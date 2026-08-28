@@ -2,7 +2,11 @@
 
 Owner decision at GATE 2 follow-up: the 2.54 mm 1x12 header physically
 cannot fit a 2242 card with an 18 mm module (30.5 mm > 22 mm card width).
-Replaced by two JST SH 1.0 mm side-entry connectors, ASSEMBLED:
+Replaced by two JST SH 1.0 mm connectors, ASSEMBLED:
+
+  VERTICAL (top-entry BM..-SRSS) per owner: side-entry plugs cannot be
+  mated with the card in the M.2 slot (socket housing blocks the approach).
+  Top-entry mates perpendicular to the card - works in-slot.
 
   J3 = SH-4, Qwiic / STEMMA-QT standard pinout: 1=GND 2=3V3 3=SDA 4=SCL
        -> off-the-shelf I2C sensor cables just plug in (SPEC success
@@ -22,9 +26,9 @@ from blocks.common import R_0603, TESTPOINT, subcircuit
 @subcircuit
 def io_header(v3v3, gnd, ios, txd0, rxd0):
     j3 = Part("Connector_Generic", "Conn_01x04", ref="J3", tag="J_QWIIC",
-              footprint="Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal")
-    j3.fields.update(LCSC="C160404", JLC="Extended",
-                     MPN="JST SM04B-SRSS-TB")
+              footprint="Connector_JST:JST_SH_BM04B-SRSS-TB_1x04-1MP_P1.00mm_Vertical")
+    j3.fields.update(LCSC="C160390", JLC="Extended",
+                     MPN="JST BM04B-SRSS-TB")
     j3.fields["JLC_note"] = "Qwiic I2C port; no Basic 1mm connector exists"
     j3[1] += gnd          # Qwiic order
     j3[2] += v3v3
@@ -32,9 +36,10 @@ def io_header(v3v3, gnd, ios, txd0, rxd0):
     j3[4] += ios["IO9"]   # SCL
 
     j4 = Part("Connector_Generic", "Conn_01x08", ref="J4", tag="J_IO",
-              footprint="Connector_JST:JST_SH_SM08B-SRSS-TB_1x08-1MP_P1.00mm_Horizontal")
-    j4.fields.update(LCSC="C160407", JLC="Extended",
-                     MPN="JST SM08B-SRSS-TB")
+              footprint="Connector_JST:JST_SH_BM08B-SRSS-TB_1x08-1MP_P1.00mm_Vertical")
+    j4.fields.update(LCSC="C160394", JLC="Extended",
+                     MPN="JST BM08B-SRSS-TB")
+    j4.fields["LCSC_2nd_source"] = "C265120 (JST BM08B-SRSS-TBT)"
     j4.fields["JLC_note"] = "UART/SPI/GPIO port; no Basic 1mm connector exists"
     j4[1] += txd0
     j4[2] += rxd0

@@ -57,8 +57,8 @@ PLACEMENT = {
     "U2": (0, -24.75, 0, "F"),      # module center: top edge at -37.5
     # --- TOP: connectors only (courtyards 11.9+7.9 wide x 6.65 deep -
     # they own the whole lower zone; ADR 0005 / layout-notes) ---
-    "J4": (-4.3, -6.8, 0, "F"),     # SH-8: UART/SPI/GPIO
-    "J3": (5.4, -6.8, 0, "F"),      # SH-4: Qwiic I2C
+    "J4": (-4.9, -6.0, 0, "F"),     # SH-8 vertical (top-entry): UART/SPI/GPIO
+    "J3": (4.2, -6.0, 0, "F"),      # SH-4 vertical (top-entry): Qwiic I2C
     # --- BOTTOM: near fingers ---
     "U1": (7.7, -5.0, 0, "B"),      # USBLC6 near pins 7/9
     "C4": (5.2, -5.0, 90, "B"),     # USBLC6 VBUS 100n

@@ -29,3 +29,14 @@ All 12 originally-planned signals remain exposed. I2C pull-ups stay DNP.
 - Two more Extended BOM lines (justified: no Basic 1 mm connectors exist).
 - In-slot cable routing is tight (side entry, 1.6 mm tall); primary IO use
   case is bench / extender / flipped carrier.
+
+## Amendment (2026-08-28, owner): vertical entry
+
+Side-entry (SM..) plugs cannot be mated with the card in the M.2 slot — the
+socket housing blocks the ~10 mm straight approach the plug needs, so cables
+would have to be attached before insertion. Switched to the **vertical
+top-entry variants**: J3 = BM04B-SRSS-TB (C160390), J4 = BM08B-SRSS-TB
+(C160394, 2nd source C265120 TBT reel). Plugs mate perpendicular to the
+card, which works in-slot given the open space below the Mallow carrier
+(card top faces down; verify finger clearance at bring-up). Footprints are
+also less than half as deep (3 mm vs 6.65 mm), relaxing the lower zone.
