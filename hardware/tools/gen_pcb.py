@@ -55,45 +55,43 @@ ORIGIN = (100.0, 150.0)
 PLACEMENT = {
     "J1": (0, 0, 0, "F"),
     "U2": (0, -24.75, 0, "F"),      # module center: top edge at -37.5
-    # --- top, row A (y ~ -5): closest to fingers ---
-    "FB1": (-8.6, -4.8, 90, "F"),   # power entry near VCC fingers
-    "C4": (4.2, -5.2, 90, "F"),     # USBLC6 VBUS 100n
-    "U1": (6.8, -5.2, 0, "F"),      # USBLC6 near pins 7/9 (x ~ +7.7)
-    # --- top, row B (y ~ -8.6) ---
-    "C1": (-9.4, -8.6, 90, "F"),
-    "C2": (-7.4, -8.6, 90, "F"),
-    "C3": (-5.9, -8.6, 90, "F"),
-    "D3": (-3.4, -8.6, 0, "F"),     # power LED
-    "R3": (-1.1, -8.6, 90, "F"),
-    "D1": (1.6, -8.6, 0, "F"),      # EN diode (PERST_n pin 50)
-    "D2": (4.6, -8.6, 0, "F"),      # BOOT diode (pins 8/20)
-    "R2": (7.0, -8.6, 90, "F"),     # BOOT pull-up
-    "R4": (8.8, -8.6, 90, "F"),     # status LED resistor
-    # --- top, row C (y ~ -10.6): horizontal low-profile only ---
-    "R5": (1.2, -10.6, 0, "F"),     # I2C PU (DNP)
-    "R6": (4.0, -10.6, 0, "F"),
-    "D4": (6.9, -10.6, 0, "F"),     # status LED
-    # --- bottom: test points (card bottom faces UP in the Mallow slot -
-    # X17 is on the carrier bottom side, Mallow Table 3) ---
-    "TP1": (-8.0, -7.5, 0, "B"),    # TP_EN
-    "TP2": (-5.5, -7.5, 0, "B"),    # TP_BOOT
-    "TP3": (-3.0, -7.5, 0, "B"),    # TP_TXD0
-    "TP4": (-0.5, -7.5, 0, "B"),    # TP_RXD0
-    "TP5": (2.0, -7.5, 0, "B"),     # TP_3V3
-    "TP6": (4.5, -7.5, 0, "B"),     # TP_GND
-    # --- bottom: USB series/shunt provision near module pins 13/14 ---
-    "R7": (-6.6, -14.0, 0, "B"),
-    "R8": (-6.6, -15.8, 0, "B"),
-    "C8": (-3.4, -14.0, 0, "B"),
-    "C9": (-3.4, -15.8, 0, "B"),
-    # --- bottom: module 3V3 decoupling + EN RC under module pins 1-3 ---
-    "C6": (-8.2, -30.0, 90, "B"),   # 100n at 3V3 (module pin 2)
-    "C7": (-6.2, -30.0, 90, "B"),   # 10u at 3V3
-    "C5": (-8.2, -27.1, 90, "B"),   # EN RC 1u (module pin 3)
-    "R1": (-6.2, -27.1, 90, "B"),   # EN pull-up
-    # --- PARKED off-board pending GATE decision: 1x12 2.54mm does not fit
-    # a 2242 card with an 18mm module (see docs/layout-notes.md) ---
-    "J3": (0, 12.0, 90, "F"),
+    # --- TOP: connectors only (courtyards 11.9+7.9 wide x 6.65 deep -
+    # they own the whole lower zone; ADR 0005 / layout-notes) ---
+    "J4": (-4.3, -6.8, 0, "F"),     # SH-8: UART/SPI/GPIO
+    "J3": (5.4, -6.8, 0, "F"),      # SH-4: Qwiic I2C
+    # --- BOTTOM: near fingers ---
+    "U1": (7.7, -5.0, 0, "B"),      # USBLC6 near pins 7/9
+    "C4": (5.2, -5.0, 90, "B"),     # USBLC6 VBUS 100n
+    "FB1": (-8.6, -5.0, 90, "B"),   # power entry near VCC fingers
+    # --- BOTTOM: row y -8.2 ---
+    "C1": (-9.4, -8.2, 90, "B"),
+    "C2": (-7.4, -8.2, 90, "B"),
+    "C3": (-5.4, -8.2, 90, "B"),
+    "D1": (-1.6, -8.2, 0, "B"),     # EN diode
+    "D2": (1.8, -8.2, 0, "B"),      # BOOT diode
+    "R2": (4.4, -8.2, 90, "B"),     # BOOT pull-up
+    "R1": (5.9, -8.2, 90, "B"),     # EN pull-up
+    "C5": (7.4, -8.2, 90, "B"),     # EN RC 1u
+    # --- BOTTOM: TPs row y -10.8, DNP bare pads row y -13.2 ---
+    "TP1": (-9.2, -11.2, 0, "B"),   # TP_EN
+    "TP2": (-6.8, -11.2, 0, "B"),   # TP_BOOT
+    "TP3": (-4.4, -11.2, 0, "B"),   # TP_TXD0
+    "TP4": (-2.0, -11.2, 0, "B"),   # TP_RXD0
+    "TP5": (0.4, -11.2, 0, "B"),    # TP_3V3
+    "TP6": (2.8, -11.2, 0, "B"),    # TP_GND
+    "R5": (-8.6, -13.8, 0, "B"),    # DNP I2C PU (bare pads)
+    "R6": (-5.6, -13.8, 0, "B"),    # DNP I2C PU
+    "C8": (-2.6, -13.8, 0, "B"),    # DNP USB shunt
+    "C9": (0.4, -13.8, 0, "B"),     # DNP USB shunt
+    # --- BOTTOM: under module (below antenna keepout) ---
+    "R7": (-8.2, -15.6, 0, "B"),    # USB series 0R, near module pins 13/14
+    "R8": (-8.2, -17.4, 0, "B"),
+    "D3": (-9.3, -20.2, 90, "B"),   # power LED at left edge (side glow)
+    "R3": (-7.3, -20.2, 90, "B"),
+    "D4": (-9.3, -23.2, 90, "B"),   # status LED at left edge
+    "R4": (-7.3, -23.2, 90, "B"),
+    "C6": (-8.2, -30.0, 90, "B"),   # 100n at module 3V3 (pin 2)
+    "C7": (-6.2, -30.0, 90, "B"),   # 10u at module 3V3
 }
 
 

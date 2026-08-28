@@ -141,7 +141,12 @@ design = SchLib(tool=SKIDL).add_parts(*[
         Part(**{ 'name':'LED', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'LED'}), 'ref_prefix':'D', 'fplist':[''], 'footprint':'LED_SMD:LED_0805_2012Metric', 'keywords':'LED diode', 'description':'Light emitting diode', 'datasheet':'~', 'pins':[
             Pin(num='1',name='K',func=pin_types.PASSIVE,unit=1),
             Pin(num='2',name='A',func=pin_types.PASSIVE,unit=1)], 'unit_defs':[] }),
-        Part(**{ 'name':'Conn_01x12', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'Conn_01x12'}), 'ref_prefix':'J', 'fplist':[''], 'footprint':'Connector_PinHeader_2.54mm:PinHeader_1x12_P2.54mm_Vertical', 'keywords':'connector', 'description':'Generic connector, single row, 01x12, script generated (kicad-library-utils/schlib/autogen/connector/)', 'datasheet':'~', 'pins':[
+        Part(**{ 'name':'Conn_01x04', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'Conn_01x04'}), 'ref_prefix':'J', 'fplist':[''], 'footprint':'Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal', 'keywords':'connector', 'description':'Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)', 'datasheet':'~', 'pins':[
+            Pin(num='1',name='Pin_1',func=pin_types.PASSIVE,unit=1),
+            Pin(num='2',name='Pin_2',func=pin_types.PASSIVE,unit=1),
+            Pin(num='3',name='Pin_3',func=pin_types.PASSIVE,unit=1),
+            Pin(num='4',name='Pin_4',func=pin_types.PASSIVE,unit=1)], 'unit_defs':[] }),
+        Part(**{ 'name':'Conn_01x08', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'Conn_01x08'}), 'ref_prefix':'J', 'fplist':[''], 'footprint':'Connector_JST:JST_SH_SM08B-SRSS-TB_1x08-1MP_P1.00mm_Horizontal', 'keywords':'connector', 'description':'Generic connector, single row, 01x08, script generated (kicad-library-utils/schlib/autogen/connector/)', 'datasheet':'~', 'pins':[
             Pin(num='1',name='Pin_1',func=pin_types.PASSIVE,unit=1),
             Pin(num='2',name='Pin_2',func=pin_types.PASSIVE,unit=1),
             Pin(num='3',name='Pin_3',func=pin_types.PASSIVE,unit=1),
@@ -149,8 +154,4 @@ design = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='5',name='Pin_5',func=pin_types.PASSIVE,unit=1),
             Pin(num='6',name='Pin_6',func=pin_types.PASSIVE,unit=1),
             Pin(num='7',name='Pin_7',func=pin_types.PASSIVE,unit=1),
-            Pin(num='8',name='Pin_8',func=pin_types.PASSIVE,unit=1),
-            Pin(num='9',name='Pin_9',func=pin_types.PASSIVE,unit=1),
-            Pin(num='10',name='Pin_10',func=pin_types.PASSIVE,unit=1),
-            Pin(num='11',name='Pin_11',func=pin_types.PASSIVE,unit=1),
-            Pin(num='12',name='Pin_12',func=pin_types.PASSIVE,unit=1)], 'unit_defs':[] })])
+            Pin(num='8',name='Pin_8',func=pin_types.PASSIVE,unit=1)], 'unit_defs':[] })])

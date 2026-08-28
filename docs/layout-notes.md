@@ -34,20 +34,20 @@ DRC rules alongside).
 
 ## Known-open items
 
-1. **J3 header parked off-board.** A 1×12 2.54 mm single row does not fit a
-   2242 card with an 18 mm module (30.5 mm > 22 mm card width; side strips
-   are 2 mm). Owner decision needed — options:
-   a) 2×6 2.54 mm block in the lower zone (fits, keeps jumper wires; my
-      recommendation),
-   b) 1×12 at 1.27 mm pitch (fits along lower zone; needs 1.27 mm jumpers),
-   c) 12 SMD pads / castellations along the long edges (solder wires).
-   SPEC §6.6 wording needs amending either way.
-2. **Two-sided assembly**: bottom currently carries 10 populated parts.
-   JLCPCB two-sided assembly costs more; alternative is hand-soldering the
-   bottom parts (they're all 0603 + TPs). Decide at GATE 4.
-3. 18 courtyard-overlap DRC infos in the proposal placement — fine-tune
-   while routing; no net shorts, no real clearance violations remain.
-4. J1-internal DRC artifacts (3): the vendored footprint's own mounting pad
-   inside its own screw-clearance keep-out. Benign; excluded at GATE 3.
-5. Bevel/panel decision (risks R2): JLCPCB bevel is 30° and needs ≥50×50 mm
+1. ~~J3 header~~ **Resolved (ADR 0005)**: JST SH-4 Qwiic (J3) + SH-8 (J4),
+   assembled, top side. Their courtyards consume the whole lower top zone,
+   which forced item 2:
+2. **Top/bottom split is now: top = module + connectors; bottom = all
+   passives + USBLC6 + diodes + LEDs + TPs.** The owner's "no bottom
+   components" wish is geometrically incompatible with two top-side
+   connectors — the two constraints cannot both hold on 22 mm width.
+   Consequence: two-sided assembly (or ~15 min hand-soldering) — GATE 4.
+   LEDs sit near the left card edge on the bottom for side-glow; neither
+   card face is directly visible in the Mallow slot anyway.
+3. Residual DRC: ~12 courtyard-overlap infos (sub-0.4 mm kisses, fine-tune
+   while routing) + 3 J1-internal artifacts (footprint's own mounting pad
+   inside its own screw keep-out — benign). No shorts, no clearance errors.
+4. Bevel/panel decision (risks R2): JLCPCB bevel is 30° and needs ≥50×50 mm
    panels with fingers on the panel edge — or skip bevel for v1.
+5. USB 90 Ω geometry: run JLCPCB's impedance calculator for the 0.8 mm
+   4-layer stackup and update the USB_DIFF netclass before routing.

@@ -1,10 +1,17 @@
-"""IO header (SPEC 6.6): 12-pin 2.54 mm single row, UNPOPULATED (DNP).
+"""IO connectors (SPEC 6.6 as amended by ADR 0005).
 
-Pin order (silkscreen labels in Phase 2):
-  1=3V3 2=GND 3=SDA(IO8) 4=SCL(IO9) 5=TX(IO43) 6=RX(IO44)
-  7=CS(IO10) 8=MOSI(IO11) 9=CLK(IO12) 10=MISO(IO13) 11=IO14 12=IO21
+Owner decision at GATE 2 follow-up: the 2.54 mm 1x12 header physically
+cannot fit a 2242 card with an 18 mm module (30.5 mm > 22 mm card width).
+Replaced by two JST SH 1.0 mm side-entry connectors, ASSEMBLED:
 
-I2C pull-up footprints provided, DNP by default (SPEC 6.6).
+  J3 = SH-4, Qwiic / STEMMA-QT standard pinout: 1=GND 2=3V3 3=SDA 4=SCL
+       -> off-the-shelf I2C sensor cables just plug in (SPEC success
+       criterion 4).
+  J4 = SH-8: 1=TX(IO43) 2=RX(IO44) 3=CS(IO10) 4=MOSI(IO11) 5=CLK(IO12)
+       6=MISO(IO13) 7=IO14 8=IO21 -> full native FSPI set + UART0 + 2 GPIO.
+
+I2C pull-up footprints 10k DNP (Qwiic peripherals usually carry their own).
+Rail test points per SPEC 6.7.
 """
 
 from skidl import Part
@@ -14,23 +21,29 @@ from blocks.common import R_0603, TESTPOINT, subcircuit
 
 @subcircuit
 def io_header(v3v3, gnd, ios, txd0, rxd0):
-    j = Part("Connector_Generic", "Conn_01x12", ref="J3", tag="J_HDR",
-             footprint="Connector_PinHeader_2.54mm:PinHeader_1x12_P2.54mm_Vertical")
-    j.fields.update(LCSC="", JLC="DNP", MPN="unpopulated 2.54mm header")
-    j.do_not_populate = True
+    j3 = Part("Connector_Generic", "Conn_01x04", ref="J3", tag="J_QWIIC",
+              footprint="Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal")
+    j3.fields.update(LCSC="C160404", JLC="Extended",
+                     MPN="JST SM04B-SRSS-TB")
+    j3.fields["JLC_note"] = "Qwiic I2C port; no Basic 1mm connector exists"
+    j3[1] += gnd          # Qwiic order
+    j3[2] += v3v3
+    j3[3] += ios["IO8"]   # SDA
+    j3[4] += ios["IO9"]   # SCL
 
-    j[1] += v3v3
-    j[2] += gnd
-    j[3] += ios["IO8"]
-    j[4] += ios["IO9"]
-    j[5] += txd0
-    j[6] += rxd0
-    j[7] += ios["IO10"]
-    j[8] += ios["IO11"]
-    j[9] += ios["IO12"]
-    j[10] += ios["IO13"]
-    j[11] += ios["IO14"]
-    j[12] += ios["IO21"]
+    j4 = Part("Connector_Generic", "Conn_01x08", ref="J4", tag="J_IO",
+              footprint="Connector_JST:JST_SH_SM08B-SRSS-TB_1x08-1MP_P1.00mm_Horizontal")
+    j4.fields.update(LCSC="C160407", JLC="Extended",
+                     MPN="JST SM08B-SRSS-TB")
+    j4.fields["JLC_note"] = "UART/SPI/GPIO port; no Basic 1mm connector exists"
+    j4[1] += txd0
+    j4[2] += rxd0
+    j4[3] += ios["IO10"]  # SPI CS
+    j4[4] += ios["IO11"]  # SPI MOSI
+    j4[5] += ios["IO12"]  # SPI CLK
+    j4[6] += ios["IO13"]  # SPI MISO
+    j4[7] += ios["IO14"]
+    j4[8] += ios["IO21"]
 
     # Optional I2C pull-ups, DNP (SPEC 6.6)
     for sig, ref in (("IO8", "R5"), ("IO9", "R6")):

@@ -59,3 +59,9 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
 - 2026-08-28 · GATE 2 · low · **BLOCK power_3v3** · Rail margin is real but
   thin (~60 mV over module 3.0 V min worst-case); bead choice confirmed
   sound; recorded in LESSONS.md with "do not substitute higher-DCR bead".
+- 2026-08-28 · Phase 2 · medium · **PROJECT** (self-caught) · Card exceeds
+  the M.2 top-side height envelope (module 3.1 mm vs 1.5 mm): fine in open
+  slots (Mallow), impossible in enclosed hosts. → risks.md R11, README note.
+- 2026-08-28 · Phase 2 · medium · **PROJECT** (owner decision, ADR 0005) ·
+  1×12 2.54 mm header cannot fit the 2242 card; replaced by JST SH-4
+  (Qwiic) + SH-8, assembled. SPEC §6.6 amended.
