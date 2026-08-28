@@ -189,6 +189,7 @@ def build_schematic():
     lib_symbols = {}
     placed = []      # symbol instances
     labels = []      # global labels
+    wires = []       # stagger stubs
     texts = []       # block headings
 
     # block per part via the stable explicit designators (skidl 2.3 has no
@@ -286,10 +287,14 @@ def build_schematic():
         inst.append(proj)
         placed.append(inst)
 
-        # net labels at pin endpoints
+        # net labels at pin endpoints, horizontal per the PIN's own
+        # orientation (never position-derived), staggered per side so
+        # adjacent 2.54mm-pitch labels can never overlap.
+        import math
         netmap = {str(pin.num): pin.nets[0].name
                   for pin in part.pins if pin.nets}
-        for num, px, py, ang, _l in pins:
+        side_seq = {}
+        for num, px, py, ang, _l in sorted(pins, key=lambda p: (p[3], p[2], p[1])):
             net = netmap.get(str(num))
             if not net:
                 continue
@@ -297,18 +302,43 @@ def build_schematic():
                 sx, sy = x - py, y - px
             else:
                 sx, sy = x + px, y - py        # lib Y is inverted on sheet
-            # label direction from the pin's outward position vs center
-            dx, dy = sx - x, sy - y
-            if abs(dx) >= abs(dy):
-                la = 180.0 if dx < 0 else 0.0
+            # outward direction: lib pin angle points INTO the body
+            oa = math.radians(ang + 180.0)
+            ox, oy = round(math.cos(oa)), round(math.sin(oa))
+            if rot == 90:
+                gx, gy = -oy, -ox
             else:
-                la = 90.0 if dy > 0 else 270.0
+                gx, gy = ox, -oy
+            # stagger so neighbors never overlap: horizontal sides
+            # alternate 0/6.35; vertical sides (labels read rotated, pins
+            # often share x) get a base offset and a 3-step cycle
+            k = side_seq.get((gx, gy), 0)
+            side_seq[(gx, gy)] = k + 1
+            if gy == 0:
+                off = 6.35 if (k % 2) else 0.0
+            else:
+                off = 2.54 + (k % 3) * 6.35
+            ax, ay = sx + gx * off, sy + gy * off
+            if off:
+                wires.append([S("wire"),
+                              [S("pts"), [S("xy"), round(sx, 3), round(sy, 3)],
+                               [S("xy"), round(ax, 3), round(ay, 3)]],
+                              [S("stroke"), [S("width"), 0],
+                               [S("type"), S("default")]],
+                              [S("uuid"), u()]])
+            if gx < 0:
+                la, just = 180.0, S("right")
+            elif gx > 0:
+                la, just = 0.0, S("left")
+            elif gy < 0:
+                la, just = 270.0, S("left")
+            else:
+                la, just = 90.0, S("left")
             labels.append([S("global_label"), net,
                            [S("shape"), S("passive")],
-                           [S("at"), round(sx, 3), round(sy, 3), la],
+                           [S("at"), round(ax, 3), round(ay, 3), la],
                            [S("effects"), [S("font"), [S("size"), 1.27, 1.27]],
-                            [S("justify"),
-                             S("right") if la == 180.0 else S("left")]],
+                            [S("justify"), just]],
                            [S("uuid"), u()]])
         return (x1 - x0), (y1 - y0) + 13.0
 
@@ -348,9 +378,9 @@ def build_schematic():
             col_w = max(col_w, w)
             if y_cursor > PAGE_H and part is not parts[-1]:
                 y_cursor = 42.0
-                x_cursor += col_w + 24.0
+                x_cursor += col_w + 30.0
                 col_w = 30.0
-        x_cursor += col_w + 26.0
+        x_cursor += col_w + 34.0
 
     tb = [S("title_block"),
           [S("title"), "ESP32 M.2 Companion - Key-B 2242 USB companion MCU"],
@@ -370,7 +400,7 @@ def build_schematic():
            [S("paper"), "A2"],
            tb,
            [S("lib_symbols")] + list(lib_symbols.values())]
-    sch += texts + placed + labels
+    sch += texts + placed + wires + labels
     sch.append([S("sheet_instances"), [S("path"), "/",
                 [S("page"), "1"]]])
 
