@@ -16,3 +16,6 @@ firmware/sdkconfig.old
 
 # OS
 .DS_Store
+hardware/build/
+hardware/build_out.log
+hardware/.venv/

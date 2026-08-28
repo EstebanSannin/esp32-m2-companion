@@ -15,4 +15,11 @@ Network notes (this machine/sandbox):
   a mirror (UMW clone doc); see docs/datasheets/README.md.
 - Waveshare wiki reachable via curl with browser UA (plain fetch gets 403).
 
-Still to install (Phase 1): KiCad 9 + kicad-cli, atopile (or SKiDL), ESP-IDF.
+| 2026-08-28 | uv 0.9.x | `brew install uv` | python project/venv management |
+| 2026-08-28 | KiCad 9.0.9 (kicad-cli + libs) | official DMG → `~/Applications/KiCad` (brew cask needs sudo → hand-install; SPEC pins v9, brew only has v10) | headless ERC/DRC/exports, symbol/footprint libs |
+| 2026-08-28 | atopile 0.15.8 | `uv tool install atopile` | evaluated & REJECTED (ADR 0001); kept installed for reference |
+| 2026-08-28 | skidl 2.3.0 + pypdf | `uv add` in hardware/ | schematic-as-code (ADR 0001), PDF merge |
+| 2026-08-28 | node 26 + graphviz (incl. rsvg-convert) | `brew install node graphviz` | netlistsvg rendering, SVG→PDF |
+| 2026-08-28 | netlistsvg | `npm install -g netlistsvg` | schematic-style SVG from netlists |
+
+Still to install (Phase 4): ESP-IDF.

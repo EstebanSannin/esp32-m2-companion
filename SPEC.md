@@ -200,6 +200,28 @@ review. Never proceed past a gate without explicit approval.
 - R4. 2242 card mechanical fit in 3042-oriented RPi HATs (standoff position).
 - R5. GPIO choice vs. octal-PSRAM reservations on the exact WROOM variant.
 
+## 12. Knowledge management (added 2026-08-28, owner)
+
+1. `docs/review-findings.md` is an **append-only** log. Every finding from any
+   review gate — owner's, an external senior HW designer's, or self-caught —
+   gets one entry: date, phase, finding, severity, and a classification:
+   - **BLOCK**: bug/improvement in a reusable circuit block → fix the block
+     source and add a line to that block's `LESSONS.md`
+   - **PROCESS**: workflow/tooling/fab gap → flag to owner as a candidate rule
+     for the shared hardware-design skill
+   - **PROJECT**: specific to this board → note it in `CLAUDE.md`
+2. Schematic sources are organized as self-contained reusable blocks
+   (`m2_keyb_edge`, `esp32s3_companion`, `usb_esd`, `power_3v3`, `leds`,
+   `io_header`) — each block in its own directory with sources, datasheet
+   references, and a `LESSONS.md` (empty is fine; the file must exist). At
+   project end, stable blocks are promoted to a shared hw-blocks repo.
+3. `CLAUDE.md` stays current with project conventions: net names follow the
+   M.2 / Verdin datasheet naming verbatim, tool choices, DRC profile, gate
+   protocol.
+4. When the owner relays findings from an external senior designer review,
+   their categorization ("wrong" / "works but unprofessional" / "fragile at
+   scale") is preserved in the log — never flattened.
+
 ---
 
 # Kickoff prompt for the Claude Code session
