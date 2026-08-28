@@ -28,8 +28,8 @@ _DATASHEET_PINS = {
 def esp32s3_companion(v3v3, gnd, en, io0_boot, usb_d_n, usb_d_p,
                       led_status_n, header_ios, txd0, rxd0):
     """header_ios: dict {'IO8':net, 'IO9':net, 'IO10':..., 'IO14', 'IO21'}"""
-    u = Part("RF_Module", "ESP32-S3-WROOM-1", tag="U_MCU",
-             footprint="RF_Module:ESP32-S3-WROOM-1")
+    u = Part("RF_Module", "ESP32-S3-WROOM-1", ref="U2", tag="U_MCU",
+             footprint="esp32m2:ESP32-S3-WROOM-1_JLC")  # vendored: EPAD vias 0.3mm drill (JLC min)
     u.fields.update(
         LCSC="C2913204", JLC="Extended", MPN="ESP32-S3-WROOM-1-N8R2")
     u.fields["JLC_note"] = "core MCU module; no Basic alternative exists"
@@ -46,10 +46,10 @@ def esp32s3_companion(v3v3, gnd, en, io0_boot, usb_d_n, usb_d_p,
     u[1] += gnd
     u[40] += gnd
     u[41] += gnd  # EPAD
-    c1 = C_0603("100nF 50V", lcsc="C14663", mpn="CC0603KRX7R9BB104")
+    c1 = C_0603("100nF 50V", lcsc="C14663", mpn="CC0603KRX7R9BB104", ref="C6")
     c1[1] += v3v3
     c1[2] += gnd
-    c2 = C_0603("10uF 25V", lcsc="C19702", mpn="CL10A106KP8NNNC")
+    c2 = C_0603("10uF 10V", lcsc="C19702", mpn="CL10A106KP8NNNC", ref="C7")
     c2[1] += v3v3
     c2[2] += gnd
 
@@ -75,8 +75,8 @@ def esp32s3_companion(v3v3, gnd, en, io0_boot, usb_d_n, usb_d_p,
     # UART0 (doubles as ROM console fallback)
     u[37] += txd0
     u[36] += rxd0
-    TESTPOINT("TP_TXD0")[1] += txd0
-    TESTPOINT("TP_RXD0")[1] += rxd0
+    TESTPOINT("TP_TXD0", ref="TP3")[1] += txd0
+    TESTPOINT("TP_RXD0", ref="TP4")[1] += rxd0
 
     # Everything else deliberately unconnected in v1:
     # strapping IO3(15)/IO45(26)/IO46(16) float per datasheet §4 defaults;

@@ -30,50 +30,50 @@ def _bom(part, lcsc, jlc, mpn, dnp=False):
     return part
 
 
-def R_0603(value, lcsc, mpn, dnp=False):
-    p = Part("Device", "R", value=value, tag=_next_tag("R"),
+def R_0603(value, lcsc, mpn, dnp=False, ref=None):
+    p = Part("Device", "R", value=value, ref=ref, tag=_next_tag("R"),
              footprint="Resistor_SMD:R_0603_1608Metric")
     return _bom(p, lcsc, "Basic", mpn, dnp)
 
 
-def C_0603(value, lcsc, mpn):
-    p = Part("Device", "C", value=value, tag=_next_tag("C"),
+def C_0603(value, lcsc, mpn, ref=None):
+    p = Part("Device", "C", value=value, ref=ref, tag=_next_tag("C"),
              footprint="Capacitor_SMD:C_0603_1608Metric")
     return _bom(p, lcsc, "Basic", mpn)
 
 
-def C_0805_22U():
-    p = Part("Device", "C", value="22uF 25V", tag=_next_tag("C"),
+def C_0805_22U(ref=None):
+    p = Part("Device", "C", value="22uF 25V", ref=ref, tag=_next_tag("C"),
              footprint="Capacitor_SMD:C_0805_2012Metric")
     return _bom(p, "C45783", "Basic", "CL21A226MAQNNNE")
 
 
-def LED_0603(color, lcsc, mpn):
-    p = Part("Device", "LED", value=color, tag=_next_tag("LED"),
+def LED_0603(color, lcsc, mpn, ref=None):
+    p = Part("Device", "LED", value=color, ref=ref, tag=_next_tag("LED"),
              footprint="LED_SMD:LED_0603_1608Metric")
     return _bom(p, lcsc, "Basic", mpn)
 
 
-def LED_0805(color, lcsc, mpn):
-    p = Part("Device", "LED", value=color, tag=_next_tag("LED"),
+def LED_0805(color, lcsc, mpn, ref=None):
+    p = Part("Device", "LED", value=color, ref=ref, tag=_next_tag("LED"),
              footprint="LED_SMD:LED_0805_2012Metric")
     return _bom(p, lcsc, "Basic", mpn)
 
 
-def BAT54A():
+def BAT54A(ref=None):
     """Dual Schottky, common anode: pin 3 = A, pins 1/2 = K.
 
     Pinout: docs/datasheets/lbat54a_schottky.pdf p.1 internal-schematic
     figure (note: that doc's *title* wrongly says 'Dual Series'; the drawing
     and the standard BAT54A config are common anode).
     """
-    p = Part("Diode", "BAT54A", tag=_next_tag("D"),
+    p = Part("Diode", "BAT54A", ref=ref, tag=_next_tag("D"),
              footprint="Package_TO_SOT_SMD:SOT-23")
     return _bom(p, "C12743", "Extended", "LBAT54ALT1G")
 
 
-def TESTPOINT(name):
-    p = Part("Connector", "TestPoint", value=name, tag=_next_tag("TP"),
+def TESTPOINT(name, ref=None):
+    p = Part("Connector", "TestPoint", value=name, ref=ref, tag=_next_tag("TP"),
              footprint="TestPoint:TestPoint_Pad_D1.5mm")
     p.fields.update(LCSC="", JLC="PCB", MPN="")
     return p

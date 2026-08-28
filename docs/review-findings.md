@@ -19,3 +19,43 @@ External-reviewer categorizations ("wrong" / "works but unprofessional" /
 - 2026-08-28 · GATE 2 · low · **PROJECT** (owner decision) · USB ESD array
   sourcing: ST USBLC6-2SC6 (C7519) primary, UMW clone (C2687116) approved
   second source. → BOM field `LCSC_2nd_source` added in usb_esd block.
+
+## GATE 2 multi-agent adversarial review (2026-08-28, workflow wf_7e010569)
+
+7 independent reviewers re-derived each block from source datasheets; every
+finding attacked by 2 refutation verifiers (datasheet-evidence + circuit-
+behavior lenses, xhigh effort). Core electrical design confirmed correct:
+module pinout (0 findings), USB path polarity/pairing, recovery diode
+topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
+3.0 V min). Confirmed findings:
+
+- 2026-08-28 · GATE 2 · medium · **BLOCK sideband_recovery** · CONFIRMED (2/2
+  uphold) · "Diode blocks when host high" claim false for push-pull-high
+  hosts below ~2.8 V: net dragged to ~2.0–2.1 V (undefined input band),
+  ~125 µA into host pin. Mallow paths unaffected (OD / open). → Docs
+  corrected (pinmap §3.2, block docstring, ADR 0002 amendment); constraint
+  stated; recovery flow = release to Hi-Z. LESSONS.md updated.
+- 2026-08-28 · GATE 2 · low (verifiers downgraded from medium) · **BLOCK
+  power_3v3 / esp32s3_companion** · CONFIRMED · BOM label "10uF 25V" wrong:
+  C19702 (CL10A106KP8NNNC) is a 10 V part. Electrically fine at 3.3 V.
+  → Relabeled "10uF 10V". Related: C15849 labeled 25 V is actually 50 V →
+  relabeled "1uF 50V".
+- 2026-08-28 · GATE 2 · low · **PROJECT** (docs) · CONFIRMED · pinmap [KEYB]
+  column misquotes on NC pins: 41/43/47/49 (PCIe pair names transposed),
+  38/68 (SDX2AP/AP2SDX shift), 56/58/60/64 (RFFE/WLAN/COEX names), and
+  "12 × GND fingers" (actual 11). → All corrected in pinmap + _PINS.
+- 2026-08-28 · GATE 2 · low · **PROCESS** (tooling) · DNP parts leaked into
+  JLC assembly CSV: gen_bom keyed on a field the header block never set.
+  → gen_bom now derives DNP from `do_not_populate`. Candidate rule for the
+  shared hardware-design skill: "DNP handling must be enforced by the BOM
+  generator, not by per-part convention."
+- 2026-08-28 · GATE 2 · low · **BLOCK usb_esd** · HDG §1.3.13 series-R/
+  shunt-C provision missing on USB D+/D−. → Added R7/R8 (0R populated,
+  22–33R swappable) + C8/C9 (DNP), placed near module.
+- 2026-08-28 · GATE 2 · low · **PROJECT** (risk) · Host-behavior failure
+  modes undocumented: W_DISABLE1# low at boot ⇒ download mode (→ R10);
+  stock Mallow PCIe driver may hold PERST# asserted (→ R9, verify at
+  bring-up).
+- 2026-08-28 · GATE 2 · low · **BLOCK power_3v3** · Rail margin is real but
+  thin (~60 mV over module 3.0 V min worst-case); bead choice confirmed
+  sound; recorded in LESSONS.md with "do not substitute higher-DCR bead".

@@ -27,10 +27,10 @@ def power_3v3(v3v3_m2, v3v3, gnd):
 
     # Bulk on the card rail: 2 x 22 uF + 10 uF (HDG: extra 10 uF at power
     # entrance; TX-burst support).
-    for _ in range(2):
-        c = C_0805_22U()
+    for ref in ("C1", "C2"):
+        c = C_0805_22U(ref=ref)
         c[1] += v3v3
         c[2] += gnd
-    c10 = C_0603("10uF 25V", lcsc="C19702", mpn="CL10A106KP8NNNC")
+    c10 = C_0603("10uF 10V", lcsc="C19702", mpn="CL10A106KP8NNNC", ref="C3")
     c10[1] += v3v3
     c10[2] += gnd

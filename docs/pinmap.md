@@ -50,37 +50,37 @@ Directions ("I/O") are from the **card's** point of view.
 | 35 | USB_SS_RX_M | USBH3_SSTX_N ¹ | NC |
 | 36 | UIM1_VDD | PCIE_1_UIM_PWR | NC |
 | 37 | USB_SS_RX_P | USBH3_SSTX_P ¹ | NC |
-| 38 | (U)SIM2_DET / NC | NC | NC |
+| 38 | SDX2AP_STATUS | NC | NC |
 | 39 | GND | GND | GND |
 | 40 | (U)SIM2 / GPIO | PCIE_1_GPIO_0 → X16 pin 24 | NC |
-| 41 | PCIE_RX_P ² | PCIE_1_L0_RX_N ² | NC |
+| 41 | PCIE_TX_M ² | PCIE_1_L0_RX_N ² | NC |
 | 42 | (U)SIM2 / GPIO | PCIE_1_GPIO_1 → X16 pin 23 | NC |
-| 43 | PCIE_RX_M ² | PCIE_1_L0_RX_P ² | NC |
+| 43 | PCIE_TX_P ² | PCIE_1_L0_RX_P ² | NC |
 | 44 | (U)SIM2 / GPIO | PCIE_1_GPIO_2 → X16 pin 22 | NC |
 | 45 | GND | GND | GND |
 | 46 | (U)SIM2 / GPIO | PCIE_1_GPIO_3 → X16 pin 21 | NC |
-| 47 | PCIE_TX_P ² | PCIE_1_L0_TX_N ² | NC |
+| 47 | PCIE_RX_M ² | PCIE_1_L0_TX_N ² | NC |
 | 48 | (U)SIM2 / GPIO | PCIE_1_GPIO_4 → X16 pin 20 | NC |
-| 49 | PCIE_TX_M ² | PCIE_1_L0_TX_P ² | NC |
+| 49 | PCIE_RX_P ² | PCIE_1_L0_TX_P ² | NC |
 | 50 | PERST# (PCIE_RST_N) | PERST#, **SODIMM 244**, input to card, OD, 10 kΩ pull-up to +V3.3_PCIE_1 | **EN (reset) input** via Schottky diode (see §3) |
 | 51 | GND | GND | GND |
 | 52 | PCIE_CLKREQ_N | NC | NC |
 | 53 | PCIE_REFCLK_M | PCIE_1_CLK_N | NC |
 | 54 | PCIE_WAKE_N | PCIE_1_WAKE#, SODIMM 252, 10 kΩ PU to +V1.8 | NC (1.8 V domain — do not touch) |
 | 55 | PCIE_REFCLK_P | PCIE_1_CLK_P | NC |
-| 56 | NC | NC | NC |
+| 56 | RFFE_CLK | NC | NC |
 | 57 | GND | GND | GND |
-| 58 | NC | NC | NC |
+| 58 | RFFE_DATA | NC | NC |
 | 59 | LAA_TX_EN / ANT | NC | NC |
-| 60 | COEX_TXD | NC | NC |
+| 60 | WLAN_TX_EN | NC | NC |
 | 61 | ANTCTL1 | NC | NC |
 | 62 | COEX_RXD | NC | NC |
 | 63 | ANTCTL2 | NC | NC |
-| 64 | COEX3 / NC | NC | NC |
+| 64 | COEX_TXD | NC | NC |
 | 65 | RFFE_VIO_1V8 | NC | NC |
 | 66 | UIM1_DET | PCIE_1_UIM_CD | NC |
 | 67 | RESET# | M.2_CARD_RESET#, **+1.8 V domain**, driver not documented (no SODIMM pin) | NC in v1 (see §3.4) |
-| 68 | SDX2AP_STATUS / NC | NC | NC |
+| 68 | AP2SDX_STATUS | NC | NC |
 | 69 | CONFIG_1 | NC | NC |
 | 70 | VCC (3.3 V) | +V3.3_PCIE_1 | **3V3 in** |
 | 71 | GND | GND | GND |
@@ -96,7 +96,7 @@ directions are consistent between the two once that is accounted for.
 Power notes:
 - +V3.3_PCIE_1: Mallow's 3V3 DC-DC is rated 7 A board-total (Table 4) —
   ESP32-S3 WiFi TX bursts (~0.5 A) are comfortably inside slot budget.
-- Card power = 5 × VCC pins, 12 × GND fingers. Input filter per SPEC §6.2.
+- Card power = 5 × VCC pins, 11 × GND fingers. Input filter per SPEC §6.2.
 - Note [KEYB] modem VCC is 3.135–4.4 V (modem-specific); the *socket* rail on
   both our hosts is 3.3 V, which is what we design to.
 
@@ -177,8 +177,15 @@ Therefore every sideband input goes through a small-signal Schottky
 
 - Host (any voltage, push-pull or OD) pulls low → card net ≈ V_OL + V_f
   ≤ ~0.5 V < VIL (0.825 V @3.3 V) ✔
-- Host high or Hi-Z → diode blocks, card net sits at 3.3 V via its own 10 kΩ,
-  host pin never sees 3.3 V ✔
+- Host Hi-Z or open-drain released → diode blocks, card net sits at 3.3 V via
+  its own 10 kΩ, host pin never sees 3.3 V ✔
+- **Constraint (GATE 2 review finding):** a host driving a sideband
+  *push-pull HIGH below ~2.8 V* (e.g. 1.8 V) forward-biases the diode
+  (~125 µA) and drags the card net to ~2.0–2.1 V — inside the undefined
+  input band. Host sidebands must idle open-drain/Hi-Z, or push-pull with
+  V_OH ≥ ~2.8 V. Recovery flows must *release* BOOT/EN to input/Hi-Z
+  (`gpioset` back to input), never drive them high. Mallow's documented
+  paths satisfy this (PERST# is OD; pin 20 is open until jumpered).
 - Card unplugged / sideband unconnected → normal boot ✔ (SPEC §6.4 satisfied)
 
 Trade-off: host can only assert (pull low), never drive high — which is all

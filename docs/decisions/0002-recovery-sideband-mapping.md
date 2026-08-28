@@ -36,3 +36,16 @@ Exact overlay steps per owner's SoM go into docs/bringup.md (Phase 4).
   BOOT; EN works with zero carrier modification.
 - Hosts can only assert (pull low), never drive high — sufficient for the
   recovery flow; default state comes from on-card pull-ups.
+
+## Amendment (2026-08-28, GATE 2 adversarial review)
+
+The original "Consequences" overstated the isolation: the diode blocks only
+when the host sideband is **Hi-Z or open-drain released**. A host driving
+push-pull HIGH below ~2.8 V (e.g. 1.8 V) forward-biases the diode (~125 µA)
+and drags EN/IO0 to ~2.0–2.1 V — inside the undefined input band
+(VIL 0.825 V / VIH 2.475 V @ 3.3 V). Real constraint: host sidebands must
+idle OD/Hi-Z or push-pull with V_OH ≥ ~2.8 V; recovery flows must RELEASE
+BOOT/EN to input/Hi-Z, never drive them high. Mallow's documented paths
+satisfy this. Two host-behavior failure modes recorded in docs/risks.md:
+W_DISABLE1# held low at boot forces download mode (R10); a stock Mallow
+image's PCIe driver may leave PERST# asserted (R9).

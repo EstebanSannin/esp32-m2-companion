@@ -14,7 +14,7 @@ from blocks.common import R_0603, TESTPOINT, subcircuit
 
 @subcircuit
 def io_header(v3v3, gnd, ios, txd0, rxd0):
-    j = Part("Connector_Generic", "Conn_01x12", tag="J_HDR",
+    j = Part("Connector_Generic", "Conn_01x12", ref="J3", tag="J_HDR",
              footprint="Connector_PinHeader_2.54mm:PinHeader_1x12_P2.54mm_Vertical")
     j.fields.update(LCSC="", JLC="DNP", MPN="unpopulated 2.54mm header")
     j.do_not_populate = True
@@ -33,11 +33,12 @@ def io_header(v3v3, gnd, ios, txd0, rxd0):
     j[12] += ios["IO21"]
 
     # Optional I2C pull-ups, DNP (SPEC 6.6)
-    for sig in ("IO8", "IO9"):
-        r = R_0603("10k", lcsc="C25804", mpn="0603WAF1002T5E", dnp=True)
+    for sig, ref in (("IO8", "R5"), ("IO9", "R6")):
+        r = R_0603("10k", lcsc="C25804", mpn="0603WAF1002T5E", dnp=True,
+                   ref=ref)
         r[1] += v3v3
         r[2] += ios[sig]
 
     # Rail test points (SPEC 6.7)
-    TESTPOINT("TP_3V3")[1] += v3v3
-    TESTPOINT("TP_GND")[1] += gnd
+    TESTPOINT("TP_3V3", ref="TP5")[1] += v3v3
+    TESTPOINT("TP_GND", ref="TP6")[1] += gnd

@@ -12,6 +12,8 @@ def _rows():
         jlc = part.fields.get("JLC", "")
         if jlc == "PCB":       # edge fingers / test points: PCB features
             continue
+        if getattr(part, "do_not_populate", False) and "DNP" not in part.fields:
+            part.fields["DNP"] = "DNP"   # never leak DNP parts into bom.csv
         key = (part.value_str if hasattr(part, "value_str") else str(part.value),
                part.footprint, part.fields.get("LCSC", ""),
                part.fields.get("MPN", ""), jlc,

@@ -1,0 +1,7 @@
+(version 1)
+# Card-edge gold fingers legitimately touch the board edge; suppress the
+# edge-clearance check for everything belonging to J1 only.
+(rule "edge_fingers_edge_clearance"
+  (condition "A.memberOfFootprint('J1')")
+  (severity ignore)
+  (constraint edge_clearance))
