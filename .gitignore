@@ -1,0 +1,18 @@
+# KiCad
+*.kicad_prl
+*-backups/
+*.lck
+fp-info-cache
+
+# atopile / python
+.ato/
+__pycache__/
+*.egg-info/
+.venv/
+
+# ESP-IDF
+firmware/build/
+firmware/sdkconfig.old
+
+# OS
+.DS_Store
