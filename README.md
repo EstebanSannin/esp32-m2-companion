@@ -11,7 +11,7 @@ Current phase: **Phase 0 — Groundwork** → awaiting GATE 1 review of
 | Host | Status |
 |---|---|
 | Toradex Mallow (Verdin) M.2 Key-B slot | Primary target — pin mapping verified against Mallow V1.1 datasheet |
-| Raspberry Pi 5 + Waveshare "PCIe TO 4G/5G M.2 USB3.2 HAT+" | Best effort — HAT officially fits 3042/3052 (2242 standoff TBD), sideband wiring unpublished |
+| Raspberry Pi 5 + Waveshare "PCIe TO 4G/5G M.2 USB3.2 HAT+" | Nice-to-have (ADR 0004) — HAT officially fits 3042/3052 (2242 standoff TBD), sideband wiring unpublished |
 | Raspberry Pi official M.2 HAT+ | **NOT compatible** — M-key, PCIe only, no USB on the socket |
 
 ## Layout

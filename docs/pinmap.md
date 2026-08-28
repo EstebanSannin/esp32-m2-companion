@@ -215,20 +215,18 @@ discharges the 1 µF through the diode — trivial with `gpioset`.
 - On Mallow the port is behind a USB5744 hub (port 3) — enumeration
   expectation in `docs/bringup.md` should mention the hub in `lsusb -t`.
 
-## 5. Open items for GATE 1
+## 5. GATE 1 outcomes (2026-08-28)
 
-1. **BOOT diode-OR (pins 20+8) vs pin 20 only** — recommendation: fit both
-   diodes (cost ≈ nothing, covers non-Mallow hosts); OK?
-2. **Status LED**: plain LED on IO48 (recommended, simplest) vs WS2812B-2020.
-   Footprint for both, populate one — decide at BOM time.
-3. **SODIMM 244 (PERST#) ownership on Verdin**: normally claimed by the PCIe
-   DT node; on your image it must be freed/repurposed as GPIO for recovery
-   use. Confirm acceptable on your Mallow setup.
-4. ST vs UMW for the USB ESD array (datasheet provenance in
-   `docs/datasheets/README.md`); if ST (C7519), please drop the ST PDF into
-   `docs/datasheets/`.
-5. Waveshare HAT+ officially supports 3042/3052 only → 2242 standoff missing
-   (risk R4 confirmed). Accept flying-lead/adapter best-effort, or pick a
-   different Key-B HAT?
-6. M.2 2242 mechanical outline for Phase 2 needs a licensed M.2 EM spec or a
-   trusted derived drawing — can you provide the spec PDF?
+1. BOOT diode-OR (pins 20+8): **approved** → ADR 0002.
+2. Status LED: **plain LED on IO48** → ADR 0003.
+3. SODIMM 244 as GPIO: **verified in mainline device trees** for Verdin
+   iMX8MP/iMX8MM (claimed by PCIe node — free it with an overlay) and AM62
+   (free by default). Per-SoM table in ADR 0002; exact steps for the owner's
+   SoM go into `docs/bringup.md` (Phase 4).
+4. RPi5: **demoted to nice-to-have** → ADR 0004 (risk R4 accepted).
+
+Still open (not blocking Phase 1):
+- ST vs UMW for the USB ESD array — decide at BOM review (Phase 1 / GATE 2);
+  if ST, owner drops the ST PDF into `docs/datasheets/`.
+- M.2 2242 mechanical outline source for Phase 2 (licensed M.2 EM spec or
+  verified derived drawing) — needed before GATE 3, not before schematic.
