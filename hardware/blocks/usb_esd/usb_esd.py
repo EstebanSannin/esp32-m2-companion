@@ -20,6 +20,9 @@ def usb_esd(usb_edge_p, usb_edge_n, usb_mcu_p, usb_mcu_n, v3v3, gnd):
     u = Part("Power_Protection", "USBLC6-2SC6", tag="U_ESD",
              footprint="Package_TO_SOT_SMD:SOT-23-6")
     u.fields.update(LCSC="C7519", JLC="Extended", MPN="USBLC6-2SC6 (ST)")
+    # Owner decision at GATE 2: ST (C7519) primary, UMW (C2687116) approved
+    # second source if ST is out of stock at order time.
+    u.fields["LCSC_2nd_source"] = "C2687116 (UMW)"
 
     u[1] += usb_edge_p   # I/O1 edge side
     u[6] += usb_mcu_p    # I/O1 MCU side

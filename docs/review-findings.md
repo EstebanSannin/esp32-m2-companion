@@ -16,3 +16,6 @@ External-reviewer categorizations ("wrong" / "works but unprofessional" /
   wiring of card 3.3 V pull-up nets to sideband pins would overvoltage 1.8 V
   hosts. → Schottky-diode isolation on every sideband input (ADR 0002);
   lesson recorded in block LESSONS.md.
+- 2026-08-28 · GATE 2 · low · **PROJECT** (owner decision) · USB ESD array
+  sourcing: ST USBLC6-2SC6 (C7519) primary, UMW clone (C2687116) approved
+  second source. → BOM field `LCSC_2nd_source` added in usb_esd block.

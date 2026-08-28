@@ -8,5 +8,5 @@
 | R4 | 2242 fit in RPi5 Key-B HATs | **Accepted.** RPi5 demoted to nice-to-have at GATE 1 (ADR 0004). Waveshare HAT+ fits 3042/3052 only; no published schematic; USB 2.0 presence inferred from official SIM7600-M.2 (USB2-only modem) support. | Best-effort via test points / flying leads; no design decision may block on RPi5. |
 | R5 | GPIO choice vs octal-PSRAM reservation | **Resolved by design.** IO35–37 kept NC; N8R2 ⇄ N16R8 drop-in compatible. | — |
 | R6 | 1.8 V host GPIO domain (Verdin) vs 3.3 V card nets | New | Schottky-diode isolation on all sideband inputs (pinmap §3.2). |
-| R7 | USBLC6 datasheet on file is the UMW clone, not ST original | New | st.com unreachable from this machine; owner to supply ST PDF or approve UMW part (LCSC C323793) at BOM review. |
+| R7 | USBLC6 datasheet on file is the UMW clone, not ST original | **Resolved (sourcing).** Owner decision: ST C7519 primary, UMW C2687116 approved second source. | Owner to drop the ST PDF into docs/datasheets/ when convenient (st.com blocked from this machine); UMW doc on file covers the pin map either way. |
 | R8 | M.2 EM spec (mechanical outline, gold-finger geometry) paywalled | New | Owner to provide spec PDF, or Phase 2 uses a derived/verified drawing (e.g. KiCad official M.2 edge footprints) with explicit dimension checks. |
