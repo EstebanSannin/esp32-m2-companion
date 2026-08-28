@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html class="client-nojs" lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<title>PCIe TO 4G/5G M.2 USB3.2 HAT+ - Waveshare Wiki</title>
+<script>document.documentElement.className="client-js";RLCONF={"wgBreakFrames":!1,"wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgRequestId":"68272b9c9c9fd2b41e837694","wgCSPNonce":!1,"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":!1,"wgNamespaceNumber":0,"wgPageName":"PCIe_TO_4G/5G_M.2_USB3.2_HAT+","wgTitle":"PCIe TO 4G/5G M.2 USB3.2 HAT+","wgCurRevisionId":98667,"wgRevisionId":98667,"wgArticleId":19553,"wgIsArticle":!0,"wgIsRedirect":!1,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":[],"wgPageContentLanguage":"en","wgPageContentModel":"wikitext","wgRelevantPageName":"PCIe_TO_4G/5G_M.2_USB3.2_HAT+","wgRelevantArticleId":19553,"wgIsProbablyEditable":!1,"wgRelevantPageIsProbablyEditable":!1,"wgRestrictionEdit":[],"wgRestrictionMove":[]};RLSTATE={"ext.gadget.tabber"
+:"ready","site.styles":"ready","noscript":"ready","user.styles":"ready","user":"ready","user.options":"loading","mediawiki.toc.styles":"ready","skins.tweeki.styles":"ready","skins.tweeki.bootstraptheme.styles":"ready","skins.tweeki.externallinks.styles":"ready","skins.tweeki.awesome.styles":"ready"};RLPAGEMODULES=["site","mediawiki.page.startup","mediawiki.page.ready","mediawiki.toc","ext.FancyBoxThumbs","ext.HighlightjsIntegration","skins.tweeki.messages","skins.tweeki.scripts"];</script>
+<script>(RLQ=window.RLQ||[]).push(function(){mw.loader.implement("user.options@1hzgi",function($,jQuery,require,module){/*@nomin*/mw.user.tokens.set({"patrolToken":"+\\","watchToken":"+\\","csrfToken":"+\\"});
+});});</script>
+<link rel="stylesheet" href="/w/Uy8Yw0y/aAdkk0o.php?lang=en&amp;modules=mediawiki.toc.styles%7Cskins.tweeki.awesome.styles%7Cskins.tweeki.bootstraptheme.styles%7Cskins.tweeki.externallinks.styles%7Cskins.tweeki.styles&amp;only=styles&amp;skin=tweeki"/>
+<script async="" src="/w/Uy8Yw0y/aAdkk0o.php?lang=en&amp;modules=startup&amp;only=scripts&amp;raw=1&amp;skin=tweeki"></script>
+<meta name="ResourceLoaderDynamicStyles" content=""/>
+<link rel="stylesheet" href="/w/Uy8Yw0y/aAdkk0o.php?lang=en&amp;modules=ext.gadget.tabber&amp;only=styles&amp;skin=tweeki"/>
+<link rel="stylesheet" href="/w/Uy8Yw0y/aAdkk0o.php?lang=en&amp;modules=site.styles&amp;only=styles&amp;skin=tweeki"/>
+<meta name="generator" content="MediaWiki 1.35.5"/>
+<meta property="og:image" content="https://www.waveshare.com/w/upload/d/d6/PCIe-TO-4G-5G-M.2-USB3.2-HAT-Plus-1.jpg"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="shortcut icon" href="/w/favicon.ico"/>
+<link rel="search" type="application/opensearchdescription+xml" href="/w/opensearch_desc.php" title="Waveshare Wiki (en)"/>
+<link rel="EditURI" type="application/rsd+xml" href="https://www.waveshare.com/w/api.php?action=rsd"/>
+<link rel="alternate" type="application/atom+xml" title="Waveshare Wiki Atom feed" href="/w/index.php?title=Special:RecentChanges&amp;feed=atom"/>
+<!--[if lt IE 9]><script src="/w/resources/lib/html5shiv/html5shiv.js"></script><![endif]-->
+</head>
+<body class="mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-subject page-PCIe_TO_4G_5G_M_2_USB3_2_HAT rootpage-PCIe_TO_4G_5G_M_2_USB3_2_HAT skin-tweeki action-view tweeki-animateLayout tweeki-non-advanced tweeki-user-anon">			<!-- navbar -->
+			<div id="mw-navigation" class="navbar navbar-default navbar-fixed-top navbar-expand-lg fixed-top navbar-light bg-light" role="navigation">
+				<h2>Navigation menu</h2>
+				<div id="mw-head" class="navbar-inner">
+					<div class="container">
+
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+							</button>
+
+							<a href="/wiki/Main_Page" class="navbar-brand"><img src="https://www.waveshare.com/w/upload/a/a7/Ws-watermark-en.svg" alt="Waveshare Wiki" /></a>
+						</div>
+
+						<div id="navbar" class="navbar-collapse collapse">
+													<ul class="nav navbar-nav">
+							<li class="nav"><a href="#" id="n-raspberry-pi" class="dropdown-toggle" data-toggle="dropdown">Raspberry Pi <b class="caret"></b></a><ul class="dropdown-menu " role="menu"><li id="n-main_page.2523rpi-boards"><a href="/wiki/Main_Page#RPi-Boards" tabindex="-1">Boards/Kits</a></li><li id="n-main_page.2523rpi-displays"><a href="/wiki/Main_Page#RPi-Displays" tabindex="-1">Displays</a></li><li id="n-main_page.2523rpi-cameras"><a href="/wiki/Main_Page#RPi-Cameras" tabindex="-1">Cameras</a></li><li id="n-main_page.2523rpi-expansions"><a href="/wiki/Main_Page#RPi-Expansions" tabindex="-1">Expansions</a></li><li id="n-main_page.2523rpi-laptops"><a href="/wiki/Main_Page#RPi-Laptops" tabindex="-1">All-in-one</a></li><li id="n-main_page.2523rpi-robots"><a href="/wiki/Main_Page#RPi-Robots" tabindex="-1">Robots</a></li><li id="n-main_page.2523rpi-games"><a href="/wiki/Main_Page#RPi-Games" tabindex="-1">Portable Gaming</a></li><li id="n-main_page.2523rpi-acces"><a href="/wiki/Main_Page#RPi-Acces" tabindex="-1">Accessories</a></li><li id="n-main_page.2523android-linux-boards"><a href="/wiki/Main_Page#Android-Linux-Boards" tabindex="-1">Other Android/Linux Boards</a></li></ul></li><li class="nav"><a href="#" id="n-ai" class="dropdown-toggle" data-toggle="dropdown">AI <b class="caret"></b></a><ul class="dropdown-menu " role="menu"><li id="n-main_page.2523jetson-ai-boards"><a href="/wiki/Main_Page#Jetson-AI-Boards" tabindex="-1">Boards/Kits</a></li><li id="n-main_page.2523jetson-ai-displays"><a href="/wiki/Main_Page#Jetson-AI-Displays" tabindex="-1">Displays</a></li><li id="n-main_page.2523jetson-ai-cameras"><a href="/wiki/Main_Page#Jetson-AI-Cameras" tabindex="-1">Cameras</a></li><li id="n-main_page.2523jetson-ai-hat"><a href="/wiki/Main_Page#Jetson-AI-HAT" tabindex="-1">Expansions</a></li><li id="n-main_page.2523jetson-ai-robots"><a href="/wiki/Main_Page#Jetson-AI-Robots" tabindex="-1">Robots</a></li></ul></li><li class="nav"><a href="#" id="n-displays" class="dropdown-toggle" data-toggle="dropdown">Displays <b class="caret"></b></a><ul class="dropdown-menu " role="menu"><li id="n-main_page.2523display-lcd-oleds"><a href="/wiki/Main_Page#Display-LCD-OLEDs" tabindex="-1">LCD/OLED</a></li><li id="n-main_page.2523display-e-paper"><a href="/wiki/Main_Page#Display-e-Paper" tabindex="-1">e-Paper</a></li></ul></li><li class="nav"><a href="#" id="n-iot" class="dropdown-toggle" data-toggle="dropdown">IoT <b class="caret"></b></a><ul class="dropdown-menu " role="menu"><li id="n-main_page.2523long-range-wireless-comm"><a href="/wiki/Main_Page#Long-range-wireless-comm" tabindex="-1">Long Range Wireless</a></li><li id="n-main_page.2523short-range-wireless-comm"><a href="/wiki/Main_Page#Short-range-wireless-comm" tabindex="-1">Short Range Wireless</a></li><li id="n-main_page.2523wired-communication"><a href="/wiki/Main_Page#Wired-communication" tabindex="-1">Wired Comm / Converter</a></li><li id="n-main_page.2523misc-cameras-av"><a href="/wiki/Main_Page#Misc-cameras-av" tabindex="-1">Cameras / Audio / Video</a></li><li id="n-main_page.2523misc-sensor-modules"><a href="/wiki/Main_Page#Misc-sensor-modules" tabindex="-1">Sensors</a></li><li id="n-main_page.2523misc-servos-motors"><a href="/wiki/Main_Page#Misc-servos-motors" tabindex="-1">Motors / Servos</a></li><li id="n-main_page.2523misc-other-modules"><a href="/wiki/Main_Page#Misc-other-modules" tabindex="-1">others</a></li></ul></li><li class="nav"><a href="#" id="n-robotics" class="dropdown-toggle" data-toggle="dropdown">Robotics <b class="caret"></b></a><ul class="dropdown-menu " role="menu"><li id="n-main_page.2523robotics-cars"><a href="/wiki/Main_Page#Robotics-cars" tabindex="-1">Mobile Robots</a></li><li id="n-main_page.2523dog-like-robots"><a href="/wiki/Main_Page#Dog-like-Robots" tabindex="-1">Dog-like Robots</a></li><li id="n-main_page.2523robotics-drivers-sensors"><a href="/wiki/Main_Page#Robotics-drivers-sensors" tabindex="-1">Drivers / Sensors</a></li><li id="n-main_page.2523robotics-robot-arms"><a href="/wiki/Main_Page#Robotics-robot-arms" tabindex="-1">Robot Arm / Control</a></li></ul></li><li class="nav"><a href="#" id="n-mcu.252Ffpga" class="dropdown-toggle" data-toggle="dropdown">MCU/FPGA <b class="caret"></b></a><ul class="dropdown-menu " role="menu"><li id="n-main_page.2523arduino-main-boards"><a href="/wiki/Main_Page#Arduino-main-boards" tabindex="-1">Arduino</a></li><li id="n-main_page.2523micro.253Abit"><a href="/wiki/Main_Page#micro:bit" tabindex="-1">micro:bit</a></li><li id="n-main_page.2523mcu.2farm" class="LPC"><a href="/wiki/Main_Page#MCU.2FARM" tabindex="-1">STM32</a></li><li id="n-main_page.2523fpga"><a href="/wiki/Main_Page#FPGA" tabindex="-1">FPGA</a></li></ul></li><li class="nav"><a href="https://service.waveshare.com" id="n-https.253A.252F.252Fservice.waveshare.com" rel="nofollow" target="_blank">Support</a></li>							</ul>
+						
+													<ul class="nav navbar-nav navbar-right">
+							</ul>
+				<form class="navbar-form navbar-right" action="/w/index.php" id="searchform">
+					<div class="form-group"><input type="search" name="search" placeholder="Product name search" title="Search Waveshare Wiki [f]" accesskey="f" id="searchInput" class="search-query form-control"/><input type="submit" name="go" value="Go" title="Go to a page with this exact name if it exists" id="mw-searchButton" class="searchButton btn hidden"/>
+					</div>
+				</form><ul class="nav navbar-nav navbar-right">							</ul>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			<!-- /navbar -->
+					<div id="mw-page-base"></div>
+			<div id="mw-head-base"></div>
+			<a id="top"></a>
+
+			<!-- content -->
+			<div id="contentwrapper" class="user-loggedout not-editable container with-navbar with-navbar-fixed">
+
+				
+				<div class="row">
+					<div class="col-md-offset-2 col-md-10" role="main">
+								<div class="mw-body" id="content">
+			<div id="mw-js-message" style="display:none;"></div>
+									<h1 id="firstHeading" class="firstHeading page-header" lang="en"><span dir="auto">PCIe TO 4G/5G M.2 USB3.2 HAT+</span></h1>
+									<!-- bodyContent -->
+			<div id="bodyContent">
+								<div id="siteSub">From Waveshare Wiki</div>
+								<div id="contentSub"></div>
+												<div id="jump-to-nav" class="mw-jump">
+					Jump to:					<a href="#mw-navigation">navigation</a>, 					<a href="#p-search">search</a>
+				</div>
+				<div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><div class="mw-parser-output"><div class="wiki-pages jet-green-color">
+<table id="infotable" class="a-r at-c roundy bgd-green bl-white" style="margin-left: 5px; margin-bottom: 5px; width: 30%;">
+
+<tbody><tr>
+<td>
+<table class="at-c roundy" style="background: transparent;width:100%;">
+
+<tbody><tr>
+<td class="at-c textwhite"><b>PCIe TO 4G/5G M.2 USB3.2 HAT+</b>
+</td></tr>
+<tr>
+<td class="at-c bgwhite" style="margin:5px;"><a href="https://www.waveshare.com/pcie-to-4g-5g-m.2-usb3.2-hat-plus.htm" target="_blank" rel="nofollow noreferrer noopener"><img alt="PCIe-TO-4G-5G-M.2-USB3.2-HAT-Plus-1.jpg" src="/w/upload/thumb/d/d6/PCIe-TO-4G-5G-M.2-USB3.2-HAT-Plus-1.jpg/300px-PCIe-TO-4G-5G-M.2-USB3.2-HAT-Plus-1.jpg" decoding="async" loading="lazy" width="300" height="225" srcset="/w/upload/d/d6/PCIe-TO-4G-5G-M.2-USB3.2-HAT-Plus-1.jpg 1.5x" /></a><br /><br /><small>PCIe TO 4G/5G M.2</small>
+</td></tr></tbody></table>
+</td></tr>
+<tr style="display:none;">
+<td>
+<table class="roundy" style="background: transparent;width:100%;">
+
+<tbody><tr>
+<td class="at-c textwhite"><b>{{{name2}}}</b>
+</td></tr>
+<tr>
+<td class="at-c bgwhite" style="margin:5px;"><br />
+</td></tr></tbody></table>
+</td></tr>
+<tr style="display:none;">
+<td>
+<table class="roundy" style="background: transparent;width:100%;">
+
+<tbody><tr>
+<td class="at-c textwhite"><b>{{{name3}}}</b>
+</td></tr>
+<tr>
+<td class="at-c bgwhite" style="margin:5px;"><br />
+</td></tr></tbody></table>
+</td></tr>
+<tr style="display:none;">
+<td>
+<table class="roundy" style="background: transparent;width:100%;">
+
+<tbody><tr>
+<td class="at-c textwhite"><b>{{{name4}}}</b>
+</td></tr>
+<tr>
+<td class="at-c bgwhite" style="margin:5px;"><br />
+</td></tr></tbody></table>
+</td></tr>
+<tr style="display:none;">
+<td>
+<table class="roundy" style="background: transparent;width:100%;">
+
+<tbody><tr>
+<td class="at-c textwhite"><b>{{{name5}}}</b>
+</td></tr>
+<tr>
+<td class="at-c bgwhite" style="margin:5px;"><br />
+</td></tr></tbody></table>
+</td></tr>
+<tr style="display:none;">
+<td>
+<table class="roundy" style="background: transparent;width:100%;">
+
+<tbody><tr>
+<td class="at-c textwhite"><b>{{{name6}}}</b>
+</td></tr>
+<tr>
+<td class="at-c bgwhite" style="margin:5px;"><br />
+</td></tr></tbody></table>
+</td></tr>
+<tr>
+<td>
+<table class="roundy" style="display:none;">
+<tbody><tr>
+<td style="width:2%;">
+</td>
+<td style="width:3%;">
+</td>
+<th colspan="2" width="90%" class="at-c roundytop bgl-white">Primary Attribute
+</th>
+<td style="width:3%;">
+</td>
+<td style="width:2%;">
+</td></tr>
+<tr>
+<td colspan="6" width="90px" class="at-c roundytl roundytr bgwhite b-green" style="border-width: 0 0 1px 0;"><b>Category:</b>
+</td></tr>
+<tr style="display:none;">
+<th colspan="3" width="90px" class="at-r bgwhite b-green" style="border-width: 0 0 1px 0;">{{{userDefinedInfo}}}:
+</th>
+<td colspan="3" class="at-l b-green bgwhite" style="border-width: 0 0 1px 0;">{{{userdefinedvalue}}}
+</td></tr>
+<tr style="display:none;">
+<td colspan="6" width="90px" class="at-c roundybl roundybr bgwhite"><b>Brand:</b> Waveshare
+</td></tr></tbody></table>
+</td></tr>
+<tr>
+<td>
+<table class="a-r roundy" style="display:none;">
+<tbody><tr>
+<td style="width:2%;">
+</td>
+<td style="width:3%;">
+</td>
+<th colspan="2" width="90%" class="at-c roundytop bgl-white">Website
+</th>
+<td style="width:3%;">
+</td>
+<td style="width:2%;">
+</td></tr>
+<tr>
+<td colspan="6" width="90px" class="at-c roundytl roundytr bgwhite b-green" style="border-width: 0 0 1px 0;"><b>International:</b> <a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://www.waveshare.com">Website</a>
+</td></tr>
+<tr>
+<td colspan="6" width="90px" class="at-c roundybl roundybr bgwhite"><b>Chinese:</b> <a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://www.waveshare.net/shop">官网</a>
+</td></tr></tbody></table>
+</td></tr>
+<tr style="display:none;">
+<td>
+<table class="a-r roundy" style="background: transparent; border-collapse:collapse;width:100%;display:none;">
+<tbody><tr>
+<td style="width:2%;">
+</td>
+<td style="width:3%;">
+</td>
+<th colspan="2" width="90%" class="at-c roundytop bgl-white">Onboard Interfaces
+</th>
+<td style="width:3%;">
+</td>
+<td style="width:2%;">
+</td></tr>
+<tr>
+<td colspan="6" width="90px" class="at-l roundy bgwhite b-green" style="border-width: 0 0 1px 0;">
+<table class="roundy bgwhite fulltable" style="text-align:center;">
+
+<tbody><tr>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td></tr>
+<tr>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td></tr>
+<tr>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td></tr>
+<tr>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td></tr>
+<tr>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td></tr></tbody></table>
+</td></tr></tbody></table>
+</td></tr>
+<tr style="display:none;">
+<td>
+<table class="a-r roundy" style="background: transparent; border-collapse:collapse;width:100%;;display:none;">
+<tbody><tr>
+<td style="width:2%;">
+</td>
+<td style="width:3%;">
+</td>
+<th colspan="2" width="90%" class="at-c roundytop bgl-white">Related Products
+</th>
+<td style="width:3%;">
+</td>
+<td style="width:2%;">
+</td></tr>
+<tr>
+<td colspan="6" width="90px" class="at-l roundy bgwhite b-green" style="border-width: 0 0 1px 0;">
+</td></tr></tbody></table>
+</td></tr></tbody></table>
+<div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Overview"><span class="tocnumber">1</span> <span class="toctext">Overview</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="#Introduction"><span class="tocnumber">1.1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-2 tocsection-3"><a href="#Features"><span class="tocnumber">1.2</span> <span class="toctext">Features</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-4"><a href="#Dimensions"><span class="tocnumber">2</span> <span class="toctext">Dimensions</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#How_to_Use"><span class="tocnumber">3</span> <span class="toctext">How to Use</span></a>
+<ul>
+<li class="toclevel-2 tocsection-6"><a href="#Hardware_Connection"><span class="tocnumber">3.1</span> <span class="toctext">Hardware Connection</span></a></li>
+<li class="toclevel-2 tocsection-7"><a href="#How_to_Install_Antennas"><span class="tocnumber">3.2</span> <span class="toctext">How to Install Antennas</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="#Control_via_DIP_Switch"><span class="tocnumber">3.3</span> <span class="toctext">Control via DIP Switch</span></a>
+<ul>
+<li class="toclevel-3 tocsection-9"><a href="#Reboot_or_Power_On.2FOff_Module_with_Demo"><span class="tocnumber">3.3.1</span> <span class="toctext">Reboot or Power On/Off Module with Demo</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-10"><a href="#Description_of_Dialing_Modes_for_Various_Modules"><span class="tocnumber">3.4</span> <span class="toctext">Description of Dialing Modes for Various Modules</span></a>
+<ul>
+<li class="toclevel-3 tocsection-11"><a href="#Various_Modules_Dialing_Modes_Switch"><span class="tocnumber">3.4.1</span> <span class="toctext">Various Modules Dialing Modes Switch</span></a></li>
+<li class="toclevel-3 tocsection-12"><a href="#Install_and_Use_DIP_Tools"><span class="tocnumber">3.4.2</span> <span class="toctext">Install and Use DIP Tools</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-13"><a href="#Power_Monitoring"><span class="tocnumber">3.5</span> <span class="toctext">Power Monitoring</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-14"><a href="#Windows_System_Network_Access"><span class="tocnumber">4</span> <span class="toctext">Windows System Network Access</span></a>
+<ul>
+<li class="toclevel-2 tocsection-15"><a href="#SIM8262XX_Series_Modules"><span class="tocnumber">4.1</span> <span class="toctext">SIM8262XX Series Modules</span></a></li>
+<li class="toclevel-2 tocsection-16"><a href="#RM5xxx_Series_Modules"><span class="tocnumber">4.2</span> <span class="toctext">RM5xxx Series Modules</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-17"><a href="#Resource"><span class="tocnumber">5</span> <span class="toctext">Resource</span></a>
+<ul>
+<li class="toclevel-2 tocsection-18"><a href="#Datasheet"><span class="tocnumber">5.1</span> <span class="toctext">Datasheet</span></a>
+<ul>
+<li class="toclevel-3 tocsection-19"><a href="#INA219"><span class="tocnumber">5.1.1</span> <span class="toctext">INA219</span></a></li>
+<li class="toclevel-3 tocsection-20"><a href="#SIM8262_Series_Modules"><span class="tocnumber">5.1.2</span> <span class="toctext">SIM8262 Series Modules</span></a></li>
+<li class="toclevel-3 tocsection-21"><a href="#RM5xx_Series_Modules"><span class="tocnumber">5.1.3</span> <span class="toctext">RM5xx Series Modules</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-22"><a href="#Driver_Files"><span class="tocnumber">5.2</span> <span class="toctext">Driver Files</span></a>
+<ul>
+<li class="toclevel-3 tocsection-23"><a href="#SIM8262_Series_Modules_2"><span class="tocnumber">5.2.1</span> <span class="toctext">SIM8262 Series Modules</span></a></li>
+<li class="toclevel-3 tocsection-24"><a href="#RM5xx_Series_Modules_2"><span class="tocnumber">5.2.2</span> <span class="toctext">RM5xx Series Modules</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-25"><a href="#FAQ"><span class="tocnumber">6</span> <span class="toctext">FAQ</span></a></li>
+<li class="toclevel-1 tocsection-26"><a href="#Support"><span class="tocnumber">7</span> <span class="toctext">Support</span></a></li>
+</ul>
+</div>
+
+<h1><span class="mw-headline" id="Overview">Overview</span></h1>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p><b>PCIe TO 4G/5G M.2 USB3.2 HAT+ is a PCIe to USB3.2/M.2 adapter board designed for Raspberry Pi 5, is compatible with 5G modules in 3042/3052 size, supports Gen2 mode and high-speed communication.</b>
+</p>
+<h2><span class="mw-headline" id="Features">Features</span></h2>
+<ul><li>Designed for Raspberry Pi 5, HAT+ standard design with onboard I2C EEPROM, and supports Raspberry Pi 40PIN GPIO stackable expansion.</li>
+<li>Support PCI-E×1 Gen2 mode.</li>
+<li>Extends 3x high-speed USB 3.2 Gen1 ports for connecting more peripherals.</li>
+<li>Onboard M.2 (NGFF) Key B slot, supports SIM7600XX-M.2, SIM82XX and RM5XX series 4G/5G modules and is compatible with 3042/3052 packages.</li>
+<li>Onboard Type-C port for connecting to a PC for 4G/5G networking, debugging and firmware updating, or external power supply input.</li>
+<li>Onboard power monitoring chip for real-time measurement of voltage, current and power.</li>
+<li>Onboard SIM card slot for NANO-SIM card.</li>
+<li>Onboard Reset button, Power and Network indicators for easy debugging and monitoring operating status.</li>
+<li>Comes with customized 5G-4IN1-PCB Antenna for neat wiring management, supports top or bottom installation.</li>
+<li>Reserved airflow vent and mounting holes for cooling fan to increase airflow and provide better heat dissipation.</li></ul>
+<h1><span class="mw-headline" id="Dimensions">Dimensions</span></h1>
+<p><a href="/wiki/File:PCIe-TO-4G-5G-M.2-USB3.2-HAT-Plus-details-size.jpg" class="image"><img alt="PCIe-TO-4G-5G-M.2-USB3.2-HAT-Plus-details-size.jpg" src="/w/upload/9/9d/PCIe-TO-4G-5G-M.2-USB3.2-HAT-Plus-details-size.jpg" decoding="async" loading="lazy" width="600" height="375" /></a>
+</p>
+<h1><span class="mw-headline" id="How_to_Use">How to Use</span></h1>
+<h2><span class="mw-headline" id="Hardware_Connection">Hardware Connection</span></h2>
+<p>Pay attention to the direction of the wires and connect as shown in the figure:<br />
+<a href="/wiki/File:PCIe-TO-4G-5G-M.2-USB3.2-HAT-Plus-details-4.png" class="image"><img alt="PCIe-TO-4G-5G-M.2-USB3.2-HAT-Plus-details-4.png" src="/w/upload/4/43/PCIe-TO-4G-5G-M.2-USB3.2-HAT-Plus-details-4.png" decoding="async" loading="lazy" width="808" height="905" /></a>
+</p>
+<h2><span class="mw-headline" id="How_to_Install_Antennas">How to Install Antennas</span></h2>
+<p>The 5G PCBA antenna with this product can be installed through the screw pack, and the top installation method is recommended.<br />
+<a href="/wiki/File:PCIe-TO-4G-5G-M.2-USB3.2-HAT-Plus-details-3.jpg.png" class="image"><img alt="PCIe-TO-4G-5G-M.2-USB3.2-HAT-Plus-details-3.jpg.png" src="/w/upload/c/c1/PCIe-TO-4G-5G-M.2-USB3.2-HAT-Plus-details-3.jpg.png" decoding="async" loading="lazy" width="745" height="929" /></a>
+</p>
+<h2><span class="mw-headline" id="Control_via_DIP_Switch">Control via DIP Switch</span></h2>
+<p>The onboard module power on/off and restart functions are controlled by DIP switches connected to Raspberry Pi GPIO5 and GPIO6. By toggling the DIP switches, the Raspberry Pi can control the module's power and restart functions.<br />
+By default, please turn on the onboard DIP switch for RST and keep PWR off.
+</p>
+<h3><span id="Reboot_or_Power_On/Off_Module_with_Demo"></span><span class="mw-headline" id="Reboot_or_Power_On.2FOff_Module_with_Demo">Reboot or Power On/Off Module with Demo</span></h3>
+<p>Control GPIO pins with python gpiozero, and the high/low level switch should be adjusted according to the actual status (power on/off, rebooting time sequence) of the module.
+</p>
+<pre>import subprocess
+from gpiozero import LED
+import time
+# led = LED(5) #Ctl On/off 
+led = LED(6) #Ctl Restart
+led.on()
+time.sleep(0.5)
+led.off()
+</pre>
+<h2><span class="mw-headline" id="Description_of_Dialing_Modes_for_Various_Modules">Description of Dialing Modes for Various Modules</span></h2>
+<p>Different modules correspond to different dialing methods, which are mainly divided into four types:<br />
+1. DNIS (Dialed Number Identification Service):
+</p>
+<pre>DNIS is a telecommunication network service used to identify the dialed number when receiving a call. It is mainly used in call centers and PBX systems. By transmitting the dialed number information, DNIS helps the system take different actions based on the dialed number. This can be used for routing calls or providing specific services.
+</pre>
+<p>2. RNDIS (Remote Network Driver Interface Specification):
+</p>
+<pre>RNDIS is a network device interface standard defined by Microsoft. It allows USB devices (such as smartphones, modems) to share their network connections through a USB connection.
+</pre>
+<p>3. ECM (Ethernet Control Model):
+</p>
+<pre>ECM is a USB network control model mainly used for USB to Ethernet conversion. Many USB-to-Ethernet adapters use this model.
+</pre>
+<p>4. MBIM (Mobile Broadband Interface Model):
+</p>
+<pre>MBIM is a modern USB network interface model for mobile broadband devices defined by USB-IF. It supports more efficient network connections and a wider range of network functions for modern cellular modems.
+</pre>
+<h3><span class="mw-headline" id="Various_Modules_Dialing_Modes_Switch">Various Modules Dialing Modes Switch</span></h3>
+<p>1. SIMxx:
+</p>
+<pre>AT+CUSBCFG=usbid,1e0e,9001     # NDIS <font color="red">requires network card to be loaded through dial-up tools</font>
+AT+CUSBCFG=usbid,1e0e,9011     # RNDIS, ECM automatically load network card for internet access
+AT+CUSBCFG=usbid,1e0e,901E     # MBIM automatically loads network card for internet access
+</pre>
+<p>2. RMxxx:
+</p>
+<pre>AT+QCFG="usbnet",0     # NDIS(qmi) <font color="red">requires network card to be loaded through dial-up tools</font>
+AT+QCFG="usbnet",1     # ECM automatically loads network card for internet access
+AT+QCFG="usbnet",2     # MBIM <font color="red">requires network card to be loaded through dial-up tools</font>
+AT+QCFG="usbnet",3     # RNDIS automatically loads network card for internet access
+</pre>
+<h3><span class="mw-headline" id="Install_and_Use_DIP_Tools">Install and Use DIP Tools</span></h3>
+<p>Using the following commands to install waveshare-CM dialing tools:
+</p>
+<pre>wget -O - <a target="_blank" rel="nofollow noreferrer noopener" class="external free" href="https://files.waveshare.com/wiki/PCIe-TO-4G-5G-M.2-USB3.2-HAT-Plus/install.sh">https://files.waveshare.com/wiki/PCIe-TO-4G-5G-M.2-USB3.2-HAT-Plus/install.sh</a> | sudo bash
+</pre>
+<p>After installation, if NDIS (qmi) or MBIM cannot automatically dial-up, use a dial-up tool to connect to the internet. <font color="red">YOUR_APN is the APN used by the SIM card.</font>
+</p>
+<pre>sudo waveshare-CM
+# or
+sudo waveshare-CM -s YOUR_APN
+</pre>
+<h2><span class="mw-headline" id="Power_Monitoring">Power Monitoring</span></h2>
+<p>The onboard INA219 chip can detect the voltage and current, easy to monitor the device status and monitor the input 5V voltage status (not 3.3V).<br />
+The default I2C address is 0x40, addresses can be modified via back resistors to support stacking of different expansion boards.
+Demo:
+</p>
+<pre>wget <a target="_blank" rel="nofollow noreferrer noopener" class="external free" href="https://files.waveshare.com/wiki/PCIe-TO-M.2-HAT%2B/PCIe_TO_M.2_HAT%2B.zip">https://files.waveshare.com/wiki/PCIe-TO-M.2-HAT%2B/PCIe_TO_M.2_HAT%2B.zip</a>
+unzip -o PCIe_TO_M.2_HAT+.zip -d ./PCIe_TO_M.2_HAT+
+cd PCIe_TO_M.2_HAT+
+sudo python INA219.py
+<a href="/wiki/File:PCIe_TO_M.2_HAT%2B_W_8.png" class="image"><img alt="PCIe TO M.2 HAT+ W 8.png" src="/w/upload/2/22/PCIe_TO_M.2_HAT%2B_W_8.png" decoding="async" loading="lazy" width="619" height="87" /></a>
+</pre>
+<h1><span class="mw-headline" id="Windows_System_Network_Access">Windows System Network Access</span></h1>
+<p>To connect this product to Windows and access the internet, set the module to USB mode and connect it to Windows using the onboard Type-C interface. Use the following commands:
+</p>
+<h3><span class="mw-headline" id="SIM8262XX_Series_Modules">SIM8262XX Series Modules</span></h3>
+<p>Use a serial tool to connect and switch the module mode to automatic dialing.
+</p>
+<pre>at+cusbcfg=usbid,1e0e,9011
+</pre>
+<h3><span class="mw-headline" id="RM5xxx_Series_Modules">RM5xxx Series Modules</span></h3>
+<p>Modify the data channels of the module to USB:
+</p>
+<pre>AT+QCFG="data_interface",0,0
+AT+QCFG="usbnet",2
+</pre>
+<p><a href="/wiki/File:RM520N-GL-5G-HAT-Plus-details-9-2.jpg" class="image"><img alt="RM520N-GL-5G-HAT-Plus-details-9-2.jpg" src="/w/upload/6/60/RM520N-GL-5G-HAT-Plus-details-9-2.jpg" decoding="async" loading="lazy" width="800" height="600" /></a>
+</p>
+<h1><span class="mw-headline" id="Resource">Resource</span></h1>
+<h2><span class="mw-headline" id="Datasheet">Datasheet</span></h2>
+<h3><span class="mw-headline" id="INA219">INA219</span></h3>
+<ul><li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://www.waveshare.com/w/upload/1/10/Ina219.pdf">INA219 Datasheet</a></li></ul>
+<h3><span class="mw-headline" id="SIM8262_Series_Modules">SIM8262 Series Modules</span></h3>
+<ul><li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/5/56/SIM8262E-M2_SPEC_20220315.pdf">SIM8262E-M2 SPEC</a></li>
+<li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/c/c6/SIM82XX_SIM83XX_Series_AT_Command_Manual_V1.02.pdf">SIM82XX SIM83XX Series AT Command Manual V1.02.pdf</a></li>
+<li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/0/05/SIM83X0-SIM82X0_Series_Hardware_Design_V1.04_%282%29.pdf">SIM83X0-SIM82X0 Series Module Hardware Design Manual</a></li>
+<li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/e/e9/SIM83X0-SIM82X0_Series_Hardware_Design_V1.04_%284%29.pdf">SIM83X0-SIM83XX Series Module Hardware Design</a></li>
+<li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/2/25/SIM82XX_SIM83XX_Series_SSL_Application_Note_V1.01.pdf">SIM82XX SIM83XX Series SSL Application_Note</a></li>
+<li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/2/29/SIM82XX_SIM83XX_Series_TCPIP_Application_Note_V1.01_%281%29.pdf">SIM82XX SIM83XX Series TCPIP Application Note V1.01</a></li>
+<li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/7/73/SIM82XX_SIM83XX_Series_GNSS_Application_Note_V1.00.pdf">SIM82XX SIM83XX Series GNSS_Application Note V1.00.pdf</a></li>
+<li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/1/15/SIM82XX_SIM83XX_Series_HTTP%28S%29_Application_Note_V1.01.pdf">SIM82XX SIM83XX Series HTTP(S) Application Note V1.01.pdf</a></li>
+<li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/d/d9/SIM82XX_SIM83XX_Series_LBS_Application_Note_V1.01.pdf">SIM82XX SIM83XX Series LBS Application Note V1.01.pdf</a></li>
+<li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/a/ad/SIM82XX_SIM83XX_Series_MQTT%28S%29_Application_Note_V1.01.pdf">SIM82XX SIM83XX Series MQTT(S) Application Note V1.01.pdf</a></li>
+<li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/d/d0/SIM82XX_SIM83XX_Series_SMS_Application_Note_V1.01.pdf">SIM82XX SIM83XX Series SMS Application Note  V1.01.pdf</a></li>
+<li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/0/06/SIM82XX_SIM83XX_Series_TTS_Application_Note_V1.01.pdf">SIM82XX SIM83XX Series TTS Application Note V1.01.pdf</a></li></ul>
+<div role="note" class="note note-warn">For resources about SIM8262E-M2 HAT, please refer to <a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://www.simcomm2m.com/">SIMCom</a>
+</div>
+<h3><span class="mw-headline" id="RM5xx_Series_Modules">RM5xx Series Modules</span></h3>
+<ul><li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/8/8a/Quectel_RG520N%26RG52xF%26RG530F%26RM520N%26RM530N_Series_AT_Commands_Manual_V1.0.0_Preliminary_20220812.pdf">RM520N Series AT Commands</a></li>
+<li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/wiki/RM530N-GL/Quectel_RG520N%26RG52xF%26RG530F%26RM520N%26RM530N_Series_AT_Commands_Manual_V1.0.0_Preliminary_20220812.pdf">RM520N&amp;RM530N Series AT Commands</a></li></ul>
+<h2><span class="mw-headline" id="Driver_Files">Driver Files</span></h2>
+<h3><span class="mw-headline" id="SIM8262_Series_Modules_2">SIM8262 Series Modules</span></h3>
+<ul><li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/9/95/SIM8200_OS_Driver.zip">SIM82xx Driver</a></li></ul>
+<h3><span class="mw-headline" id="RM5xx_Series_Modules_2">RM5xx Series Modules</span></h3>
+<ul><li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/f/f5/Quectel_Windows_USB_DriverQ_NDIS_V2.4.6.zip">RM520N-GL Windows NDIS Driver</a></li>
+<li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/9/94/Quectel_Windows_USB_Driver(Q)_MBIM_V1.3.1.zip">RM5xx Windows MBIM driver</a></li></ul>
+<h1><span class="mw-headline" id="FAQ">FAQ</span></h1>
+<div class="panel-group">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<a data-toggle="collapse" data-parent="#accordion" href="#accordion1">
+								Question: The PCIe is recognized and the device is loaded. The dialer demo works fine, and the SIM card is not overdue. Why can't I access the internet?
+
+							</a>
+						</h4>
+					</div>
+					<div id="accordion1" class="panel-collapse collapse in">
+						<div class="panel-body">
+<div>&#160;<b>Answer:</b></div>
+<div>
+<p>This situation may be caused by an error with the DNS server on the Raspberry Pi. In this case, you need to manually set the DNS.
+</p>
+</div>
+<div style="display:none;"></div>
+<div style="display:none;"></div>
+<p><font color="red" style="display:none;">{{{5}}}</font>
+</p>
+						</div>
+					</div>
+				</div>
+</div>
+<p><br />
+</p>
+<div class="panel-group">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<a data-toggle="collapse" data-parent="#accordion" href="#accordion2">
+								Question: Why is my 5G speed not as fast as advertised online?
+
+							</a>
+						</h4>
+					</div>
+					<div id="accordion2" class="panel-collapse collapse in">
+						<div class="panel-body">
+<div>&#160;<b>Answer:</b></div>
+<div>
+<p>Firstly, you need to understand the difference between laboratory data and real data. In practice, due to insufficient base stations and poor signal coverage, there are many gaps in 5G coverage, so the network speed may not reach its peak. Under normal conditions, the 4G upload speed is stable at 20-40 Mbps, and the 5G upload speed is stable at 100 Mbps (the fewer people and the closer to the base station, the faster the speed).
+</p>
+</div>
+<div style="display:none;"></div>
+<div style="display:none;"></div>
+<p><font color="red" style="display:none;">{{{5}}}</font>
+</p>
+						</div>
+					</div>
+				</div>
+</div>
+<p><br />
+</p>
+<div class="panel-group">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<a data-toggle="collapse" data-parent="#accordion" href="#accordion3">
+								Question: What should I do if my SIM820X-M2 5G HAT cannot recognize the SIM card?
+
+							</a>
+						</h4>
+					</div>
+					<div id="accordion3" class="panel-collapse collapse in">
+						<div class="panel-body">
+<div>&#160;<b>Answer:</b></div>
+<div>
+<p>It might have switched to SIM card 2. Please use the following command to switch to SIM card 1:
+</p>
+<pre>AT+SMSIMCFG=1,1</pre>
+<p>To switch to SIM card 2, use the following command (some HATs have SIM2):
+</p>
+<pre>AT+SMSIMCFG=1,2</pre>
+<p>If it still doesn't work, consider if the flight mode is enabled. Use the following command to disable flight mode:
+</p>
+<pre>AT+CFUN=1</pre>
+</div>
+<div style="display:none;"></div>
+<div style="display:none;"></div>
+<p><font color="red" style="display:none;">{{{5}}}</font>
+</p>
+						</div>
+					</div>
+				</div>
+</div>
+<p><br />
+</p>
+<div class="panel-group">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<a data-toggle="collapse" data-parent="#accordion" href="#accordion4">
+								Question: Can the IPEX4 generation antenna socket of the 5G module be repaired if it is broken?
+
+							</a>
+						</h4>
+					</div>
+					<div id="accordion4" class="panel-collapse collapse in">
+						<div class="panel-body">
+<div>&#160;<b>Answer:</b></div>
+<div>
+<ul><li>If only the socket is broken, you can replace it with a new socket.</li>
+<li>If the copper foil is also broken, it usually cannot be repaired.</li>
+<li>When removing it, please wiggle it gently from side to side and pull it out with balanced force, do not pull it forcibly.</li>
+<li>The IPEX4 generation socket is relatively fragile, so please be more careful and cautious when using it.</li></ul>
+</div>
+<div style="display:none;"></div>
+<div style="display:none;"></div>
+<p><font color="red" style="display:none;">{{{5}}}</font>
+</p>
+						</div>
+					</div>
+				</div>
+</div>
+<p><br />
+</p>
+<div class="panel-group">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<a data-toggle="collapse" data-parent="#accordion" href="#accordion5">
+								Question: Why is my 5G speed not as fast as advertised online?
+
+							</a>
+						</h4>
+					</div>
+					<div id="accordion5" class="panel-collapse collapse in">
+						<div class="panel-body">
+<div>&#160;<b>Answer:</b></div>
+<div>
+<p>Firstly, you need to understand the difference between laboratory data and real data. In practice, due to insufficient base stations and poor signal coverage, there are many gaps in 5G coverage, so the network speed may not reach its peak. Under normal conditions, the 4G upload speed is stable at 20-40 Mbps, and the 5G upload speed is stable at 100 Mbps (the fewer people and the closer to the base station, the faster the speed).
+</p>
+</div>
+<div style="display:none;"></div>
+<div style="display:none;"></div>
+<p><font color="red" style="display:none;">{{{5}}}</font>
+</p>
+						</div>
+					</div>
+				</div>
+</div>
+<p><br />
+</p>
+<div class="panel-group">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<a data-toggle="collapse" data-parent="#accordion" href="#accordion6">
+								Question: How to connect PCB antenna?
+							</a>
+						</h4>
+					</div>
+					<div id="accordion6" class="panel-collapse collapse in">
+						<div class="panel-body">
+<div>&#160;<b>Answer:</b></div>
+<div>
+<p>Please refer to the diagram below to connect the four interfaces nearby：<br />
+<a href="/wiki/File:PCIE-ANT.png" class="image"><img alt="PCIE-ANT.png" src="/w/upload/9/9c/PCIE-ANT.png" decoding="async" loading="lazy" width="586" height="329" /></a>
+</p>
+</div>
+<div style="display:none;"></div>
+<div style="display:none;"></div>
+<p><font color="red" style="display:none;">{{{5}}}</font>
+</p>
+						</div>
+					</div>
+				</div>
+</div>
+<p><br />
+</p>
+<div class="panel-group">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<a data-toggle="collapse" data-parent="#accordion" href="#accordion7">
+								Question: Are PCIe TO 4G/5G M.2 USB3.2 HAT+ and XXXXXXX 5G HAT+ different? What is the difference? 
+							</a>
+						</h4>
+					</div>
+					<div id="accordion7" class="panel-collapse collapse in">
+						<div class="panel-body">
+<div>&#160;<b>Answer:</b></div>
+<div>
+<ul><li>The protocols of the M.2 interface are different. Please refer to the following figure:</li></ul>
+<p><a href="/wiki/File:PCIE-USB%2B.png" class="image"><img alt="PCIE-USB+.png" src="/w/upload/f/f5/PCIE-USB%2B.png" decoding="async" loading="lazy" width="1275" height="546" /></a>
+</p>
+</div>
+<div style="display:none;"></div>
+<div style="display:none;"></div>
+<p><font color="red" style="display:none;"></font>
+</p>
+						</div>
+					</div>
+				</div>
+</div>
+<p><br />
+</p>
+<h1><span class="mw-headline" id="Support">Support</span></h1>
+<p><br />
+<br />
+</p>
+<div style="background:linear-gradient(to bottom right,#91C942,#7DB036); border-radius:15px; width:100%;min-width:750px;">
+<div style="display:flex;flex-direction: row;align-items: flex-start;">
+<div style="flex:l; font-size:15px; width:70%; margin-top:20px; margin-bottom:20px; margin-right:40px;padding-left:40px;">
+<p style="font-size:20px; font-weight:bold;">
+Technical Support
+</p>
+<p>
+If you need technical support or have any feedback/review, please click the <b>Submit Now</b> button to submit a ticket, Our support team will check and reply to you within 1 to 2 working days. Please be patient as we make every effort to help you to resolve the issue. 
+<br /> 
+Working Time: 9 AM - 6 PM GMT+8 (Monday to Friday)
+</p>
+</div>
+<div style="margin-top:94px;">
+<div id="service" style="display:flex; flex:r; background-color:#393939; color:white; text-align:center; font-size:20px; border-radius:20px;">
+<p><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://service.waveshare.com/">Submit Now</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 
+NewPP limit report
+Cached time: 20260828151121
+Cache expiry: 0
+Dynamic content: true
+Complications: []
+CPU time usage: 0.146 seconds
+Real time usage: 0.244 seconds
+Preprocessor visited node count: 764/1000000
+Post‐expand include size: 10167/2097152 bytes
+Template argument size: 5087/2097152 bytes
+Highest expansion depth: 8/40
+Expensive parser function count: 0/100
+Unstrip recursion depth: 1/20
+Unstrip post‐expand size: 6897/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  161.408      1 -total
+ 40.54%   65.428      7 Template:FAQ
+ 23.56%   38.028      1 Template:SIM8262E-M2_5G_HAT_Datasheets
+ 23.37%   37.715      1 Template:Infobox_item
+ 10.72%   17.295      1 Template:Servicebox1
+ 10.65%   17.192      1 Template:Note
+  7.92%   12.784      1 Template:Amazon_nolink
+-->
+</div></div>								<div class="printfooter">
+				Retrieved from "<a dir="ltr" href="https://www.waveshare.com/w/index.php?title=PCIe_TO_4G/5G_M.2_USB3.2_HAT%2B&amp;oldid=98667">https://www.waveshare.com/w/index.php?title=PCIe_TO_4G/5G_M.2_USB3.2_HAT%2B&amp;oldid=98667</a>"				</div>
+												<div id="catlinks" class="catlinks catlinks-allhidden" data-mw="interface"></div>												<div class="visualClear"></div>
+							</div>
+			<!-- /bodyContent -->
+		</div>
+						</div>
+				</div>
+			</div>
+			<!-- /content -->
+
+			<!-- sidebar-left -->
+			<div class="sidebar-wrapper sidebar-left-wrapper">
+				<div class="sidebar-container container">
+					<div class="row">
+						<div id="sidebar-left" class="col-md-2 col-md-offset-0">
+							<div id="tweekiTOC"></div>						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /sidebar-left -->
+					<!-- footer -->
+			<div id="footer" role="contentinfo" class="footer container footer-sticky bg-light">
+			<ul id="footer-custom"><li class="dropup"><a href="/w/index.php?title=Special:UserLogin&amp;returnto=PCIe+TO+4G%2F5G+M.2+USB3.2+HAT%2B" title="You are encouraged to log in; however, it is not mandatory [o]" accesskey="o">Login / Create Account</a></li></ul><div style="clear:both"></div>			</div>
+			<!-- /footer -->
+		
+<script>
+var fbtFancyBoxOptions = {};
+</script>
+
+<script>(RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgPageParseReport":{"limitreport":{"cputime":"0.146","walltime":"0.244","ppvisitednodes":{"value":764,"limit":1000000},"postexpandincludesize":{"value":10167,"limit":2097152},"templateargumentsize":{"value":5087,"limit":2097152},"expansiondepth":{"value":8,"limit":40},"expensivefunctioncount":{"value":0,"limit":100},"unstrip-depth":{"value":1,"limit":20},"unstrip-size":{"value":6897,"limit":5000000},"timingprofile":["100.00%  161.408      1 -total"," 40.54%   65.428      7 Template:FAQ"," 23.56%   38.028      1 Template:SIM8262E-M2_5G_HAT_Datasheets"," 23.37%   37.715      1 Template:Infobox_item"," 10.72%   17.295      1 Template:Servicebox1"," 10.65%   17.192      1 Template:Note","  7.92%   12.784      1 Template:Amazon_nolink"]},"cachereport":{"timestamp":"20260828151121","ttl":0,"transientcontent":true}}});mw.config.set({"wgBackendResponseTime":899});});</script>	<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3243f777dd9ed25',t:'MTc4NzkyOTg4MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
