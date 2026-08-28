@@ -38,3 +38,11 @@ atopile was evaluated first per SPEC §8 preference and rejected.
   one-time KiCad schematic derived from the netlist (kept generated, never
   hand-edited).
 - KiCad 9.0.9 pinned (SPEC §8) even though KiCad 10 is current.
+
+## Amendment (2026-08-29)
+
+The netlistsvg render path proved insufficient at owner review (label
+collisions). The fallback named above is now implemented as
+`hardware/tools/gen_sch.py`: a generated KiCad 9 `.kicad_sch` (global-label
+style), exported to PDF with a full title block (project, date, git rev,
+CERN-OHL-P v2 license, credits). Still generated-only — never hand-edited.

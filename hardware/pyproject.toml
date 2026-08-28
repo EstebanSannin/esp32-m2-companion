@@ -4,5 +4,6 @@ version = "0.1.0"
 requires-python = ">=3.9"
 dependencies = [
     "pypdf>=6.16.2",
+    "sexpdata>=1.0.2",
     "skidl>=2.3.0",
 ]

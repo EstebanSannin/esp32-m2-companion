@@ -26,8 +26,9 @@ Knowledge management per SPEC §12 (findings log, block LESSONS.md, this file).
   top-level `hardware/design.py`, uv-managed venv in `hardware/`.
 - `make check` = ERC + netlist + BOM (runs `hardware/design.py`); run after
   every schematic-source change and show the result to the owner.
-  `make svg` = per-block schematic renders → `build/esp32_m2_companion_blocks.pdf`
-  (needs `/opt/homebrew/bin` on PATH for netlistsvg/rsvg-convert).
+  `make sch` = generated KiCad schematic + PDF with title block
+  (build/esp32_m2_companion_schematic.pdf) — the review/GATE artifact.
+  `make svg` = auxiliary per-block netlistsvg renders (less readable).
 - Pin-assignment traceability: block code references module pins by
   datasheet pin number; runtime asserts compare KiCad symbol pin names
   against the datasheet table on every build.

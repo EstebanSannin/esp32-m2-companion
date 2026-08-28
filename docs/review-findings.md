@@ -65,3 +65,10 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
 - 2026-08-28 · Phase 2 · medium · **PROJECT** (owner decision, ADR 0005) ·
   1×12 2.54 mm header cannot fit the 2242 card; replaced by JST SH-4
   (Qwiic) + SH-8, assembled. SPEC §6.6 amended.
+- 2026-08-29 · Phase 2 · low · **PROCESS** (owner feedback) · netlistsvg
+  renders have label/wire collisions (third-party layouter, not KiCad) —
+  insufficient for review. → ADR 0001 fallback activated: tools/gen_sch.py
+  generates a true .kicad_sch (global-label style, no crossing wires) with
+  title block (project, git rev, license, credits); `make sch`. Candidate
+  rule for the shared hardware-design skill: "schematic-as-code flows need a
+  KiCad-native render path from day one."

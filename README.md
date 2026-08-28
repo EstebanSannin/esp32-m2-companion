@@ -3,8 +3,16 @@
 M.2 Key-B 2242 card with an ESP32-S3-WROOM-1 acting as a USB companion MCU
 for embedded Linux hosts. Spec: [SPEC.md](SPEC.md) (contract, frozen v1).
 
-Current phase: **Phase 0 — Groundwork** → awaiting GATE 1 review of
-[docs/pinmap.md](docs/pinmap.md).
+**Open source hardware** — © 2026 Stefano Viola, licensed under
+[CERN-OHL-P v2](LICENSE). Designed by Stefano Viola with Claude (Anthropic);
+schematic-as-code in SKiDL, all outputs generated (`make check`, `make sch`,
+`make svg`). The vendored M.2 card-edge footprint derives from
+[timonsku/M.2-Card-Footprints](https://github.com/timonsku/M.2-Card-Footprints)
+(CERN-OHL-P v2).
+
+Current phase: **Phase 2 — Layout** (GATEs 1–2 passed). Owner routes
+[hardware/kicad/esp32_m2_companion.kicad_pcb](hardware/kicad/esp32_m2_companion.kicad_pcb);
+open items in [docs/layout-notes.md](docs/layout-notes.md).
 
 ## Host compatibility
 
