@@ -261,6 +261,12 @@ def build_schematic():
         value = str(part.value)
         if part.fields.get("DNP"):
             value += " [DNP]"
+        # symbols with vertical pins route L-stubs below/above: move the
+        # value text above (stacked under the reference) to keep it clear
+        has_vert = any(((ang % 180) == 90) == (rot == 0) or
+                       ((ang % 180) == 0) == (rot == 90)
+                       for _n, _px, _py, ang, _l in pins)
+        val_y = (y - (y1 + 4.4)) if has_vert else (y - (y0 - 2.0))
         inst = [S("symbol"), [S("lib_id"), lib_id], [S("at"), x, y, rot],
                 [S("unit"), 1],
                 [S("exclude_from_sim"), S("no")], [S("in_bom"), S("yes")],
@@ -271,7 +277,7 @@ def build_schematic():
                  [S("at"), x, y - (y1 + 2.0), 0],
                  [S("effects"), [S("font"), [S("size"), 1.27, 1.27]]]],
                 [S("property"), "Value", value,
-                 [S("at"), x, y - (y0 - 2.0), 0],
+                 [S("at"), x, val_y, 0],
                  [S("effects"), [S("font"), [S("size"), 1.27, 1.27]]]],
                 [S("property"), "Footprint", str(part.footprint or ""),
                  [S("at"), x, y, 0],
@@ -309,31 +315,37 @@ def build_schematic():
                 gx, gy = -oy, -ox
             else:
                 gx, gy = ox, -oy
-            # stagger so neighbors never overlap: horizontal sides
-            # alternate 0/6.35; vertical sides (labels read rotated, pins
-            # often share x) get a base offset and a 3-step cycle
             k = side_seq.get((gx, gy), 0)
             side_seq[(gx, gy)] = k + 1
             if gy == 0:
+                # horizontal pin: stagger 0/6.35 so neighbors never abut
                 off = 6.35 if (k % 2) else 0.0
+                ax, ay = sx + gx * off, sy
+                if off:
+                    wires.append([S("wire"),
+                                  [S("pts"),
+                                   [S("xy"), round(sx, 3), round(sy, 3)],
+                                   [S("xy"), round(ax, 3), round(ay, 3)]],
+                                  [S("stroke"), [S("width"), 0],
+                                   [S("type"), S("default")]],
+                                  [S("uuid"), u()]])
+                la, just = (180.0, S("right")) if gx < 0 else (0.0, S("left"))
             else:
-                off = 2.54 + (k % 3) * 6.35
-            ax, ay = sx + gx * off, sy + gy * off
-            if off:
-                wires.append([S("wire"),
-                              [S("pts"), [S("xy"), round(sx, 3), round(sy, 3)],
-                               [S("xy"), round(ax, 3), round(ay, 3)]],
-                              [S("stroke"), [S("width"), 0],
-                               [S("type"), S("default")]],
-                              [S("uuid"), u()]])
-            if gx < 0:
-                la, just = 180.0, S("right")
-            elif gx > 0:
+                # vertical pin: NO vertical labels - L-stub (drop, bend
+                # right) ending in a horizontal label; stacked same-x pins
+                # get increasing drops
+                drop = 2.54 + k * 2.54
+                mx, my = sx, sy + gy * drop
+                ax, ay = mx + 2.54, my
+                for p1, p2 in (((sx, sy), (mx, my)), ((mx, my), (ax, ay))):
+                    wires.append([S("wire"),
+                                  [S("pts"),
+                                   [S("xy"), round(p1[0], 3), round(p1[1], 3)],
+                                   [S("xy"), round(p2[0], 3), round(p2[1], 3)]],
+                                  [S("stroke"), [S("width"), 0],
+                                   [S("type"), S("default")]],
+                                  [S("uuid"), u()]])
                 la, just = 0.0, S("left")
-            elif gy < 0:
-                la, just = 270.0, S("left")
-            else:
-                la, just = 90.0, S("left")
             labels.append([S("global_label"), net,
                            [S("shape"), S("passive")],
                            [S("at"), round(ax, 3), round(ay, 3), la],
