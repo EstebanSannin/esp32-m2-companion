@@ -27,7 +27,8 @@ DRC rules alongside).
 - USBLC6 (U1) near fingers 7/9; diff pair runs up the right side to module
   pins 13/14 through bottom-side R7/R8 (0R series, HDG provision) — route
   edge→U1→(via)→R7/R8→module, referenced to L2 GND, no stubs.
-- Bottom side (faces UP in the Mallow slot — X17 is on the carrier bottom):
+- Bottom side (faces the CARRIER underside at ~2.5 mm in the Mallow slot —
+  the card top faces away from the host PCB, i.e. downward on Mallow):
   test points TP1–TP6, USB series/shunt provision, module 3V3 decoupling
   (C6/C7) + EN RC (C5/R1) under module pins 1–3.
 - Power entry FB1 near VCC fingers (left); bulk row behind it.
@@ -42,8 +43,8 @@ DRC rules alongside).
    components" wish is geometrically incompatible with two top-side
    connectors — the two constraints cannot both hold on 22 mm width.
    Consequence: two-sided assembly (or ~15 min hand-soldering) — GATE 4.
-   LEDs sit near the left card edge on the bottom for side-glow; neither
-   card face is directly visible in the Mallow slot anyway.
+   LEDs are SIDE-VIEW parts at the left card edge (ADR 0003 amendment):
+   they emit out of the slot gap and are visible in any orientation.
 3. Residual DRC: ~12 courtyard-overlap infos (sub-0.4 mm kisses, fine-tune
    while routing) + 3 J1-internal artifacts (footprint's own mounting pad
    inside its own screw keep-out — benign). No shorts, no clearance errors.

@@ -89,9 +89,9 @@ PLACEMENT = {
     # --- BOTTOM: under module (below antenna keepout) ---
     "R7": (-8.2, -17.7, 0, "B"),    # USB series 0R near module pins 13/14
     "R8": (-4.8, -17.7, 0, "B"),
-    "D3": (-9.3, -20.2, 90, "B"),   # power LED at left edge (side glow)
+    "D3": (-9.8, -20.2, 90, "B"),   # SIDE-VIEW power LED, face flush w/ left edge
     "R3": (-7.3, -20.2, 90, "B"),
-    "D4": (-9.3, -23.6, 90, "B"),   # status LED at left edge
+    "D4": (-9.8, -23.6, 90, "B"),   # SIDE-VIEW status LED, face flush w/ left edge
     "R4": (-7.3, -23.6, 90, "B"),
     "C6": (-8.2, -30.0, 90, "B"),   # 100n at module 3V3 (pin 2)
     "C7": (-6.2, -30.0, 90, "B"),   # 10u at module 3V3

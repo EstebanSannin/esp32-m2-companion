@@ -243,14 +243,15 @@ FSPI IOMUX group (up to 80 MHz).
 
 | Item | Location | Function |
 |---|---|---|
-| Green LED (D3) | bottom, card edge | 3.3 V rail present |
-| Red LED (D4) | bottom, card edge | firmware status, active-low on IO48 |
+| Green LED (D3) | side-view, left card edge | 3.3 V rail present |
+| Red LED (D4) | side-view, left card edge | firmware status, active-low on IO48 |
 | TP1/TP2 | bottom | EN / IO0 (recovery without host sidebands) |
 | TP3/TP4 | bottom | UART0 TX / RX |
 | TP5/TP6 | bottom | 3.3 V / GND |
 
-In the Mallow slot the card's bottom side faces up: LEDs and test points
-remain visible/accessible while inserted.
+The LEDs are side-view parts emitting out of the left card edge — visible
+with the card in the slot regardless of mounting orientation. Test points
+are on the bottom side (bench use).
 
 ## Host compatibility
 

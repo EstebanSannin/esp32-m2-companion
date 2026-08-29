@@ -15,8 +15,8 @@ BOT_CALLOUTS = [
     ("D1", "Recovery diodes (EN / IO0 sideband isolation)"),
     ("TP1", "Test points: EN, IO0, TXD0, RXD0, 3V3, GND"),
     ("R7", "USB series resistors (0R)"),
-    ("D3", "Power LED (green)"),
-    ("D4", "Status LED (red, IO48)"),
+    ("D3", "Power LED (green, side-view, emits from left edge)"),
+    ("D4", "Status LED (red, IO48, side-view, emits from left edge)"),
     ("C6", "Module 3V3 decoupling"),
     ("R5", "DNP provisions (I2C pull-ups, USB shunt C)"),
 ]

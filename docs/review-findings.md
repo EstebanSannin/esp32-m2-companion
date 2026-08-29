@@ -81,3 +81,11 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   F/B.CrtYd rectangles over the zone so DRC catches this class forever.
   LESSONS.md updated. PROCESS candidate: "connector footprints must model
   the MATED envelope as courtyard, not just their own copper."
+- 2026-08-29 · Phase 2 · medium · **BLOCK leds** (OWNER-caught) · Top-emitting
+  LEDs invisible in-slot: card top faces away from host, bottom faces host
+  at ~2.5 mm; a prior layout note claiming "bottom faces up on Mallow" was
+  wrong (EM spec stack-ups: module component side faces away from host PCB).
+  → Side-view LEDs at the left card edge (ADR 0003 amendment); layout-notes
+  corrected; PROCESS candidate: "indicator LEDs on mezzanine cards must be
+  edge-emitting or light-piped — check the mated orientation, not the bench
+  view."
