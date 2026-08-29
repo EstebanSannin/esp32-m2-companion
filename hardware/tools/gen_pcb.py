@@ -53,43 +53,46 @@ ORIGIN = (100.0, 150.0)
 
 # ref -> (x, y, rot_deg, side)  in card coords (J1 edge row at y=0)
 PLACEMENT = {
+    # Socket coverage zone: the mated M.2 connector overlaps the card's
+    # first 4.8 mm on BOTH faces (EM spec Figs 38/39: 9.10 deep incl land
+    # pattern, 4.30 beyond the card edge). J1's courtyard now covers it;
+    # every courtyard below starts at y <= -4.8. Owner-caught at review.
     "J1": (0, 0, 0, "F"),
     "U2": (0, -24.75, 0, "F"),      # module center: top edge at -37.5
-    # --- TOP: connectors only (courtyards 11.9+7.9 wide x 6.65 deep -
-    # they own the whole lower zone; ADR 0005 / layout-notes) ---
-    "J4": (-4.9, -6.0, 0, "F"),     # SH-8 vertical (top-entry): UART/SPI/GPIO
-    "J3": (4.2, -6.0, 0, "F"),      # SH-4 vertical (top-entry): Qwiic I2C
-    # --- BOTTOM: near fingers ---
-    "U1": (7.7, -5.0, 0, "B"),      # USBLC6 near pins 7/9
-    "C4": (5.2, -5.0, 90, "B"),     # USBLC6 VBUS 100n
-    "FB1": (-8.6, -5.0, 90, "B"),   # power entry near VCC fingers
-    # --- BOTTOM: row y -8.2 ---
-    "C1": (-9.4, -8.2, 90, "B"),
-    "C2": (-7.4, -8.2, 90, "B"),
-    "C3": (-5.4, -8.2, 90, "B"),
-    "D1": (-1.6, -8.2, 0, "B"),     # EN diode
-    "D2": (1.8, -8.2, 0, "B"),      # BOOT diode
-    "R2": (4.4, -8.2, 90, "B"),     # BOOT pull-up
-    "R1": (5.9, -8.2, 90, "B"),     # EN pull-up
-    "C5": (7.4, -8.2, 90, "B"),     # EN RC 1u
-    # --- BOTTOM: TPs row y -10.8, DNP bare pads row y -13.2 ---
-    "TP1": (-9.2, -11.2, 0, "B"),   # TP_EN
-    "TP2": (-6.8, -11.2, 0, "B"),   # TP_BOOT
-    "TP3": (-4.4, -11.2, 0, "B"),   # TP_TXD0
-    "TP4": (-2.0, -11.2, 0, "B"),   # TP_RXD0
-    "TP5": (0.4, -11.2, 0, "B"),    # TP_3V3
-    "TP6": (2.8, -11.2, 0, "B"),    # TP_GND
-    "R5": (-8.6, -13.8, 0, "B"),    # DNP I2C PU (bare pads)
-    "R6": (-5.6, -13.8, 0, "B"),    # DNP I2C PU
-    "C8": (-2.6, -13.8, 0, "B"),    # DNP USB shunt
-    "C9": (0.4, -13.8, 0, "B"),     # DNP USB shunt
+    # --- TOP: connectors only (vertical JST, courtyards 5.29 deep) ---
+    "J4": (-4.2, -7.5, 0, "F"),     # SH-8 vertical: UART/SPI/GPIO
+    "J3": (6.0, -7.5, 0, "F"),      # SH-4 vertical: Qwiic I2C
+    # --- BOTTOM row 1 (y -6.7): clears socket zone ---
+    "U1": (7.7, -6.7, 0, "B"),      # USBLC6, still nearest fingers 7/9
+    "C4": (4.9, -6.7, 90, "B"),     # USBLC6 VBUS 100n
+    "FB1": (-8.6, -6.7, 90, "B"),   # power entry near VCC fingers
+    # --- BOTTOM row 2 (y -10.3) ---
+    "C1": (-9.4, -10.3, 90, "B"),
+    "C2": (-7.4, -10.3, 90, "B"),
+    "C3": (-5.4, -10.3, 90, "B"),
+    "D1": (-2.3, -10.3, 0, "B"),    # EN diode
+    "D2": (1.6, -10.3, 0, "B"),     # BOOT diode
+    "R2": (4.6, -10.3, 90, "B"),    # BOOT pull-up
+    "R1": (6.5, -10.3, 90, "B"),    # EN pull-up
+    "C5": (8.4, -10.3, 90, "B"),    # EN RC 1u
+    # --- BOTTOM: TPs (y -13.4), DNP bare pads (y -15.9) ---
+    "TP1": (-9.6, -13.4, 0, "B"),   # TP_EN
+    "TP2": (-6.8, -13.4, 0, "B"),   # TP_BOOT
+    "TP3": (-4.0, -13.4, 0, "B"),   # TP_TXD0
+    "TP4": (-1.2, -13.4, 0, "B"),   # TP_RXD0
+    "TP5": (1.6, -13.4, 0, "B"),    # TP_3V3
+    "TP6": (4.4, -13.4, 0, "B"),    # TP_GND
+    "R5": (-8.6, -15.9, 0, "B"),    # DNP I2C PU (bare pads)
+    "R6": (-5.6, -15.9, 0, "B"),    # DNP I2C PU
+    "C8": (-2.6, -15.9, 0, "B"),    # DNP USB shunt
+    "C9": (0.4, -15.9, 0, "B"),     # DNP USB shunt
     # --- BOTTOM: under module (below antenna keepout) ---
-    "R7": (-8.2, -15.6, 0, "B"),    # USB series 0R, near module pins 13/14
-    "R8": (-8.2, -17.4, 0, "B"),
+    "R7": (-8.2, -17.7, 0, "B"),    # USB series 0R near module pins 13/14
+    "R8": (-4.8, -17.7, 0, "B"),
     "D3": (-9.3, -20.2, 90, "B"),   # power LED at left edge (side glow)
     "R3": (-7.3, -20.2, 90, "B"),
-    "D4": (-9.3, -23.2, 90, "B"),   # status LED at left edge
-    "R4": (-7.3, -23.2, 90, "B"),
+    "D4": (-9.3, -23.6, 90, "B"),   # status LED at left edge
+    "R4": (-7.3, -23.6, 90, "B"),
     "C6": (-8.2, -30.0, 90, "B"),   # 100n at module 3V3 (pin 2)
     "C7": (-6.2, -30.0, 90, "B"),   # 10u at module 3V3
 }

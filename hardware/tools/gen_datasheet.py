@@ -13,6 +13,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent.parent
 ROOT = HERE.parent
 sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(HERE / "tools"))
+from view_defs import BOT_CALLOUTS, TOP_CALLOUTS  # noqa: E402
 
 # signal -> human function, for the connector tables
 J3_FN = {"GND": "Ground", "+3V3": "3.3 V out (card rail)",
@@ -64,11 +66,16 @@ def main():
                              cwd=ROOT, capture_output=True,
                              text=True).stdout.strip() or "dev"
 
+    top_legend = "\n".join(f"| {i} | {t} |" for i, (_r, t)
+                            in enumerate(TOP_CALLOUTS, 1))
+    bot_legend = "\n".join(f"| {i} | {t} |" for i, (_r, t)
+                            in enumerate(BOT_CALLOUTS, 1))
     md = TEMPLATE.format(
         date=date.today().isoformat(), rev=git_rev,
         j3=_connector_table(parts["J3"], J3_FN),
         j4=_connector_table(parts["J4"], J4_FN),
         edge=_edge_table(parts["J1"]),
+        top_legend=top_legend, bot_legend=bot_legend,
     )
     out = ROOT / "DATASHEET.md"
     out.write_text(md)
@@ -148,7 +155,8 @@ flowchart LR
 | Bluetooth | 5 (LE) + mesh, ≤20 dBm | WROOM DS §7.2 |
 | Operating temperature | −40 … +85 °C (module limit) | WROOM DS Table 1-1 |
 | Dimensions | 22 × 42 mm (M.2 2242), 0.8 mm PCB | M.2 EM spec |
-| Height | ~3.8 mm above top side (module + connectors), ~1.2 mm below | see note |
+| Height (top) | 4.2 mm max (JST headers; module 3.1 mm) — ≈6.3 mm with SH plug mated | JST eSH catalog |
+| Height (bottom) | ≤1.5 mm — within the 2.54 mm B-side allowance of an H4.2 socket | M.2 EM spec Fig 38 |
 | ESD (USB lines) | IEC 61000-4-2 level 4 (USBLC6-2SC6) | ST/UMW DS |
 
 > **Height note**: the module (3.1 mm) exceeds the M.2 1.5 mm top-side
@@ -202,6 +210,34 @@ Both connectors are vertical (top-entry) 1.0 mm JST SH: plugs mate
 perpendicular to the card and can be (un)plugged with the card in the slot.
 UART0 doubles as the ROM bootloader console. The SPI set is the native
 FSPI IOMUX group (up to 80 MHz).
+
+## Product views
+
+<p align="center"><img src="docs/img/view_top.png" width="620" alt="top view"></p>
+
+| # | Top side |
+|---|---|
+{top_legend}
+
+<p align="center"><img src="docs/img/view_bottom.png" width="620" alt="bottom view"></p>
+
+| # | Bottom side |
+|---|---|
+{bot_legend}
+
+## Mechanical data
+
+<p align="center"><img src="docs/img/mechanical.png" width="560" alt="mechanical drawing"></p>
+
+| Parameter | Value |
+|---|---|
+| Card size | M.2 Type 2242: 22.00 × 42.00 mm |
+| PCB | 0.8 mm, 4-layer (SIG/GND/PWR/SIG), ENIG + bevelled gold fingers |
+| Max height, top side | 4.2 mm (JST SH headers) · ≈6.3 mm with plug mated |
+| Max height, bottom side | ≤1.5 mm (compliant with H4.2 socket B-side envelope) |
+| Socket coverage zone | first 4.8 mm from card edge kept component-free (both faces) |
+| Mounting | M.2 screw, Ø3.5 semicircular notch, plated GND pad |
+| Component sides | SMT both sides (top: module + connectors; bottom: passives) |
 
 ## LEDs & test points
 

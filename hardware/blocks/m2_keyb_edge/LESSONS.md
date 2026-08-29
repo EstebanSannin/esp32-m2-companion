@@ -7,3 +7,7 @@
 - 2026-08-28: Don't trust SPEC-level assumptions about which sideband pins a
   host actually drives — read the carrier schematic/datasheet table; on
   Mallow only PERST# is SoM-wired.
+- 2026-08-29: The mated M.2 socket covers the card's first ~4.8 mm on BOTH
+  faces (EM spec Figs 38/39). Model it as F/B courtyard IN the edge-finger
+  footprint so placement violations are DRC errors, not review luck.
+  (Owner caught U1 sitting in the zone from a 3D render.)

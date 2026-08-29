@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="620" viewBox="0 0 760 620" font-family="Helvetica,Arial,sans-serif"><rect width="760" height="620" fill="white"/><text x="380.0" y="28" text-anchor="middle" font-size="20" font-weight="bold">Mechanical data (mm)</text>
+<defs><marker id="a" markerWidth="8" markerHeight="8" refX="1" refY="3" orient="auto"><path d="M7,0 L1,3 L7,6" fill="none" stroke="black"/></marker><marker id="b" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M1,0 L7,3 L1,6" fill="none" stroke="black"/></marker></defs>
+<g transform="translate(160.0,60)">
+<path d="M 5.0,0.0 L 215.0,0.0 Q 220.0,0.0 220.0,5.0 L 220.0,378.0 L 218.0,380.0 L 214.5,380.0 L 209.5,385.0 L 209.5,418.0 Q 209.5,420.0 207.5,420.0 L 172.0,420.0 L 172.0,391.0 A 6.0 6.0 0 0 0 160.0,391.0 L 160.0,420.0 L 12.5,420.0 Q 10.5,420.0 10.5,418.0 L 10.5,385.0 L 5.5,380.0 L 2.0,380.0 L 0.0,378.0 L 0.0,5.0 Q 0.0,0.0 5.0,0.0 Z" fill="none" stroke="#333" stroke-width="2"/>
+<circle cx="110.0" cy="10.0" r="17.5" fill="none" stroke="#333" stroke-width="2"/>
+<rect x="17.5" y="395.0" width="140.0" height="25.0" fill="none" stroke="#999" stroke-width="1"/>
+<rect x="175.0" y="395.0" width="27.5" height="25.0" fill="none" stroke="#999" stroke-width="1"/>
+</g>
+<line x1="160.0" y1="50" x2="380.0" y2="50" stroke="#000" stroke-width="1" marker-start="url(#a)" marker-end="url(#b)"/>
+<text x="270.0" y="44" text-anchor="middle" font-size="14">22.00</text>
+<line x1="134.0" y1="60" x2="134.0" y2="480.0" stroke="#000" stroke-width="1" marker-start="url(#a)" marker-end="url(#b)"/>
+<text x="126.0" y="270.0" text-anchor="middle" font-size="14" transform="rotate(-90 126.0 270.0)">42.00</text>
+<line x1="320.0" y1="442.0" x2="332.0" y2="442.0" stroke="#000" stroke-width="1" marker-start="url(#a)" marker-end="url(#b)"/>
+<text x="326.0" y="436.0" text-anchor="middle" font-size="14"></text>
+<text x="394.0" y="465.0" font-size="13">Key B notch</text>
+<text x="394.0" y="74.0" font-size="13">Mounting notch Ø3.50</text>
+<line x1="287.5" y1="70.0" x2="390.0" y2="70.0" stroke="#888" stroke-width="1"/>
+<text x="394.0" y="487.0" font-size="13">Gold fingers 0.5 mm pitch, bevelled</text>
+</svg>

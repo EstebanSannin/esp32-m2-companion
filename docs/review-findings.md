@@ -72,3 +72,12 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   title block (project, git rev, license, credits); `make sch`. Candidate
   rule for the shared hardware-design skill: "schematic-as-code flows need a
   KiCad-native render path from day one."
+- 2026-08-29 · Phase 2 · **high** · **BLOCK m2_keyb_edge** (OWNER-caught from
+  3D render) · U1/C4/FB1 (bottom) and J3/J4 (top) courtyards intruded into
+  the M.2 socket coverage zone: the mated connector overlaps the card's
+  first ~4.8 mm on BOTH faces (EM spec Figs 38/39: 9.10 mm depth incl land
+  pattern, 4.30 mm beyond card edge) — the card would not have seated.
+  → All placements moved behind y=−4.8; the edge footprint now carries
+  F/B.CrtYd rectangles over the zone so DRC catches this class forever.
+  LESSONS.md updated. PROCESS candidate: "connector footprints must model
+  the MATED envelope as courtyard, not just their own copper."

@@ -169,4 +169,6 @@
     (solder_mask_margin 0.1016) (tstamp 96aa93f9-2aa6-4522-8d31-9bd0bcd00629))
   (pad "75" smd rect (at -9.25 -1.25) (size 0.35 2.5) (layers "F.Cu" "F.Paste" "F.Mask")
     (solder_mask_margin 0.1016) (tstamp 51b2060b-1e60-4eb8-a07e-e2f52deb6371))
+  (fp_rect (start -11 -4.8) (end 11 0) (layer "F.CrtYd") (width 0.05) (fill none) (tstamp f-crtyd-socketzone))
+  (fp_rect (start -11 -4.8) (end 11 0) (layer "B.CrtYd") (width 0.05) (fill none) (tstamp b-crtyd-socketzone))
 )
