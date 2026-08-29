@@ -3,6 +3,14 @@
 M.2 Key-B 2242 card with an ESP32-S3-WROOM-1 acting as a USB companion MCU
 for embedded Linux hosts. Spec: [SPEC.md](SPEC.md) (contract, frozen v1).
 
+<p align="center">
+  <img src="docs/img/board_iso.png" alt="3D render of the card (pre-route placement)" width="560">
+</p>
+<p align="center"><sub>
+  Generated render, pre-route placement · <a href="docs/img/board_top.png">top</a> ·
+  <a href="docs/img/board_bottom.png">bottom</a> · regenerate with <code>make render</code>
+</sub></p>
+
 **Open source hardware** — © 2026 Stefano Viola, licensed under
 [CERN-OHL-P v2](LICENSE). Designed by Stefano Viola with Claude (Anthropic);
 schematic-as-code in SKiDL, all outputs generated (`make check`, `make sch`,
