@@ -11,6 +11,8 @@ for embedded Linux hosts. Spec: [SPEC.md](SPEC.md) (contract, frozen v1).
   <a href="docs/img/board_bottom.png">bottom</a> · regenerate with <code>make render</code>
 </sub></p>
 
+**[→ Product datasheet](DATASHEET.md)** — features, specs, pinout, recovery interface.
+
 **Open source hardware** — © 2026 Stefano Viola, licensed under
 [CERN-OHL-P v2](LICENSE). Designed by Stefano Viola with Claude (Anthropic);
 schematic-as-code in SKiDL, all outputs generated (`make check`, `make sch`,

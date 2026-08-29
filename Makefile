@@ -3,7 +3,7 @@
 HW := hardware
 UV := cd $(HW) && uv run
 
-.PHONY: check netlist bom sch svg render clean
+.PHONY: check netlist bom sch svg render datasheet clean
 
 # ERC + netlist + BOM: run after every schematic-source change.
 check:
@@ -16,6 +16,10 @@ sch:
 # Auxiliary per-block SVG renders (netlistsvg; less readable than make sch).
 svg:
 	$(UV) python tools/gen_svg.py
+
+# Product datasheet (DATASHEET.md) with live pin tables from the design.
+datasheet:
+	$(UV) python tools/gen_datasheet.py
 
 # 3D renders for the README (docs/img/, committed).
 KCLI := $(HOME)/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli
