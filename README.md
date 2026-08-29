@@ -12,9 +12,11 @@ for embedded Linux hosts. Spec: [SPEC.md](SPEC.md) (contract, frozen v1).
 </sub></p>
 
 **[→ Product datasheet](DATASHEET.md)** — features, specs, pinout, recovery interface.
-**[→ Interactive 3D viewer](docs/3d/viewer.html)** — download and open in any browser
-(fully offline, GLB embedded); [STEP](docs/3d/esp32_m2_companion.step) and
-[GLB](docs/3d/esp32_m2_companion.glb) for MCAD. Regenerate with `make 3d`.
+**[→ Interactive 3D viewer](https://estebansannin.github.io/esp32-m2-companion/3d/viewer.html)**
+(GitHub Pages; or download [docs/3d/viewer.html](docs/3d/viewer.html) — fully
+offline, GLB embedded) · **[quick 3D preview on GitHub](docs/3d/esp32_m2_companion.stl)**
+(STL, rendered natively by GitHub) · [STEP](docs/3d/esp32_m2_companion.step) /
+[GLB](docs/3d/esp32_m2_companion.glb) for MCAD · regenerate with `make 3d`.
 
 **Open source hardware** — © 2026 Stefano Viola, licensed under
 [CERN-OHL-P v2](LICENSE). Designed by Stefano Viola with Claude (Anthropic);

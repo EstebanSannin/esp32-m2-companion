@@ -3,7 +3,9 @@ name = "esp32-m2-companion-hw"
 version = "0.1.0"
 requires-python = ">=3.9"
 dependencies = [
+    "numpy>=2.0.2",
     "pypdf>=6.16.2",
     "sexpdata>=1.0.2",
     "skidl>=2.3.0",
+    "trimesh>=4.12.2",
 ]
