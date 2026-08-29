@@ -133,7 +133,7 @@ compatible [WROOM Table 1-1, note b].
 | 22 | IO14 | GPIO14/FSPIWP | **Header: GPIO** | |
 | 23 | IO21 | GPIO21 | **Header: GPIO** | RTC-capable |
 | 24 | IO47 | GPIO47 | spare | |
-| 25 | IO48 | GPIO48 | **Status LED** (active-low) / alt. WS2812B-2020 data (DNP one) | devkit precedent for RGB on IO48 |
+| 25 | IO48 | GPIO48 | **Status LED** (active-low, side-view red at left card edge, ADR 0003) | devkit precedent for RGB on IO48 |
 | 26 | IO45 | GPIO45, strapping (VDD_SPI) | NC | weak PD default = 3.3 V flash ✔ |
 | 27 | IO0 | GPIO0, strapping (boot) | **BOOT#**: 10 kΩ PU to 3V3, Schottky diodes from M.2 pins 20 and 8, test point | weak PU default = SPI boot |
 | 28 | IO35 | GPIO35 (octal-PSRAM res.) | NC | variant compat |

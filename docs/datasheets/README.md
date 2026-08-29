@@ -14,6 +14,11 @@ All pin assignments in `docs/pinmap.md` trace to these files. Fetched
 
 ## Missing / unobtainable
 
+- **TOGIALED TJ-S1706SW6T side-view LED drawing** — LCSC datasheet mirror
+  blocks direct download from this machine. Needed at GATE 3 for the land
+  pattern + emitting-face orientation (currently 0603 placeholder). Grab it
+  from the LCSC product pages (C273612 / C273616) in a browser.
+
 - **ST USBLC6-2 original datasheet** — st.com unreachable from here.
 - **Waveshare HAT+ schematic** — not published; M.2 sideband wiring on that
   board is unknown (recovery there is best-effort per SPEC §10.6).
