@@ -182,8 +182,7 @@ def more_fixups(board):
     en = net(board, "EN")
     d1_3 = pad_pos(board, "D1", 3)
     c5_1 = pad_pos(board, "C5", 1)
-    # v1 sits WEST of D1 pin 3: at x99.3 it walled D2.2 (W_DISABLE1_n)
-    # into an unroutable pocket
+    # v1 sits WEST of D1 pin 3 (x98.1) to keep the D1/D2 area clear
     v1 = (98.1, 141.6)
     v2 = (107.45, 141.6)
     add_track(board, en, pcbnew.B_Cu,
@@ -250,20 +249,16 @@ def more_fixups(board):
         if p.GetNetname() == "GND":
             p.SetLocalZoneConnection(pcbnew.ZONE_CONNECTION_FULL)
 
-    # IO0_BOOT backbone D2.3 -> TP2 (freerouting keeps leaving a gap in
-    # the row-2 maze): between C4's pads, up over v1, down west of D1,
-    # under TP3 into TP2
-    # D2.3 -> R2.2 east through the between-pad-row lane (y 139.7 passes
-    # between the 138.45..139.4 and 140.0..140.95 pad rows of C4/R2)
+    # IO0_BOOT: D2.3 -> R2.2 lane (locked). U2.27 (module) and TP2 are
+    # completed by freerouting on the decompressed placement.
     io0 = net(board, "IO0_BOOT")
     d2_3 = pad_pos(board, "D2", 3)
     r2_2 = pad_pos(board, "R2", 2)
     add_track(board, io0, pcbnew.B_Cu,
               [d2_3, (r2_2[0], d2_3[1]), r2_2], width=0.15)
 
-    # W_DISABLE1_n is routed in the no-freerouting finisher (tools/finish.py)
-    # inside a corridor reserved via DSN-only keepouts (WDIS_CORRIDOR), so
-    # freerouting routes every other net AROUND it. See docs/routing-method.md.
+    # (M.2 pin 8 / W_DISABLE1_n BOOT leg was dropped in v1 - ADR 0002
+    # amendment; nothing to route for it.)
 
 
 def netless_pad_via_keepouts(board):
@@ -376,7 +371,7 @@ def inject_dsn_keepouts(board, dsn):
     assert anchor in text
     text = text.replace(anchor, "\n".join(ko) + "\n" + anchor, 1)
     dsn.write_text(text)
-    print(f"injected {i} DSN keepouts (incl W_DIS corridor)")
+    print(f"injected {i} DSN keepouts")
 
 
 def run_freerouting(board):
@@ -389,7 +384,7 @@ def run_freerouting(board):
     inject_dsn_keepouts(board, dsn)
     r = subprocess.run(
         [JAVA, "-jar", FRJAR, "-de", str(dsn), "-do", str(ses),
-         "-mp", "6", "-da"],
+         "-mp", "80", "-da"],
         capture_output=True, text=True, timeout=3300)
     if not ses.exists():
         print(r.stdout[-3000:], r.stderr[-2000:])
@@ -418,6 +413,9 @@ def pour_planes(board):
         z.SetPadConnection(pcbnew.ZONE_CONNECTION_THERMAL
                            if layer in (pcbnew.F_Cu, pcbnew.B_Cu)
                            else pcbnew.ZONE_CONNECTION_FULL)
+        # drop isolated copper islands (pour fragments cut off by tracks) so
+        # the fill has no unconnected pockets - standard, clean fill
+        z.SetIslandRemovalMode(pcbnew.ISLAND_REMOVAL_MODE_ALWAYS)
         o = z.Outline()
         o.NewOutline()
         for (x, y) in pts:

@@ -34,7 +34,7 @@ render:
 	$(KCLI) pcb export step --subst-models --output docs/3d/esp32_m2_companion.step $(HW)/kicad/esp32_m2_companion.kicad_pcb
 	cp $(HW)/build/esp32_m2_companion.glb docs/3d/
 	$(UV) python tools/gen_3d.py
-	$(UV) python -c "import trimesh; s=trimesh.load('$(HW)/build/esp32_m2_companion.glb'); trimesh.util.concatenate(list(s.geometry.values())).export('docs/3d/esp32_m2_companion.stl')"
+	$(UV) python -c "import trimesh; s=trimesh.load('build/esp32_m2_companion.glb'); trimesh.util.concatenate(list(s.geometry.values())).export('../docs/3d/esp32_m2_companion.stl')"
 
 clean:
 	rm -rf $(HW)/build

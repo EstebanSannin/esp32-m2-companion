@@ -49,7 +49,6 @@ def build():
     io0_boot = Net("IO0_BOOT")
     perst_n = Net("PERST_n")
     pcie_1_gpio_5 = Net("PCIE_1_GPIO_5")
-    w_disable1_n = Net("W_DISABLE1_n")
     led_status_n = Net("LED_STATUS_n")
     txd0 = Net("TXD0")
     rxd0 = Net("RXD0")
@@ -69,12 +68,15 @@ def build():
     j1["USBH3_D_N"] += usbh3_d_n
     j1["PERST_n"] += perst_n
     j1["PCIE_1_GPIO_5"] += pcie_1_gpio_5
-    j1["W_DISABLE1_n"] += w_disable1_n
+    # M.2 pin 8 (W_DISABLE1_n) BOOT leg dropped in v1 (ADR 0002 amendment):
+    # exposed edge finger, no on-card connection. Recovery on non-Mallow
+    # hosts is via TP1(EN)+TP2(BOOT) flying leads.
+    j1["W_DISABLE1_n"].do_erc = False
 
     # --- Blocks ---
     power_3v3(v3v3_m2, v3v3, gnd, tag="blk_power")
     usb_esd(usbh3_d_p, usbh3_d_n, usb_d_p, usb_d_n, v3v3, gnd, tag="blk_usb")
-    sideband_recovery(en, io0_boot, perst_n, pcie_1_gpio_5, w_disable1_n,
+    sideband_recovery(en, io0_boot, perst_n, pcie_1_gpio_5,
                       v3v3, gnd, tag="blk_recovery")
     esp32s3_companion(v3v3, gnd, en, io0_boot, usb_d_n, usb_d_p,
                       led_status_n, header_ios, txd0, rxd0, tag="blk_mcu")

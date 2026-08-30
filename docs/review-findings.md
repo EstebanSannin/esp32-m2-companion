@@ -103,3 +103,10 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   Hand-route + lock the congested/critical nets once, autoroute the easy
   nets once, finish leftovers by hand without re-autorouting; the per-fix
   loop must be seconds (edit→DRC), not minutes."**
+- 2026-08-30 · Phase 2 · medium · **BLOCK sideband_recovery** (owner
+  decision) · M.2 pin-8 (W_DISABLE1_n) BOOT diode-OR leg DROPPED in v1:
+  unroutable in the dense pin 7/8/9 interleave AND redundant with the
+  TP1(EN)+TP2(BOOT) flying-lead recovery path. D2 pin 2 → NC; edge finger
+  exposed/unconnected. Recovery preserved via host GPIO (Mallow pin 50+20)
+  and test points (universal). → ADR 0002 amendment; block source +
+  LESSONS.md updated; pinmap/datasheet regenerated.

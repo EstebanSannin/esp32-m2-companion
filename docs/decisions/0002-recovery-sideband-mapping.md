@@ -49,3 +49,28 @@ BOOT/EN to input/Hi-Z, never drive them high. Mallow's documented paths
 satisfy this. Two host-behavior failure modes recorded in docs/risks.md:
 W_DISABLE1# held low at boot forces download mode (R10); a stock Mallow
 image's PCIe driver may leave PERST# asserted (R9).
+
+## Amendment (2026-08-30, owner): pin-8 (W_DISABLE1#) BOOT leg DROPPED in v1
+
+The BOOT diode-OR originally took two inputs: M.2 pin 20 (PCIE_1_GPIO_5,
+Mallow) and M.2 pin 8 (W_DISABLE1_n, generic non-Mallow hosts). The pin-8
+leg is **removed for v1**. Two reasons:
+
+1. **Redundant.** BOOT (IO0) is exposed on **TP2** and EN on **TP1**, so any
+   host — Mallow or not — can force ROM download by driving TP1(EN)+TP2(BOOT)
+   with flying leads (or jumping straight to the module). The Mallow in-slot
+   path (pin 50 EN + pin 20 BOOT) is fully routed and unaffected. Pin 8 only
+   added *automatic* BOOT on a non-Mallow host that (a) bricks, (b) can't be
+   physically touched, AND (c) wires pin 8 to a controllable GPIO — a
+   near-empty intersection. Note even Mallow only pulls pin 8 up through a
+   resistor (not GPIO-driven), so pin 8 is non-functional there anyway.
+2. **Unroutable in this placement.** Pin 8 sits in a 0.5 mm-pitch
+   3-conductor interleave (USB D+/W_DISABLE/D− on M.2 pins 7/8/9) with no
+   legal path to D2 on either copper layer; see docs/routing-method.md and
+   review-findings.md.
+
+Result: D2's second cathode (pin 2) is NC; the M.2 pin-8 edge finger is an
+exposed but unconnected pad (kept for mechanical/standard-pinout reasons).
+Recovery capability is preserved in full via host GPIO (Mallow) and
+TP1/TP2 flying leads (universal). Recovery procedure: DATASHEET.md +
+(Phase 4) docs/bringup.md.

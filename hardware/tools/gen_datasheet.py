@@ -30,7 +30,7 @@ EDGE_FN = {
     "USBH3_D_N": "USB 2.0 D−",
     "PERST_n": "Card reset (EN), active-low, diode-isolated",
     "PCIE_1_GPIO_5": "Boot-mode strap (IO0), active-low, diode-isolated",
-    "W_DISABLE1_n": "Boot-mode strap (IO0), alternate, diode-isolated",
+    "W_DISABLE1_n": "Not connected in v1 (exposed edge finger; BOOT leg dropped, ADR 0002)",
 }
 
 

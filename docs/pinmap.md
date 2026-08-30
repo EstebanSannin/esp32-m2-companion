@@ -27,7 +27,7 @@ Directions ("I/O") are from the **card's** point of view.
 | 5 | GND | GND | GND |
 | 6 | FULL_CARD_POWER_OFF# | PCIE_1_CARD_PWR_OFF#, +1.8/+3.3 V, driver not documented (no SODIMM pin) | NC in v1 (see §3.4) |
 | 7 | USB_DP | USBH3_D_P (USB5744 hub port 3) | **USB D+ → IO20** (via ESD array) |
-| 8 | W_DISABLE1# | 47 kΩ pull-up to +V3.3_PCIE_1 only — **not SoM-driven** | **BOOT# input** via Schottky diode (for non-Mallow hosts; see §3) |
+| 8 | W_DISABLE1# | 47 kΩ pull-up to +V3.3_PCIE_1 only — **not SoM-driven** | **NC in v1** — exposed edge finger, no on-card connection. BOOT leg dropped (ADR 0002 amendment); recovery via TP1/TP2 (§3) |
 | 9 | USB_DM | USBH3_D_N (USB5744 hub port 3) | **USB D− → IO19** (via ESD array) |
 | 10 | WWAN_LED# | PCIE_1_GPIO_9 → X16 pin 15 | NC |
 | 11 | GND | GND | GND |
@@ -135,7 +135,7 @@ compatible [WROOM Table 1-1, note b].
 | 24 | IO47 | GPIO47 | spare | |
 | 25 | IO48 | GPIO48 | **Status LED** (active-low, side-view red at left card edge, ADR 0003) | devkit precedent for RGB on IO48 |
 | 26 | IO45 | GPIO45, strapping (VDD_SPI) | NC | weak PD default = 3.3 V flash ✔ |
-| 27 | IO0 | GPIO0, strapping (boot) | **BOOT#**: 10 kΩ PU to 3V3, Schottky diodes from M.2 pins 20 and 8, test point | weak PU default = SPI boot |
+| 27 | IO0 | GPIO0, strapping (boot) | **BOOT#**: 10 kΩ PU to 3V3, Schottky diode from M.2 pin 20, test point TP2 | weak PU default = SPI boot |
 | 28 | IO35 | GPIO35 (octal-PSRAM res.) | NC | variant compat |
 | 29 | IO36 | GPIO36 (octal-PSRAM res.) | NC | variant compat |
 | 30 | IO37 | GPIO37 (octal-PSRAM res.) | NC | variant compat |
@@ -166,7 +166,7 @@ compatible [WROOM Table 1-1, note b].
 | Card signal | M.2 pin | Why |
 |---|---|---|
 | **EN** | 50 (PERST#) | Only sideband Mallow wires to a SoM pin out of the box (SODIMM 244, OD + 10 k→3.3 V on carrier). Semantically "card reset" on every host family. |
-| **BOOT (GPIO0)** | 20 (Mallow: X16.19 jumper) **and** 8 (W_DISABLE1#, diode-OR) | Mallow can't drive pin 8 (pull-up only), so pin 20 via X16 jumper covers Mallow; pin 8 covers hosts that do wire W_DISABLE# to a GPIO (common on modem slots). Two diodes, either can pull low. |
+| **BOOT (GPIO0)** | 20 (Mallow: X16.19 jumper) | pin 20 via the X16 jumper covers Mallow. The pin-8 (W_DISABLE#) diode-OR leg was **dropped in v1** (ADR 0002 amendment): unroutable in the dense pin 7/8/9 corner and redundant — BOOT is on TP2, so non-Mallow hosts recover by flying-lead on TP1(EN)+TP2(BOOT). |
 
 ### 3.2 Level-domain problem and the diode solution
 
@@ -224,7 +224,7 @@ discharges the 1 µF through the diode — trivial with `gpioset`.
 
 ## 5. GATE 1 outcomes (2026-08-28)
 
-1. BOOT diode-OR (pins 20+8): **approved** → ADR 0002.
+1. BOOT: pin 20 only (Mallow). Pin-8 diode-OR leg **dropped in v1** → ADR 0002 amendment (2026-08-30); recovery on other hosts via TP1/TP2.
 2. Status LED: **plain LED on IO48** → ADR 0003.
 3. SODIMM 244 as GPIO: **verified in mainline device trees** for Verdin
    iMX8MP/iMX8MM (claimed by PCIe node — free it with an overlay) and AM62
