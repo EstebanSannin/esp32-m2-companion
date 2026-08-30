@@ -107,12 +107,10 @@ def preroute_usb(board):
     # U1 (flipped) has pins 1/2/3 stacked on its LEFT column (x 106.56,
     # y 144.25/143.30/142.35). D+ drops straight, D- fans left and routes
     # around pad 1 to reach pad 3. Via centers 2.25 mm apart.
-    # D+ drops on F to y147.4, jogs WEST to x106.3 (leaving J1.8's exit
-    # column x107.5 clear for W_DISABLE1_n), vias down, enters U1.1.
-    vp = (106.3, 146.6)
+    # Known-good USB pair (do NOT perturb - fanning D+ west broke the pair).
+    vp = (j7[0], 147.0)
     vn = (105.55, 146.8)  # clears U1 pad-1 west edge (105.90) and C4
-    lengths["P1"] = add_track(board, n_edge_p, F,
-                              [j7, (j7[0], 147.4), vp])
+    lengths["P1"] = add_track(board, n_edge_p, F, [j7, vp])
     # exit pad 9 downward past the finger row (pads end y 147.5) BEFORE
     # fanning left, so the diagonal clears GND finger pad 11
     lengths["N1"] = add_track(board, n_edge_n, F,
@@ -120,7 +118,7 @@ def preroute_usb(board):
     add_via(board, n_edge_p, *vp)
     add_via(board, n_edge_n, *vn)
     lengths["P1"] += add_track(board, n_edge_p, B,
-                               [vp, (106.3, 144.85), (u1_1[0], 144.85),
+                               [vp, (106.95, 144.85), (u1_1[0], 144.85),
                                 u1_1])
     lengths["N1"] += add_track(board, n_edge_n, B,
                                [vn, (vn[0], u1_3[1]), u1_3])
@@ -231,6 +229,7 @@ def more_fixups(board):
     add_track(board, v3m2, pcbnew.B_Cu,
               [fb1_1, (fb1_1[0], 145.4), (vA[0], 145.9)], width=0.3)
 
+
     # GND stitching vias (also re-melds the fragmented B pour to L2)
     gnd = net(board, "GND")
     for pt in ((90.0, 124.0), (110.1, 120.5), (96.5, 146.3), (90.3, 145.4),
@@ -262,23 +261,9 @@ def more_fixups(board):
     add_track(board, io0, pcbnew.B_Cu,
               [d2_3, (r2_2[0], d2_3[1]), r2_2], width=0.15)
 
-    # W_DISABLE1_n: J1.8's only exit is its own column x 107.5; hop the
-    # congested corner on In2 and needle down between D1.3 and D2.1/D2.2
-    # (both gaps 0.1375) into D2.2 from the west
-    wd = net(board, "W_DISABLE1_n")
-    j8 = pad_pos(board, "J1", 8)
-    d2_2 = pad_pos(board, "D2", 2)
-    # In2 diagonal at y>=143 (north of EN's In2 hop at y141.6-142.35),
-    # then drop straight onto D2.2 from directly north (x100.66) so it
-    # never runs down the x99.3 column that grazes D1.3/EN
-    vw1 = (107.5, 145.6)          # J1.8 exit column, now clear of USB via
-    vw2 = (d2_2[0], 143.0)
-    add_track(board, wd, pcbnew.B_Cu, [j8, vw1], width=0.14)
-    add_via(board, wd, *vw1)
-    add_track(board, wd, pcbnew.In2_Cu, [vw1, (107.5, 143.0), vw2],
-              width=0.15)
-    add_via(board, wd, *vw2)
-    add_track(board, wd, pcbnew.B_Cu, [vw2, d2_2], width=0.14)
+    # W_DISABLE1_n is routed in the no-freerouting finisher (tools/finish.py)
+    # inside a corridor reserved via DSN-only keepouts (WDIS_CORRIDOR), so
+    # freerouting routes every other net AROUND it. See docs/routing-method.md.
 
 
 def netless_pad_via_keepouts(board):
@@ -391,7 +376,7 @@ def inject_dsn_keepouts(board, dsn):
     assert anchor in text
     text = text.replace(anchor, "\n".join(ko) + "\n" + anchor, 1)
     dsn.write_text(text)
-    print(f"injected {i} DSN keepouts")
+    print(f"injected {i} DSN keepouts (incl W_DIS corridor)")
 
 
 def run_freerouting(board):
@@ -404,7 +389,7 @@ def run_freerouting(board):
     inject_dsn_keepouts(board, dsn)
     r = subprocess.run(
         [JAVA, "-jar", FRJAR, "-de", str(dsn), "-do", str(ses),
-         "-mp", "50", "-da"],
+         "-mp", "6", "-da"],
         capture_output=True, text=True, timeout=3300)
     if not ses.exists():
         print(r.stdout[-3000:], r.stderr[-2000:])
