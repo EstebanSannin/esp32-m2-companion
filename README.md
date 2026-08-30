@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/img/samnium_tech_logo.png" alt="Samnium Tech" width="240">
+</p>
+
 # esp32-m2-companion
 
 M.2 Key-B 2242 card with an ESP32-S3-WROOM-1 acting as a USB companion MCU
