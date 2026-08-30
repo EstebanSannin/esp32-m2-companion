@@ -89,3 +89,17 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   corrected; PROCESS candidate: "indicator LEDs on mezzanine cards must be
   edge-emitting or light-piped — check the mated orientation, not the bench
   view."
+- 2026-08-30 · Phase 2 · high · **PROCESS** (self-caught, owner-flagged) ·
+  Board routing burned ~28 full autorouter runs over a night by re-invoking
+  freerouting to chase each DRC violation — every run is ~12 min AND
+  reshuffles all auto-routed nets, so each fix invalidated the last. Root
+  causes: (a) global-autorouter-in-the-loop instead of route-hard-nets-once-
+  then-finish-by-hand; (b) guessing track coordinates instead of reading pad
+  extents; (c) Python str.replace() edits silently no-matching as the file
+  drifted; (d) autorouter slotting the GND/+3V3 plane layers; (e) over-strict
+  skew assert on a USB-FS pair. → Full method captured in
+  docs/routing-method.md. **Candidate rule for the shared hardware-design
+  skill: "Never loop a global autorouter to fix individual DRC violations.
+  Hand-route + lock the congested/critical nets once, autoroute the easy
+  nets once, finish leftovers by hand without re-autorouting; the per-fix
+  loop must be seconds (edit→DRC), not minutes."**

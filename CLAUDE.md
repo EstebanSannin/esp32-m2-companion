@@ -40,6 +40,11 @@ Knowledge management per SPEC §12 (findings log, block LESSONS.md, this file).
 - USB diff pair `USBH3_D_P/N`: 90 Ω differential, length-matched, referenced
   to L2 GND, no stubs.
 - Antenna keep-out at top card edge per Espressif HDG.
+- **Routing method (MANDATORY — see docs/routing-method.md):** hand-route +
+  lock the congested/critical nets once, autoroute the easy nets once, finish
+  leftovers by hand WITHOUT re-running the autorouter. Never loop a global
+  autorouter to chase individual DRC violations. Read real pad extents before
+  placing tracks; verify every edit applied.
 
 ## Parts
 
