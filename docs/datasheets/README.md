@@ -32,3 +32,4 @@ All pin assignments in `docs/pinmap.md` trace to these files. Fetched
 |---|---|---|
 | `amphenol_mdt420b01001_m2_socket.pdf` | via JLCPCB part page C4594496 (Amphenol ICC product brief) | Mallow's M.2 socket: ratings, durability. NOTE: no mating-card drawing — product brief only |
 | `m2_em_spec_rev1.0_2013_archive.pdf` | archive.org copy (via timonsku/M.2-Card-Footprints README) of PCI-SIG "PCIe M.2 Electromechanical Spec Rev 1.0" (2013) | Card mechanical geometry: 2242 outline, gold-finger dimensions, notch position, bevel. Rev 1.0 (current spec is newer) — fine for mechanical card data; resolves risk R8 |
+| `togialed_tj-s1706_sideview.pdf` | LCSC datasheet repository (C273616) | D3/D4 side-view LED land pattern (0.80×0.70, 1.80 mm c-c), polarity (pin 1 = cathode), package geometry. Drove the custom `LED_TJ-S1706_SideView` footprint |

@@ -138,7 +138,7 @@ design = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='16',name='IO46',func=pin_types.NOCONNECT,unit=1),
             Pin(num='24',name='IO47',func=pin_types.NOCONNECT,unit=1),
             Pin(num='25',name='IO48',func=pin_types.BIDIR,unit=1)], 'unit_defs':[] }),
-        Part(**{ 'name':'LED', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'LED'}), 'ref_prefix':'D', 'fplist':[''], 'footprint':'LED_SMD:LED_0603_1608Metric', 'keywords':'LED diode', 'description':'Light emitting diode', 'datasheet':'~', 'pins':[
+        Part(**{ 'name':'LED', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'LED'}), 'ref_prefix':'D', 'fplist':[''], 'footprint':'esp32_m2_companion:LED_TJ-S1706_SideView', 'keywords':'LED diode', 'description':'Light emitting diode', 'datasheet':'~', 'pins':[
             Pin(num='1',name='K',func=pin_types.PASSIVE,unit=1),
             Pin(num='2',name='A',func=pin_types.PASSIVE,unit=1)], 'unit_defs':[] }),
         Part(**{ 'name':'Conn_01x04', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'Conn_01x04'}), 'ref_prefix':'J', 'fplist':[''], 'footprint':'Connector_JST:JST_SH_BM04B-SRSS-TB_1x04-1MP_P1.00mm_Vertical', 'keywords':'connector', 'description':'Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)', 'datasheet':'~', 'pins':[
