@@ -3,7 +3,7 @@
 HW := hardware
 UV := cd $(HW) && uv run
 
-.PHONY: check netlist bom sch svg render datasheet 3d clean
+.PHONY: check netlist bom sch svg render datasheet 3d fab clean
 
 # ERC + netlist + BOM: run after every schematic-source change.
 check:
@@ -20,6 +20,10 @@ svg:
 # Product datasheet (DATASHEET.md) with live pin tables from the design.
 datasheet:
 	$(UV) python tools/gen_datasheet.py
+
+# JLCPCB fab package: gerbers.zip + BOM + CPL (-> fab/).
+fab:
+	$(UV) python tools/gen_fab.py
 
 # 3D renders for the README (docs/img/, committed).
 KCLI := $(HOME)/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli
