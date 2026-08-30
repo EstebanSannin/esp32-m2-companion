@@ -12,6 +12,7 @@ for embedded Linux hosts. Spec: [SPEC.md](SPEC.md) (contract, frozen v1).
 </sub></p>
 
 **[→ Product datasheet](DATASHEET.md)** — features, specs, pinout, recovery interface.
+**[→ Layer stackup & routing](docs/stackup.md)** — 4-layer stack, impedance, per-layer copper views.
 **[→ Interactive 3D viewer](https://estebansannin.github.io/esp32-m2-companion/3d/viewer.html)**
 (GitHub Pages; or download [docs/3d/viewer.html](docs/3d/viewer.html) — fully
 offline, GLB embedded) · **[quick 3D preview on GitHub](docs/3d/esp32_m2_companion.stl)**
