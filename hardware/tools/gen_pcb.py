@@ -64,7 +64,7 @@ PLACEMENT = {
     "J3": (6.0, -7.5, 0, "F"),      # SH-4 vertical: Qwiic I2C
     # --- BOTTOM row 1 (y -6.7): clears socket zone ---
     "U1": (7.7, -6.7, 0, "B"),      # USBLC6, still nearest fingers 7/9
-    "C4": (4.9, -6.7, 90, "B"),     # USBLC6 VBUS 100n
+    "C4": (4.5, -6.7, 90, "B"),     # USBLC6 VBUS 100n
     "FB1": (-8.6, -6.7, 90, "B"),   # power entry near VCC fingers
     # --- BOTTOM row 2 (y -10.3) ---
     "C1": (-9.4, -10.3, 90, "B"),
@@ -76,19 +76,26 @@ PLACEMENT = {
     "R1": (6.5, -10.3, 90, "B"),    # EN pull-up
     "C5": (8.4, -10.3, 90, "B"),    # EN RC 1u
     # --- BOTTOM: TPs (y -13.4), DNP bare pads (y -15.9) ---
-    "TP1": (-9.6, -13.4, 0, "B"),   # TP_EN
+    "TP1": (7.2, -13.4, 0, "B"),    # TP_EN (east end: next to R1/C5=EN,
+                                    #  and frees the west channel for USB)
     "TP2": (-6.8, -13.4, 0, "B"),   # TP_BOOT
     "TP3": (-4.0, -13.4, 0, "B"),   # TP_TXD0
     "TP4": (-1.2, -13.4, 0, "B"),   # TP_RXD0
     "TP5": (1.6, -13.4, 0, "B"),    # TP_3V3
     "TP6": (4.4, -13.4, 0, "B"),    # TP_GND
-    "R5": (-8.6, -15.9, 0, "B"),    # DNP I2C PU (bare pads)
-    "R6": (-5.6, -15.9, 0, "B"),    # DNP I2C PU
-    "C8": (-2.6, -15.9, 0, "B"),    # DNP USB shunt
-    "C9": (0.4, -15.9, 0, "B"),     # DNP USB shunt
+    # DNP row shifted east: its west end collided with the U2 pad column
+    # and the 3V3 stub vias (run-6 DRC)
+    "C8": (3.35, -17.9, 90, "B"),   # DNP USB shunt (east of R7 courtyard)
+    "C9": (4.95, -17.9, 90, "B"),   # DNP USB shunt
+    "R5": (6.55, -17.9, 90, "B"),   # DNP I2C PU (bare pads)
+    "R6": (-5.6, -17.9, 90, "B"),   # DNP I2C PU (west: its 3V3 via
+                                    #  collided with the U2 right pad column)
     # --- BOTTOM: under module (below antenna keepout) ---
-    "R7": (-8.2, -17.7, 0, "B"),    # USB series 0R near module pins 13/14
-    "R8": (-4.8, -17.7, 0, "B"),
+    # R7 (D+, pad-14 row) EAST of R8 (D-, pad-13 row): P's F column must
+    # sit east of N's westward run or they cross (pad 14 row is south of
+    # pad 13 row). West corner saturated (C1/D3/TP/module pads).
+    "R8": (-2.2, -17.7, 0, "B"),    # USB series 0R (D-)
+    "R7": (1.0, -17.7, 0, "B"),     # USB series 0R (D+)
     "D3": (-9.8, -20.2, 90, "B"),   # SIDE-VIEW power LED, face flush w/ left edge
     "R3": (-7.3, -20.2, 90, "B"),
     "D4": (-9.8, -23.6, 90, "B"),   # SIDE-VIEW status LED, face flush w/ left edge
@@ -129,13 +136,15 @@ def postprocess(pcb_path):
     default.SetViaDrill(mm(0.3))
     default.SetViaDiameter(mm(0.6))
 
-    # USB 90-ohm differential pair. PLACEHOLDER geometry: final width/gap
-    # must come from JLCPCB's impedance calculator for their 0.8 mm 4-layer
-    # stackup (JLC04081H) before routing - flagged in docs/risks.md.
+    # USB 90-ohm differential pair on JLC04081H-3313 (outer prepreg
+    # 0.0994 mm, er 4.1, 1 oz): w/gap 0.14/0.14 mm computed via
+    # Hammerstad-Jensen + IPC coupling ~97 ohm bare copper, ~90-92 with
+    # solder mask. VERIFY against JLCPCB's order-form impedance tool
+    # before ordering (checklist item).
     usb = pcbnew.NETCLASS("USB_DIFF")
-    usb.SetTrackWidth(mm(0.15))
-    usb.SetDiffPairWidth(mm(0.15))
-    usb.SetDiffPairGap(mm(0.15))
+    usb.SetTrackWidth(mm(0.14))
+    usb.SetDiffPairWidth(mm(0.14))
+    usb.SetDiffPairGap(mm(0.14))
     usb.SetClearance(mm(0.127))
     ns.SetNetclass("USB_DIFF", usb)
     for pat in ("USBH3_D_P", "USBH3_D_N", "USB_D_P", "USB_D_N"):
