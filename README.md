@@ -8,19 +8,18 @@ M.2 Key-B 2242 card with an ESP32-S3-WROOM-1 acting as a USB companion MCU
 for embedded Linux hosts. Spec: [SPEC.md](SPEC.md) (contract, frozen v1).
 
 <p align="center">
-  <img src="docs/img/board_iso.png" alt="3D render of the card (pre-route placement)" width="560">
+  <img src="docs/img/board_iso.png" alt="3D render of the routed card" width="560">
 </p>
 <p align="center"><sub>
-  Generated render, pre-route placement · <a href="docs/img/board_top.png">top</a> ·
-  <a href="docs/img/board_bottom.png">bottom</a> · regenerate with <code>make render</code>
+  Generated render of the routed board · <a href="docs/img/board_top.png">top</a> ·
+  <a href="docs/img/board_bottom.png">bottom</a> (silk logo) · regenerate with <code>make render</code>
 </sub></p>
 
 **[→ Product datasheet](DATASHEET.md)** — features, specs, pinout, recovery interface.
 **[→ Layer stackup & routing](docs/stackup.md)** — 4-layer stack, impedance, per-layer copper views.
 **[→ Interactive 3D viewer](https://estebansannin.github.io/esp32-m2-companion/3d/viewer.html)**
 (GitHub Pages; or download [docs/3d/viewer.html](docs/3d/viewer.html) — fully
-offline, GLB embedded) · **[quick 3D preview on GitHub](docs/3d/esp32_m2_companion.stl)**
-(STL, rendered natively by GitHub) · [STEP](docs/3d/esp32_m2_companion.step) /
+offline, GLB embedded) · [STEP](docs/3d/esp32_m2_companion.step) /
 [GLB](docs/3d/esp32_m2_companion.glb) for MCAD · regenerate with `make 3d`.
 
 **Open source hardware** — © 2026 Stefano Viola, licensed under
