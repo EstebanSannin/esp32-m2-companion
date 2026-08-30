@@ -25,18 +25,46 @@ enter from the side, since a straight drop crosses the adjacent diode pad
 (D2 pin 1). This is a ~2-minute interactive drag and a poor fit for scripted
 blind routing.
 
-### GUI steps (KiCad 9, ~5 min total)
+### GUI walkthrough for a first-time KiCad user (~10 min)
 
-1. Open `hardware/kicad/esp32_m2_companion.kicad_pcb`, PCB editor.
-2. `Inspect → Design Rules Checker → Run`. The ratsnest airwire from J1 pin 8
-   to D2 shows the one missing connection.
-3. Route it on **B.Cu** (bottom): from J1 pin 8, run down/inboard clear of the
-   +3V3 finger copper, then approach D2 **pin 2 from the west side** (not from
-   directly above — pin 1 is in the way). Net class picks 0.15 mm width.
-4. A couple of GND pour "island" DRC notes clear on `Edit → Fill All Zones`
-   (B). If the small B pour pockets near U1/D2 stay isolated, drop one GND
-   stitching via in each to tie them to the plane.
-5. Re-run DRC. Ignore the 3 known-benign J1-internal notes (the edge
-   footprint's own mounting-pad / keep-out artifacts).
+**Open the board**
+1. Launch KiCad (Applications). File → Open Project →
+   `hardware/kicad/esp32_m2_companion.kicad_pro`. Double-click the PCB
+   (`.kicad_pcb`) to open the PCB Editor (pcbnew).
+
+**Find the one thing to route**
+2. The thin white "airwire" line is the unrouted connection. Zoom to the
+   bottom-right of the card (scroll to zoom, drag middle-mouse to pan). You
+   want the airwire from the M.2 finger **J1 pad 8** (bottom edge) to
+   **D2 pad 2**. Hover a pad to see its name in the status bar.
+
+**Set the active layer to the bottom copper**
+3. In the Layers panel (right), click **B.Cu** (bottom copper) so new track
+   goes there. Both endpoints are on the bottom.
+
+**Route it (KiCad walks around obstacles for you)**
+4. Press **X** (route track tool). Click **J1 pad 8** to start.
+5. Move the cursor toward D2. KiCad's interactive router auto-avoids existing
+   tracks/pads ("walk around" — the default). Move inboard (up the board),
+   then left toward D2. To change layer mid-route (hop to top and back if it
+   helps), press **V** (drops a via, switches layer); press **V** again later
+   to come back to bottom.
+6. **Approach D2 pad 2 from its LEFT (west) side** — pad 1 sits directly above
+   pad 2, so coming straight down is blocked. Aim into the small gap between
+   D1 and D2. Click on D2 pad 2 to finish. Press **Esc**.
+   - Suggested path if you want a guide: up the right side, across the top of
+     the lower components, down the left of D2, into pad 2 from the west.
+   - Track width auto-picks 0.15 mm from the net class — fine.
+
+**Heal the ground pour and check**
+7. Press **B** (fills all copper zones).
+8. `Inspect → Design Rules Checker → Run DRC`. Expect **0 unconnected**.
+   You may see 3 notes on J1 (mounting-pad / keep-out / silk polygon) — those
+   are known-benign edge-connector footprint artifacts; ignore them.
+9. **Save** (Ctrl+S). Tell me, or `git add -A && git commit && git push`.
+
+If the router won't reach pad 2, route to a point just west of it and click,
+then start a second short track from there into the pad — small segments are
+fine. Screenshot me anything confusing and I'll talk you through it.
 
 Then it's ready for GATE 3 review (diff-pair check, silkscreen, final DRC).
