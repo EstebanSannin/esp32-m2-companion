@@ -17,8 +17,17 @@ plus the per-layer export in `docs/`. Blue = copper.
 - Board thickness **0.8 mm** (M.2 requirement).
 - **USB pair** `USBH3_D_P/N` / `USB_D_P/N`: 90 Ω differential, **0.14 mm width /
   0.14 mm gap**, routed on the outer layers referenced to the L2 GND plane, no
-  stubs (SPEC §6.3). Verify against JLCPCB's impedance calculator at order.
-- **Impedance control** enabled at order (±10 %, free at JLCPCB).
+  stubs (SPEC §6.3).
+- **At order: Specify Stackup = `JLC04081H-3313`** (Standard, 0.80 mm, prepreg
+  3313 RC57% 0.0994 mm) — *not* the 7628 default (thicker 0.72 mm "Special"
+  stack). Specifying the stackup pins the 0.0994 mm prepreg, which is what sets
+  the pair impedance.
+- **Impedance Control QC option: left OFF** (JLC charges ~€28). The ESP32-S3 USB
+  is Full-Speed (12 Mbps) only, so controlled impedance is not functional here;
+  the paid option only buys a TDR measurement, not a different board.
+- **Verified 2026-08-30** against JLCPCB's live impedance calculator: on
+  JLC04081H-3313, 90 Ω differential (5.5 mil gap) → **5.2 mil (0.132 mm) width**.
+  Our 0.14 mm traces give ~88 Ω (inside a ±10 % window) — no board change.
 
 ## The four copper layers
 

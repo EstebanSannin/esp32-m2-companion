@@ -9,9 +9,25 @@ JLCPCB's [instant quote](https://cart.jlcpcb.com/quote):
 | `esp32_m2_companion_bom_jlc.csv` | **BOM** (SMT Assembly tab) — Comment / Designator / Footprint / LCSC# |
 | `esp32_m2_companion_cpl_jlc.csv` | **CPL / centroid** (SMT Assembly tab) — 22 placed parts |
 
-## Order settings (v1)
-- **Layers 4**, thickness **0.8 mm**, stackup **JLC04081H-3313**, **impedance control ON** (verify USB 0.14/0.14 mm pair against their calculator)
-- Surface finish **ENIG** (gold-plates the M.2 fingers; do NOT select the special "gold fingers" process — needs board ≥50 mm, ours is 22×42)
+## Order settings (v1) — confirmed against JLCPCB quote UI 2026-08-30
+- **Layers 4**, thickness **0.8 mm**
+- **Specify Stackup: Yes → JLC04081H-3313** (Standard, 0.80 mm, prepreg 3313
+  RC57% 0.0994 mm). This alone locks the geometry that sets the USB impedance.
+- **Impedance Control: No requirement** (i.e. OFF). Deliberate: JLC charges
+  ~€28 for it, and the ESP32-S3 USB is Full-Speed (12 Mbps) only — controlled
+  impedance is functionally irrelevant. The stackup spec above already pins the
+  0.0994 mm prepreg, and the verified 0.14 mm traces give ~88 Ω regardless
+  (see docs/stackup.md). The paid option only buys a TDR measurement, not a
+  different board.
+- Surface finish **ENIG**.
+- **Gold Fingers: Yes** (hard gold on the M.2 edge contacts — accepted at our
+  size, no visible upcharge; proper wear finish for a plug-in edge).
+- **Beveling: No** — forced. JLC UI: *"Beveled fingers cannot be produced for
+  PCBs smaller than 50mm x 50mm."* Our card is 22×42. **Consequence:** square
+  90° finger edge. Before first insertion, lightly **hand-chamfer the leading
+  edge** (~45°, ~0.2–0.3 mm, both faces, leading corner only — do not sand the
+  contact tips) so it seats without stressing the host M.2 socket.
+- Confirm Production File: **Yes**; Deburring/Edge rounding: Yes; Mark: Remove.
 - **Assembly: both sides**, 5 pcs
 - 7 Extended parts (feeder fee ~$3 each): U2 module, U1 USBLC6 (ST C7519), D1/D2 BAT54A, J3/J4 JST SH
 - DNP (not placed): R5, R6, C8, C9 — already excluded from the CPL
