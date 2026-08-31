@@ -32,4 +32,4 @@ JLCPCB's [instant quote](https://cart.jlcpcb.com/quote):
 - 7 Extended parts (feeder fee ~$3 each): U2 module, U1 USBLC6 (ST C7519), D1/D2 BAT54A, J3/J4 JST SH
 - DNP (not placed): R5, R6, C8, C9 — already excluded from the CPL
 
-Do not order before GATE 3 (colleague review). See docs/routing-status.md, docs/review-findings.md.
+Do not order before GATE 3 (colleague review). See docs/layout-notes.md, docs/review-findings.md.
