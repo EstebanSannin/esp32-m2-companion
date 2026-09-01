@@ -17,3 +17,13 @@
   auto-/blind-routed; route it interactively (fan the USB via pair a few mm
   inboard first to open a lane for the middle net). Anticipate this on any
   card where the module width leaves <~2 mm side strips.
+- 2026-09-02 (**$38 lesson**, caught in JLCPCB review): the M.2 mounting
+  semicircle is a **plated (PTH) hole centred on the top edge** → the fab sees
+  a half-cut plated hole and flags "castellated holes not selected". Choosing
+  proper castellated processing cost **$38 flat** (specialty-process setup fee,
+  independent of hole count) on the v1 run. But our mounting hole carries **no
+  net** — it's purely mechanical — so the plating buys nothing electrical.
+  **Fix for rev B (and the RP2350 sibling that reuses this edge): make the
+  mounting hole NPTH (non-plated).** A bare routed notch still takes the screw,
+  drops no castellation flag, and avoids the fee. Only keep it PTH if you
+  actually ground the mounting hole to the standoff for shielding (we don't).
