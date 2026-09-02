@@ -27,3 +27,16 @@
   mounting hole NPTH (non-plated).** A bare routed notch still takes the screw,
   drops no castellation flag, and avoids the fee. Only keep it PTH if you
   actually ground the mounting hole to the standoff for shielding (we don't).
+- 2026-09-02 (caught in JLCPCB production-file review, **not** by our DRC): a
+  `USBH3_D_N` (host-USB) via and a redundant GND stub sit right at the B-key
+  notch. The outline milling grazes the via **pad** (drilled barrel is 0.15 mm
+  clear, so the via survives) and clips the GND stub (harmless plane copper).
+  **Root cause:** our `esp32_m2_companion.kicad_dru` waives `edge_clearance`
+  for *all* `memberOfFootprint('J1')` — added so the gold fingers can legally
+  touch the edge, but it **also suppressed the legitimate copper-near-notch
+  warning**. DRC passed green; JLC's independent check caught it. **Fix (rev
+  B):** (1) pull that USB via ≥0.3 mm inboard of the notch; (2) delete the
+  dangling GND stub; (3) tighten the dru so edge-clearance is waived only for
+  the finger *pads* (condition on pad/net), never vias/tracks — so a real
+  copper-in-the-mill-path error can't hide again. Proceeded on v1 (prototype,
+  barrel clear, no signal net severed).
