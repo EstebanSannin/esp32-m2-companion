@@ -110,3 +110,43 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   exposed/unconnected. Recovery preserved via host GPIO (Mallow pin 50+20)
   and test points (universal). → ADR 0002 amendment; block source +
   LESSONS.md updated; pinmap/datasheet regenerated.
+- 2026-09-02 · Phase 2 · low · **BLOCK m2_keyb_edge** ($38, caught in JLCPCB
+  review; backfilled from LESSONS.md 2026-09-03) · The mounting semicircle is a
+  **plated (PTH) hole** centred on the top edge → the fab sees a half-cut
+  plated hole and flags "castellated holes not selected"; proper castellated
+  processing cost **$38 flat** (specialty-process setup fee, independent of
+  hole count) on the v1 run. The hole carries **no net** — purely mechanical —
+  so the plating buys nothing electrical. → Fix for rev B (and the RP2350
+  sibling reusing this edge): make the mounting hole **NPTH**. PROCESS
+  candidate: "mechanical mounting holes NPTH unless grounded to the standoff
+  for shielding."
+- 2026-09-02 · Phase 2 · low · **BLOCK m2_keyb_edge** (caught in JLCPCB
+  production-file review, **not** our DRC; backfilled 2026-09-03) · A
+  `USBH3_D_N` via + redundant GND stub sit at the B-key notch; outline milling
+  grazes the via pad (barrel 0.15 mm clear → survives) and clips the GND stub
+  (harmless plane copper). **Root cause:** `esp32_m2_companion.kicad_dru`
+  waives `edge_clearance` for *all* `memberOfFootprint('J1')` — added so the
+  gold fingers can legally touch the edge, but it also **suppressed the
+  legitimate copper-near-notch warning**; DRC passed green, JLC's independent
+  check caught it. → Fix (rev B): pull the USB via ≥0.3 mm inboard; delete the
+  GND stub; tighten the dru so edge-clearance is waived only for finger *pads*
+  (condition on pad/net), never vias/tracks. Proceeded on v1 (prototype, barrel
+  clear, no net severed). PROCESS candidate: "scope DRC waivers to pads/nets,
+  never whole-footprint or vias/tracks."
+- 2026-10-05 · bring-up · medium · **BLOCK leds** (owner-caught on hardware) ·
+  D3+D4 assembled **180° reversed** → every indicator LED reverse-biased
+  in-circuit (dark) on both v1 boards, though all still light under a meter's
+  diode test. Isolated by measurement (3V3 at R3/R4, IO48 toggles 0/3.5 V,
+  ~3.5 V across the LED with zero current) and confirmed visually: R4 solders to
+  the LED **cathode**, not the anode. **Schematic/footprint were correct**
+  (netlist ties R-series→anode); the flip entered at **JLC assembly sign-off** —
+  JLC's placement preview rendered the LED with "+" on the chip-side pad (their
+  LCSC polarity/rotation convention for C273612/C273616 is opposite our
+  footprint pin-1), they asked us to confirm, and **we approved it by eye without
+  checking against the netlist.** Fixable at assembly with NO respin (correct
+  D3/D4 CPL rotation +180°, or instruct "+ on the resistor-side pad"); rev-B
+  bakes it into the CPL export + re-confirm emit face + R3→~68-100 Ω. **PROCESS
+  candidate (shared hw skill): "never eyeball-approve a fab's LED/diode placement
+  preview — verify the '+' lands on the pad wired to the series resistor; JLC/LCSC
+  LED polarity convention frequently differs from the KiCad footprint and silently
+  flips the part."**
