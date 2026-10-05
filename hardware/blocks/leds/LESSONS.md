@@ -28,3 +28,10 @@
   verify the "+" lands on the pad wired to the series resistor (i.e. against the
   netlist), because JLC/LCSC LED polarity convention frequently differs from the
   KiCad footprint and silently flips the part.**
+- 2026-10-06 (rev B): fix lives in the fab export, not the footprint (pad
+  numbering was right): tools/gen_fab.py JLC_ROT gives C273616/C273612 +180°
+  and `make fab` stays ORDER-BLOCKED until each polarized part's rotation is
+  dated as preview-verified; tools/polarity_report.py asserts anode =
+  resistor-side pad and prints what the JLC preview must show. R3 330R →
+  100R (C22775). Emit face: closed by v1 evidence (hand-rotated D4 blinks,
+  polarity and emit direction restore together) - no package change.

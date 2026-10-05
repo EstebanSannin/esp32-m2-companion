@@ -40,3 +40,19 @@
   the finger *pads* (condition on pad/net), never vias/tracks — so a real
   copper-in-the-mill-path error can't hide again. Proceeded on v1 (prototype,
   barrel clear, no signal net severed).
+- 2026-10-06 (**rev B, CORRECTS the 2026-09-02 entry above**): the
+  `USBH3_D_N` via was not "grazed" - measured with pcbnew its centre sat
+  **0.29 mm inside the notch cut-out**, the whole 0.3 mm drill in milled-away
+  area. D− *was* severed on v1 (bring-up board needed a finger-9 → U1.3
+  jumper). The rev-A GND "stub" was also not redundant: it was J1.11's
+  (the USB pair's adjacent GND finger) only tie to the pour, routed across
+  the notch - so the milling floated J1.11 too.
+- 2026-10-06: a waiver keyed on `memberOfFootprint('J1')` is board-wide when
+  J1 owns the Edge.Cuts outline (KiCad evaluates the rule with A/B either
+  way, and every edge segment is a J1 member). Waive by item type + pad
+  (`A.Type == 'Pad' && A.memberOfFootprint('J1') && A.Pad_Type == 'SMD'`),
+  never `min_copper_edge_clearance = 0`, and prove the rule still flags a
+  known violation before fixing it.
+- 2026-10-06: mounting notch now NPTH with no copper (library + board). The
+  NPTH still sits inside U2's antenna keep-out - unavoidable (M.2 screw
+  position is fixed); documented DRC exclusion in tools/check_drc.py.
