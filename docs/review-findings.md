@@ -150,3 +150,47 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   preview — verify the '+' lands on the pad wired to the series resistor; JLC/LCSC
   LED polarity convention frequently differs from the KiCad footprint and silently
   flips the part."**
+
+## Rev B (v2) — pre-respin audit (2026-10-06)
+
+- 2026-10-06 · Rev B · **high** · **BLOCK m2_keyb_edge** (self-caught;
+  **corrects** the 2026-09-02 entry) · The `USBH3_D_N` via centre was
+  **0.29 mm inside** the B-key notch cut-out (pcbnew measurement), so the drill
+  was entirely in milled-away area — not "barrel 0.15 mm clear". D− was
+  severed on v1, consistent with the bring-up hand-jumper. The "redundant" GND
+  stub was J1.11's only tie to GND, so J1.11 also floated after milling.
+  → Corner reroute (D−/D+ vias out of the notch, J1.11 own via), pending the
+  pin-8 owner decision. LESSONS.md corrected.
+- 2026-10-06 · Rev B · high · **PROCESS** (self-caught) · The
+  `memberOfFootprint('J1')` edge-clearance waiver disabled edge clearance
+  **board-wide**: J1 owns the whole Edge.Cuts outline. `min_copper_edge_clearance`
+  was also 0.0. With a pad-scoped waiver + 0.3 mm the board flags exactly the
+  notch copper and the mounting-hole copper, nothing else. → Fixed (commit
+  c68b81b). **PROCESS candidate:** "Never key a DRC waiver on a footprint
+  that owns the board outline; waive by item type + footprint, and prove the
+  waiver still flags a known violation before trusting a green DRC."
+- 2026-10-06 · Rev B · **high** · **BLOCK usb_esd / sideband_recovery**
+  (self-caught) · On v1 **U1.2 (USBLC6 GND)** and **C5.2 (EN RC cap GND)**
+  were B.Cu GND islands enclosed by locked tracks → no ESD ground return, no
+  EN RC delay. DRC reported both as "unconnected items" and they shipped
+  untriaged; fab gerbers and board share commit 5cf2c15, so v1 hardware
+  matches. **Owner to confirm on a v1 board:** continuity U1 pin 2 ↔ GND and
+  C5 pin 2 ↔ GND (expect open). → Each pad now has its own via to L2
+  (eb07bec); tools/gnd_islands.py added. **PROCESS candidate:** "'DRC clean'
+  = zero non-excluded violations AND zero unconnected items; every exclusion
+  committed with a reason (`make drc`)."
+- 2026-10-06 · Rev B · medium · **PROJECT** · v1 U1 (USBLC6) orientation
+  cannot be proven by function (its GND floated; a 180° placement still sits
+  on the SOT-23-6 land). → Owner: check the pin-1 dot on a v1 board; rev-B
+  checklist row added.
+- 2026-10-06 · Rev B · low · **BLOCK esp32s3_companion** (route.py) · 12
+  EPAD GND vias co-located with the JLC module footprint's own plated pad-41
+  satellite holes (24 `holes_co_located`, double drill hits). → Removed.
+- 2026-10-06 · Rev B · low · **PROJECT** · `fp-lib-table` lacked the
+  `esp32m2` library → DRC could never check board-vs-library footprint
+  parity. → Registered; J1 now verifiably matches its edited library copy.
+- 2026-10-06 · Rev B · low · **PROCESS** · `gen_fab.py` kept its own DNP
+  list despite the 2026-08-28 rule. → CPL placed set now = generated BOM.
+- 2026-10-06 · Rev B · low · **PROJECT** (labels) · DATASHEET.md calls the
+  mounting notch a "plated GND pad"; it never had a net, and in rev B it is
+  NPTH. Bottom silk still reads "v1.0 … 2026-08". → Label review (GATE B2).
