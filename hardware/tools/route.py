@@ -67,11 +67,11 @@ def add_track(board, netcode, layer, pts, width=0.14, lock=True):
     return total
 
 
-def add_via(board, netcode, x, y, lock=True):
+def add_via(board, netcode, x, y, lock=True, d=0.6):
     v = pcbnew.PCB_VIA(board)
     v.SetPosition(pcbnew.VECTOR2I(mm(x), mm(y)))
     v.SetDrill(mm(0.3))
-    v.SetWidth(mm(0.6))
+    v.SetWidth(mm(d))
     v.SetViaType(pcbnew.VIATYPE_THROUGH)
     v.SetNetCode(netcode)
     v.SetLocked(lock)
@@ -235,14 +235,23 @@ def more_fixups(board):
                (104.4, 136.2)):  # last: on TP6 (GND), north edge - clears
                # the netless U2 pad-24 keepout
         add_via(board, gnd, *pt)
-    # EPAD via grid (HDG: >=9 GND vias under the module thermal pad).
-    # The JLC footprint provides 0.6 mm GND satellite pads as via-in-pad
-    # sites - drop a via on each
-    u2 = board.FindFootprintByReference("U2")
-    for p in u2.Pads():
-        if p.GetNumber() == "41" and pcbnew.ToMM(p.GetSize().x) < 1.0:
-            pos = p.GetPosition()
-            add_via(board, gnd, pcbnew.ToMM(pos.x), pcbnew.ToMM(pos.y))
+    # EPAD via grid (HDG: >=9 GND vias under the module thermal pad) is
+    # provided by the JLC footprint itself: its 12 pad-41 satellites are
+    # plated 0.3 mm through-holes, solid zone connect. Rev A also dropped a
+    # via on each -> 12 co-located duplicate drill hits (holes_co_located).
+    # Removed in rev B; do not re-add.
+
+    # Rev B: pads the GND pours cannot reach (B.Cu pockets fully enclosed
+    # by locked tracks) - rev A left both floating (tools/gnd_islands.py).
+    # U1.2 (USBLC6 GND): via under the SOT-23-6 body between pad columns,
+    # west of J3.MP's helper no-via keepout.
+    add_track(board, gnd, pcbnew.B_Cu,
+              [(106.562, 143.3), (107.0, 143.3), (107.69, 142.55)], width=0.2)
+    add_via(board, gnd, 107.69, 142.55)
+    # C5.2 (EN RC cap GND): 0.855 mm gap to USB_D_N_ESD -> 0.5 mm via.
+    add_track(board, gnd, pcbnew.B_Cu,
+              [(108.4, 138.925), (109.30, 138.95)], width=0.2)
+    add_via(board, gnd, 109.30, 138.95, d=0.5)
 
     u1 = board.FindFootprintByReference("U1")
     for p in u1.Pads():
