@@ -19,7 +19,12 @@ KCLI = Path.home() / "Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
 OUT = HERE / "build" / "drc.json"
 
 # (violation type, substring of any item description) -> reason
-EXCLUDE = {}
+EXCLUDE = {
+    ("items_not_allowed", "NPTH pad of J1"):
+        "M.2 screw notch (top-edge centre, fixed by M.2 mechanical spec) lies "
+        "inside U2's antenna keep-out. Rev B: NPTH, zero copper - only the "
+        "unavoidable drilled notch remains (standoff/screw = accepted risk R3).",
+}
 
 
 def excluded(v):
