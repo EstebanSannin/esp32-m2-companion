@@ -3,11 +3,15 @@
 HW := hardware
 UV := cd $(HW) && uv run
 
-.PHONY: check netlist bom sch svg render datasheet 3d fab clean
+.PHONY: check drc netlist bom sch svg render datasheet 3d fab clean
 
 # ERC + netlist + BOM: run after every schematic-source change.
 check:
 	$(UV) python design.py
+
+# DRC gate: fails on any non-excluded violation (tools/check_drc.py).
+drc:
+	$(UV) python tools/check_drc.py
 
 # Human-readable KiCad schematic (.kicad_sch + PDF with title block).
 sch:

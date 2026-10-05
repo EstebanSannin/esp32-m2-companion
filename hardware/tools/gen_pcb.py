@@ -222,9 +222,10 @@ def write_project(pcb_path):
                     "allow_microvias": False,
                     "max_error": 0.005,
                     "min_clearance": 0.127,
-                    # 0: gold fingers legitimately touch the edge; non-finger
-                    # copper kept off edges by placement - check at GATE 3
-                    "min_copper_edge_clearance": 0.0,
+                    # 0.3 mm (JLCPCB routed edge). Gold fingers get a
+                    # pad-only waiver in the .kicad_dru - never 0 globally
+                    # (rev A's 0.0 hid copper in the B-key notch).
+                    "min_copper_edge_clearance": 0.3,
                     "min_hole_to_hole": 0.25,
                     "min_microvia_diameter": 0.2,
                     "min_microvia_drill": 0.1,
