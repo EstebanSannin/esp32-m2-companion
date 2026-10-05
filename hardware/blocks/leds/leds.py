@@ -9,9 +9,12 @@ on commercial M.2 cards. Owner-caught at Phase 2 review.
 
 Parts: TOGIALED TJ-S1706SW6T side-view LED (body 1.70 x 0.60 x 1.10 mm):
   D3 green C273616 (power), D4 red C273612 (status, active-low on IO48).
-330R series: green InGaN Vf(20mA) is 2.8-3.4 V, so at 3.3 V it runs at
-low current by design (~1-2 mA, still bright: 600 mcd @ 20 mA rating);
-red gets ~3.5 mA. Check brightness at bring-up.
+Series R (rev B): green InGaN Vf(20mA) is 2.8-3.4 V, leaving only
+~0.3-0.6 V headroom at 3.3 V. Rev A's 330R ran it ~1.8 mA nominal /
+~0.5 mA worst case (rail 3.06 V) - visibly dim. R3 = 100R (C22775, Basic):
+~5 mA nominal, ~1-7 mA across Vf bin + rail spread (abs max 30 mA), close
+to the red LED's ~4.5 mA on R4 = 330R so the two look similar. Brightness
+spread is set by the Vf bin, not the resistor - headroom is the limit.
 
 Footprint: custom LED_TJ-S1706_SideView (hardware/kicad/footprints.pretty),
 pads 0.80x0.70, 1.80 mm centre-to-centre, per the datasheet land pattern
@@ -40,7 +43,7 @@ def _led_sideview(color, lcsc, mpn, ref):
 @subcircuit
 def leds(v3v3, gnd, led_status_n):
     # Power LED: +3V3 -> R -> LED -> GND
-    r_pwr = R_0603("330R", lcsc="C23138", mpn="0603WAF3300T5E", ref="R3")
+    r_pwr = R_0603("100R", lcsc="C22775", mpn="0603WAF1000T5E", ref="R3")
     led_pwr = _led_sideview("green", "C273616", "TJ-S1706SW6TGLC2G-A5", "D3")
     r_pwr[1] += v3v3
     r_pwr[2] += led_pwr[2]   # anode
