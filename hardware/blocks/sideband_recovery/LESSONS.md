@@ -18,3 +18,7 @@
   0.5 mm via to L2.
 - 2026-10-06 (rev B, owner decision pending): pin-8 BOOT leg stays dropped
   unless the owner routes it - see ADR 0002 rev-B amendment.
+- 2026-10-06 (rev B, resolves the "pending" line above): pin-8 leg RESTORED
+  (owner). Lesson: "unroutable" was a hand-trace verdict and wrong - a
+  one-net grid probe over all layers with the real clearances found a path
+  in ~4 s. Run a feasibility probe before dropping a net for routability.

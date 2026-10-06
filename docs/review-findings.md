@@ -194,3 +194,15 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
 - 2026-10-06 · Rev B · low · **PROJECT** (labels) · DATASHEET.md calls the
   mounting notch a "plated GND pad"; it never had a net, and in rev B it is
   NPTH. Bottom silk still reads "v1.0 … 2026-08". → Label review (GATE B2).
+- 2026-10-06 · Rev B · medium · **BLOCK sideband_recovery** (owner decision)
+  · M.2 pin-8 (W_DISABLE1_n) BOOT diode-OR leg **restored** (ADR 0002 rev-B
+  amendment). v1 dropped it as "unroutable" on a hand trace; my own rev-B hand
+  trace also called the long run blocked. A one-net feasibility probe found a
+  legal 0.15 mm corridor in seconds. R10 (W_DISABLE1# low at boot → download
+  mode) is live again. **PROCESS candidate:** "Before declaring a net
+  unroutable, run a one-net feasibility search with all other copper fixed;
+  a human trace of a dense corner is not evidence."
+- 2026-10-06 · Rev B · low · **PROCESS** (tooling) · KiCad 9.0.9's bundled
+  macOS Python segfaults in interpreter finalization after every pcbnew
+  script → "Python quit unexpectedly" dialog per run (owner-reported; results
+  unaffected). → All pcbnew tools exit via `kicad_exit.hard_exit()`.
