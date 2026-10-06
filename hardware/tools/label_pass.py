@@ -102,6 +102,18 @@ class Side:
         hit.BooleanIntersection(self.obs)
         return area(hit) == 0
 
+    def fits_glyphs(self, t):
+        """Exact test on the stroked glyph outlines (+0.15 to pads is in obs)."""
+        g = pcbnew.SHAPE_POLY_SET()
+        t.TransformShapeToPolygon(g, self.silk, 0, ERR, pcbnew.ERROR_OUTSIDE)
+        out = pcbnew.SHAPE_POLY_SET()
+        t.TransformShapeToPolygon(out, self.silk, 0, ERR, pcbnew.ERROR_OUTSIDE)
+        out.BooleanSubtract(self.allowed)
+        if area(out) > 1e6:
+            return False
+        g.BooleanIntersection(self.obs)
+        return area(g) == 0
+
     def take(self, bb):
         self.obs.BooleanAdd(rect_poly(bb, 0.12))
 
@@ -297,15 +309,23 @@ def stage_place():
         b.Add(t)
         grp.AddItem(t)
 
-    # J3/J4 legends (replace the bare refs; refs move to F.Fab)
+    # J3/J4 legends (replace the bare refs; refs move to F.Fab): centred under
+    # their own connector, first legal y below the pins, checked against the
+    # real glyph outlines (bounding boxes are ~1.8x the 0.8 mm text height,
+    # too coarse next to the B-key notch). Separate legends, not one string.
     for ref, legend in J_LEGEND.items():
         fp = b.FindFootprintByReference(ref)
         fp.Reference().SetLayer(pcbnew.F_Fab)
         t = board_text(legend, pcbnew.F_SilkS, REF_H, REF_T)
-        cy = fp.GetCourtyard(pcbnew.F_CrtYd)
-        if place(sides[pcbnew.F_SilkS], t, cy.BBox(), fp.GetPosition(),
-                 rots=(0,), own=ref):
-            commit(t)
+        pads = [p for p in fp.Pads() if p.GetNumber().isdigit()]
+        cx = sum(p.GetPosition().x for p in pads) // len(pads)
+        y0 = max(p.GetBoundingBox().GetBottom() for p in pads)
+        for k in range(60):
+            t.SetPosition(pcbnew.VECTOR2I(cx, y0 + mm(0.45 + 0.02 * k)))
+            if sides[pcbnew.F_SilkS].fits_glyphs(t):
+                sides[pcbnew.F_SilkS].take(t.GetBoundingBox())
+                commit(t)
+                break
         else:
             failed.append(f"{ref} legend '{legend}'")
 
