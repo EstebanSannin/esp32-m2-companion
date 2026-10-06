@@ -26,7 +26,9 @@ Figure 21 and docs/pinmap.md:
   center — OK. Upstream's plated Ø5.5 pad + B.Cu ring/square (no net)
   removed in rev B: half-cut plated hole = $38 castellation fee
   (m2_keyb_edge/LESSONS.md).
-- CHANGED vs upstream (rev B): mounting semicircle is **NPTH**, no copper.
+- CHANGED vs upstream (rev B): mounting semicircle is an **Edge.Cuts arc**
+  (routed with the outline) — no drill hit, no plating, no copper. File
+  upgraded to the KiCad 9 format (`kicad-cli fp upgrade`).
 - CHANGED vs upstream: pads renamed `P$n` → `n` so pcbnew matches the
   SKiDL netlist pin numbers; module renamed.
 

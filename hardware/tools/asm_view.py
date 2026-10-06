@@ -198,6 +198,17 @@ def main():
                     v.out.append(f'<text x="{x + r + 2:.2f}" y="{y - 2:.2f}" font-size="3" '
                                  f'fill="#c0392b" font-family="sans-serif">Ø{mm(p.GetDrillSize().x):.1f} '
                                  f'NPTH — NOT plated, no copper</text>')
+    # routed mounting notch: the R1.75 arc in J1's outline (no drill since rev B)
+    for fp in b.GetFootprints():
+        for g in fp.GraphicalItems():
+            if (g.GetLayer() == pcbnew.Edge_Cuts and g.GetShapeStr() == "Arc"
+                    and abs(mm(g.GetRadius()) - 1.75) < 0.01):
+                c = g.GetCenter()
+                x, y = v.P(mm(c.x), mm(c.y))
+                v.out.append(f'<text x="{x + 1.75 * SCALE + 2:.2f}" y="{y + 3:.2f}" '
+                             f'font-size="3" fill="#c0392b" font-family="sans-serif">'
+                             f'R1.75 mounting notch — routed with the outline, '
+                             f'not plated, no copper</text>')
     for t in b.GetTracks():
         if t.GetClass() == "PCB_VIA":
             key = ("PTH via", round(mm(t.GetDrillValue()), 2))
@@ -217,8 +228,8 @@ def main():
     fab_notes = ["4 layers SIG/GND/PWR/SIG, 0.80 mm, stackup JLC04081H-3313",
                  "ENIG; hard-gold fingers; NO bevel (board < 50 mm):",
                  "  hand-chamfer the leading edge before first insertion",
-                 "Mounting notch: NPTH (separate -NPTH.drl) - do NOT",
-                 "  select castellated holes",
+                 "Mounting notch: routed in the outline - no drill,",
+                 "  no plating: do NOT select castellated holes",
                  "Min track/space 0.127 mm (5 mil), min drill 0.30 mm",
                  "Vias tented both sides",
                  "Assembly: both sides; 22 placed parts; DNP R5 R6 C8 C9",

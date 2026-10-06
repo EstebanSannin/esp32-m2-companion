@@ -7,7 +7,7 @@ TOP_CALLOUTS = [
     ("J4", "J4 - UART / SPI / GPIO (JST SH-8, top entry)"),
     ("J3", "J3 - Qwiic / STEMMA-QT I2C (JST SH-4, top entry)"),
     ("J1", "M.2 Key-B card edge (75-pos, USB 2.0 + sidebands)"),
-    ("SCR", "Mounting notch (M.2 screw, NPTH - no copper)"),
+    ("SCR", "Mounting notch (M.2 screw; routed, no copper)"),
 ]
 BOT_CALLOUTS = [
     ("U1", "USBLC6-2 USB ESD protection"),

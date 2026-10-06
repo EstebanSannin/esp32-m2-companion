@@ -224,10 +224,10 @@ def main():
     # 7. fab/assembly notes
     w("## 7. Fab and assembly notes\n")
     w("- `fab/README.md` — rewritten for rev B (order settings, castellated = No, "
-      "NPTH drill file, polarity-preview procedure, ORDER BLOCKED semantics).")
+      "routed mounting notch, polarity-preview procedure, ORDER BLOCKED semantics).")
     w("- `docs/review/rev_b_drawings.pdf` sheet 1 notes (assembly) and sheet 2 "
       "notes (fab) — please review the wording.")
-    w("- `DATASHEET.md` — regenerated: pin 8 restored, NPTH notch, no bevel, "
+    w("- `DATASHEET.md` — regenerated: pin 8 restored, routed notch, no bevel, "
       "silk markings for LEDs/TPs.")
     OUT.write_text("\n".join(L) + "\n")
     print("wrote", OUT)

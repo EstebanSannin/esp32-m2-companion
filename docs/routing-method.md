@@ -91,7 +91,6 @@ individual DRC violations.
   schematic tweaks so tracks survive.
 - DRC headless: `make drc` (fails on any non-excluded violation or unconnected item; exclusions with reasons in `tools/check_drc.py`).
 - Ratsnest count (real unrouted): `board.GetConnectivity().GetUnconnectedCount(True)`.
-- Known-benign DRC on this board *(Rev B)*: 2 documented exclusions — the
-  NPTH screw notch inside the module's antenna keep-out, and a
+- Known-benign DRC on this board *(Rev B)*: 1 documented exclusion — a
   serialization-only U2 library mismatch. Never waive a whole footprint:
   v1's J1-wide edge-clearance waiver hid a via milled away in the notch.

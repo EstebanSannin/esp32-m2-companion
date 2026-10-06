@@ -59,7 +59,7 @@ DRC rules alongside).
 3. Residual DRC: ~12 courtyard-overlap infos (sub-0.4 mm kisses, fine-tune
    while routing) + 3 J1-internal artifacts (footprint's own mounting pad
    inside its own screw keep-out — benign). No shorts, no clearance errors.
-   *(Rev B: the mounting pad is gone — notch NPTH, no copper; `make drc`
+   *(Rev B: the mounting pad is gone — the notch is routed in the outline, no copper; `make drc`
    is 0 violations with 2 documented exclusions.)*
 4. Bevel/panel decision (risks R2): *(Resolved: no bevel — square edge,
    hand-chamfer before first insertion; fab/README.md.)*

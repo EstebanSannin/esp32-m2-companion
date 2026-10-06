@@ -43,7 +43,7 @@ there — nothing new functionally:
 | D3/D4 LEDs assembled 180° reversed (dark) | JLC CPL rotation +180°; `make fab` blocks the order until each polarized part is verified against JLC's preview; silk cathode bar added |
 | Green LED under-driven | R3 330 Ω → 100 Ω |
 | USB D− via milled away in the B-key notch (needed a jumper) | vias moved out of the notch ([before/after](docs/img/revb_notch_corner.png)) |
-| Plated mounting notch → $38 castellation fee | NPTH, no copper |
+| Plated mounting notch → $38 castellation fee | routed notch in the outline: not plated, no copper, no drill |
 | USBLC6 and EN-RC capacitor grounds floating | dedicated GND vias |
 | DRC waiver hid the notch problem | edge-clearance waiver scoped to the finger pads; `make drc` gate |
 

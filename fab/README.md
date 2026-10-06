@@ -5,7 +5,7 @@ JLCPCB's [instant quote](https://cart.jlcpcb.com/quote):
 
 | File | JLCPCB slot |
 |---|---|
-| `esp32_m2_companion_gerbers.zip` | **Gerber file** (PCB tab) — includes separate `-PTH.drl` and `-NPTH.drl` |
+| `esp32_m2_companion_gerbers.zip` | **Gerber file** (PCB tab) — drill as separate PTH / NPTH files |
 | `esp32_m2_companion_bom_jlc.csv` | **BOM** (SMT Assembly tab) — Comment / Designator / Footprint / LCSC# |
 | `esp32_m2_companion_cpl_jlc.csv` | **CPL / centroid** (SMT Assembly tab) — 22 placed parts |
 
@@ -34,8 +34,9 @@ uploaded for that preview.
   90° finger edge. Before first insertion, lightly **hand-chamfer the leading
   edge** (~45°, ~0.2–0.3 mm, both faces, leading corner only — do not sand the
   contact tips) so it seats without stressing the host M.2 socket.
-- **Castellated holes: No** — rev B. The M.2 mounting notch is now **NPTH**
-  (no copper, own `-NPTH.drl`). v1 had it plated → JLC flagged castellation,
+- **Castellated holes: No** — rev B. The M.2 mounting notch is now **part of
+  the board outline** (routed with it): no drill hit, no plating, no copper.
+  v1 had it as a plated hole on the edge → JLC flagged castellation,
   $38 setup fee. If JLC's DFM still flags castellation, the notch was plated
   somewhere — stop and check, don't pay the fee.
 - Confirm Production File: **Yes**; Deburring/Edge rounding: Yes; Mark: Remove.

@@ -6,7 +6,7 @@ Pin table: docs/pinmap.md §1, cross-checked
 
 The edge is a PCB feature (no BOM part). Footprint: vendored
 esp32m2:M2_KeyB_2242_EdgeFingers (timonsku-derived, spec-verified -
-kicad/esp32m2.pretty/PROVENANCE.md). Rev B: mounting notch NPTH (no copper),
+kicad/esp32m2.pretty/PROVENANCE.md). Rev B: mounting notch routed in the outline (no drill, no copper),
 fingers not bevelled (JLC < 50 mm limit), and no via may sit in the B-key
 notch (v1's D- via was milled away) - DRC edge clearance 0.3 mm, waiver
 for the finger pads only.

@@ -236,7 +236,7 @@ FSPI IOMUX group (up to 80 MHz).
 | Max height, top side | 4.2 mm (JST SH headers) · ≈6.3 mm with plug mated |
 | Max height, bottom side | ≤1.5 mm (compliant with H4.2 socket B-side envelope) |
 | Socket coverage zone | first 4.8 mm from card edge kept component-free (both faces) |
-| Mounting | M.2 screw, Ø3.5 semicircular notch, non-plated (NPTH), no copper |
+| Mounting | M.2 screw, Ø3.5 semicircular notch routed in the outline — not plated, no copper |
 | Component sides | SMT both sides (top: module + connectors; bottom: passives) |
 
 ## LEDs & test points

@@ -56,6 +56,7 @@ at defined gates before any money is spent.
 - Edge connector: gold fingers per M.2 spec geometry, **ENIG/hard-gold finger
   option + 45° edge bevel** must be selected at JLCPCB order time. Confirm
   JLCPCB supports gold fingers on 0.8 mm 4-layer — adjust stackup if not.
+  *(Amended: no bevel — see §13 A1.)*
 - Layer count: 4 layers (SIG / GND / PWR / SIG) — makes USB diff-pair
   referencing and RF keep-out trivial; cost difference at JLCPCB is small.
 - Design rules: JLCPCB standard capability (≥ 5/5 mil trace/space to be safe,
@@ -174,6 +175,7 @@ review. Never proceed past a gate without explicit approval.
   → **GATE 3: owner approves layout.**
 - **Phase 3 — Fab package.** Gerbers/BOM/CPL, JLCPCB order checklist
   (0.8 mm, 4-layer, gold fingers + bevel, assembly side, part substitutions).
+  *(Bevel: see §13 A1.)*
   → **GATE 4: owner places order.**
 - **Phase 4 — Firmware & bring-up plan.** Firmware ready before boards
   arrive; `docs/bringup.md` = step-by-step first-power checklist (visual
@@ -221,6 +223,19 @@ review. Never proceed past a gate without explicit approval.
 4. When the owner relays findings from an external senior designer review,
    their categorization ("wrong" / "works but unprofessional" / "fragile at
    scale") is preserved in the log — never flattened.
+
+
+## 13. Amendments (owner-approved, dated)
+
+- **A1 (2026-10-06, owner): no edge bevel.** JLCPCB cannot bevel boards
+  smaller than 50 × 50 mm (quote UI, confirmed 2026-08-30); v1 shipped with a
+  square finger edge and inserted fine in Mallow. Fingers stay ENIG/hard-gold,
+  unbevelled; hand-chamfer the leading edge before first insertion
+  (`fab/README.md`). Supersedes the bevel wording in §5 and §9 Phase 3.
+- **A2 (2026-10-06, owner): revision naming.** A fix-only respin keeps the
+  version number and adds a revision letter (**v1.0 Rev B**); the major
+  number is reserved for feature additions. Every fabricated revision is git-
+  tagged on the exact commit whose fab package was ordered.
 
 ---
 
