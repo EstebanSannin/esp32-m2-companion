@@ -240,3 +240,9 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
 - 2026-10-06 · Rev B labels · low · **PROCESS** · kicad-cli's PDF plot has no
   scale option, so assembly drawings of a 22×42 mm card are unreadable on A4.
   → `tools/asm_view.py` draws scaled assembly/fab sheets from the board.
+- 2026-10-06 · GATE B2 · low · **PROJECT** (owner decision) · Unit serial
+  number = ESP32-S3 factory base MAC, externally readable from the module's
+  Data Matrix (`<6-digit prefix><MAC>`; owner scan of a v1 module:
+  `1326113C0F027321E4`). No PCB-printed serial / JLC barcode. Mapping
+  inferred (Espressif OUI, neighbouring MAC to the bring-up unit), to be
+  confirmed on one unit at rev-B bring-up (docs/bringup.md).

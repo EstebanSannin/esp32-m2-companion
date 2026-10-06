@@ -253,6 +253,20 @@ The LEDs are side-view parts emitting out of the left card edge — visible
 with the card in the slot regardless of mounting orientation. Test points
 are on the bottom side (bench use).
 
+## Unit identification
+
+Each card's serial number is the ESP32-S3 **factory base MAC** (eFuse,
+unique, read-only), the same value from both sides:
+
+| Where | How |
+|---|---|
+| Printed | Data Matrix (ECC 200, not QR) on the module can: `<6-digit prefix><MAC>`, e.g. `132611` + `3C0F027321E4`. Needs a Data Matrix-capable scanner app. |
+| Over USB | `esptool.py --port /dev/ttyACM0 read_mac`; also the USB-Serial-JTAG serial-number string (`/dev/serial/by-id/…`) |
+| In firmware | `esp_efuse_mac_get_default()` (ESP-IDF) / `machine.unique_id()` (MicroPython) |
+
+No separate serial is printed on the PCB. (Prefix/MAC split inferred
+2026-10-06 from one module; confirmed on a single unit at rev-B bring-up.)
+
 ## Host compatibility
 
 | Host | Status |

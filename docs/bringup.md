@@ -134,3 +134,15 @@ verify pad size/pitch against the part terminals so it reliably solders; confirm
 emit-face orientation on a sample; consider a more standard/forgiving LED
 package. Also drop the green series resistor (R3) from 330 Ω toward ~68–100 Ω
 (green runs sub-mA at 3.3 V by design). See `hardware/blocks/leds/`.
+
+## Rev B — unit identification check (first rev-B board)
+
+Owner decision 2026-10-06: the unit serial = ESP32-S3 base MAC, printed as the
+module's Data Matrix (format `<6-digit prefix><MAC>`, e.g. a v1 module read
+`132611` + `3C0F027321E4`). Inferred from one module whose MAC could not be
+read (v1 board without the D− jumper). **Confirm once on a single unit:**
+
+1. Scan the module Data Matrix (Data Matrix-capable app; phone camera QR
+   readers don't decode it).
+2. `esptool.py --port /dev/ttyACM0 read_mac` on the same card.
+3. Last 12 hex digits of (1) must equal (2). Record both here.
