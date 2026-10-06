@@ -103,25 +103,26 @@ def preroute_usb(board):
     lengths = {}
     F, B = pcbnew.F_Cu, pcbnew.B_Cu
 
-    # --- Leg 1: fingers (F) -> staggered vias -> U1 pins 1/3 (B) ---
+    # --- Leg 1: fingers (F) -> vias -> U1 pins 1/3 (B) ---
     # U1 (flipped) has pins 1/2/3 stacked on its LEFT column (x 106.56,
-    # y 144.25/143.30/142.35). D+ drops straight, D- fans left and routes
-    # around pad 1 to reach pad 3. Via centers 2.25 mm apart.
-    # Known-good USB pair (do NOT perturb - fanning D+ west broke the pair).
-    vp = (j7[0], 147.0)
-    vn = (105.55, 146.8)  # clears U1 pad-1 west edge (105.90) and C4
-    lengths["P1"] = add_track(board, n_edge_p, F, [j7, vp])
-    # exit pad 9 downward past the finger row (pads end y 147.5) BEFORE
-    # fanning left, so the diagonal clears GND finger pad 11
-    lengths["N1"] = add_track(board, n_edge_n, F,
-                              [j9, (j9[0], 147.3), vn])
-    add_via(board, n_edge_p, *vp)
-    add_via(board, n_edge_n, *vn)
+    # y 144.25/143.30/142.35). Rev B: rev A put the D- via at (105.55,
+    # 146.8) - INSIDE the B-key notch cut-out (milled away on v1). All
+    # corner vias now live in the one free band y ~146.4-147.2 between the
+    # finger tips (147.5) and the In2 +3V3_M2 feed (y 145.9), >= 0.3 mm
+    # from the notch, leaving a B.Cu escape for pin 8 (W_DISABLE1_n,
+    # restored) between them. 0.45 mm vias (JLC min) to fit the band.
+    vp = (108.10, 146.95)
+    vn = (107.10, 146.95)
+    lengths["P1"] = add_track(board, n_edge_p, F, [j7, (j7[0], 147.5), vp])
+    lengths["N1"] = add_track(board, n_edge_n, F, [j9, (j9[0], 147.5), vn])
+    add_via(board, n_edge_p, *vp, d=0.45)
+    add_via(board, n_edge_n, *vn, d=0.45)
     lengths["P1"] += add_track(board, n_edge_p, B,
-                               [vp, (106.95, 144.85), (u1_1[0], 144.85),
-                                u1_1])
+                               [vp, (vp[0], 145.5), (107.45, 144.85),
+                                (u1_1[0], 144.85), u1_1])
     lengths["N1"] += add_track(board, n_edge_n, B,
-                               [vn, (vn[0], u1_3[1]), u1_3])
+                               [vn, (106.6, 146.45), (105.55, 145.4),
+                                (105.55, u1_3[1]), u1_3])
 
     # --- Leg 2: U1 pins 6/4 (B, right column) -> R7/R8 pin 1 (B) ---
     # Exit right of U1, drop, then two horizontal corridors in the free
@@ -266,8 +267,8 @@ def more_fixups(board):
     add_track(board, io0, pcbnew.B_Cu,
               [d2_3, (r2_2[0], d2_3[1]), r2_2], width=0.15)
 
-    # (M.2 pin 8 / W_DISABLE1_n BOOT leg was dropped in v1 - ADR 0002
-    # amendment; nothing to route for it.)
+    # (M.2 pin 8 / W_DISABLE1_n BOOT leg: dropped in v1, restored in rev B
+    # - routed in preroute_fixups.)
 
 
 def netless_pad_via_keepouts(board):
@@ -326,12 +327,34 @@ def preroute_fixups(board):
     add_track(board, g5, pcbnew.B_Cu,
               [j20, (104.5, 147.2), (103.5, 146.6), (103.5, d2_1[1]), d2_1],
               width=0.15)
-    # J1 pad 11 (F-side GND finger) is walled off from the F pour by the
-    # USB fan: stub west at y 147.4 (above the fan diagonal) into open pour
+    # J1 pad 11 (F-side GND finger, the USB pair's neighbour). Rev A ran a
+    # stub west across the B-key notch "into open pour" - the milling cut
+    # it and J1.11 floated. Rev B: north between the notch (>=0.3 mm) and
+    # the D- via (hole clearance 0.255), then west to the GND via.
     gnd = net(board, "GND")
     j11 = pad_pos(board, "J1", 11)
     add_track(board, gnd, pcbnew.F_Cu,
-              [(j11[0], 147.5), (j11[0], 147.45), (105.0, 147.45)],
+              [(j11[0], 147.5), (106.62, 147.3), (106.62, 146.1),
+               (105.3, 146.1), (104.99, 145.3), (104.99, 144.964)],
+              width=0.15)
+    # M.2 pin 8 (W_DISABLE1_n) -> D2.2: BOOT diode-OR leg restored in rev
+    # B. Escape via between the USB vias, In1 west, via at (100.8, 143.1),
+    # B.Cu through the D1.3 / D2-column gap (corridor found by a one-net
+    # feasibility probe; threads EN via, IO14 via, D1.3's rounded corner).
+    w8 = net(board, "W_DISABLE1_n")
+    add_track(board, w8, pcbnew.B_Cu,
+              [pad_pos(board, "J1", 8), (107.5, 147.5), (107.6, 147.3),
+               (107.6, 146.45)], width=0.15)
+    add_via(board, w8, 107.6, 146.45, d=0.45)
+    add_track(board, w8, pcbnew.In1_Cu,
+              [(107.6, 146.45), (107.2, 146.45), (105.2, 144.45),
+               (102.15, 144.45), (100.8, 143.1)], width=0.15)
+    add_via(board, w8, 100.8, 143.1, d=0.45)
+    add_track(board, w8, pcbnew.B_Cu,
+              [(100.8, 143.1), (98.9, 141.2), (98.9, 141.15), (98.85, 141.1),
+               (98.85, 141.05), (98.8, 141.0), (98.8, 140.75), (99.15, 140.4),
+               (99.2, 140.4), (99.55, 140.05), (99.55, 140.0), (99.6, 139.95),
+               (99.6, 139.55), (100.1, 139.05), pad_pos(board, "D2", 2)],
               width=0.15)
     # solid zone connection for J1 GND fingers (kills starved-thermal too)
     j1 = board.FindFootprintByReference("J1")
