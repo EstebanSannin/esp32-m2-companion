@@ -3,7 +3,7 @@
 HW := hardware
 UV := cd $(HW) && uv run
 
-.PHONY: check drc netlist bom sch svg render layers datasheet 3d fab drawings labels clean
+.PHONY: check drc netlist bom sch svg render layers views datasheet 3d fab drawings labels clean
 
 # ERC + netlist + BOM: run after every schematic-source change.
 check:
@@ -45,6 +45,10 @@ render:
 	$(KCLI) pcb render --rotate "-35,20,30" --zoom 0.85 --quality high --width 1600 --height 1200 --output docs/img/board_iso.png $(HW)/kicad/esp32_m2_companion.kicad_pcb
 	$(KCLI) pcb render --side top --quality high --width 1200 --height 1600 --output docs/img/board_top.png $(HW)/kicad/esp32_m2_companion.kicad_pcb
 	$(KCLI) pcb render --side bottom --quality high --width 1200 --height 1600 --output docs/img/board_bottom.png $(HW)/kicad/esp32_m2_companion.kicad_pcb
+
+# Datasheet figures: labeled top/bottom views + mechanical drawing (docs/img/).
+views:
+	cd $(HW) && $(KPY) tools/gen_views.py
 
 # Per-layer copper views for docs/stackup.md (docs/img/layers/).
 LAYERS := 1_top_signal:F.Cu 2_gnd_plane:In1.Cu 3_pwr_plane:In2.Cu 4_bottom_signal:B.Cu
