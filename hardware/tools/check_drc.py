@@ -20,10 +20,6 @@ OUT = HERE / "build" / "drc.json"
 
 # (violation type, substring of any item description) -> reason
 EXCLUDE = {
-    ("items_not_allowed", "NPTH pad of J1"):
-        "M.2 screw notch (top-edge centre, fixed by M.2 mechanical spec) lies "
-        "inside U2's antenna keep-out. Rev B: NPTH, zero copper - only the "
-        "unavoidable drilled notch remains (standoff/screw = accepted risk R3).",
     ("lib_footprint_mismatch", "Footprint U2"):
         "Serialization-only: board U2 vs esp32m2.pretty (KiCad-6 format) "
         "compared by script 2026-10-06 - 62 pads (pos/size/drill/layers/"
