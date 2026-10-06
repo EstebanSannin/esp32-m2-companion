@@ -185,9 +185,9 @@ def make_mechanical():
     dim_v(svg, bl - 26, 60, 60 + 42 * S, "42.00")
     dim_h(svg, bl + 16 * S, bl + 17.2 * S, 60 + 38.2 * S, "")
     svg.append(f'<text x="{bl+22*S+14}" y="{60+40.5*S}" font-size="13">Key B notch</text>')
-    svg.append(f'<text x="{bl+22*S+14}" y="{60+1.0*S+4}" font-size="13">Mounting notch Ø3.50</text>')
+    svg.append(f'<text x="{bl+22*S+14}" y="{60+1.0*S+4}" font-size="13">Mounting notch Ø3.50 NPTH</text>')
     svg.append(f'<line x1="{bl+11*S+1.75*S}" y1="{60+1.0*S}" x2="{bl+22*S+10}" y2="{60+1.0*S}" stroke="#888" stroke-width="1"/>')
-    svg.append(f'<text x="{bl+22*S+14}" y="{60+40.9*S+18}" font-size="13">Gold fingers 0.5 mm pitch, bevelled</text>')
+    svg.append(f'<text x="{bl+22*S+14}" y="{60+40.9*S+18}" font-size="13">Gold fingers 0.5 mm pitch, not bevelled</text>')
     svg.append('</svg>')
     (IMG / "mechanical.svg").write_text("\n".join(svg))
     subprocess.run(["rsvg-convert", "-w", "1520", "-f", "png", "-o",
