@@ -37,8 +37,8 @@ uploaded for that preview.
 - **Castellated holes: No** — rev B. The M.2 mounting notch is now **part of
   the board outline** (routed with it): no drill hit, no plating, no copper.
   v1 had it as a plated hole on the edge → JLC flagged castellation,
-  $38 setup fee. If JLC's DFM still flags castellation, the notch was plated
-  somewhere — stop and check, don't pay the fee.
+  $38 setup fee. Rev B has no plated feature on any board edge, so if JLC's
+  DFM flags castellation, something is wrong — stop and check, don't pay.
 - Confirm Production File: **Yes**; Deburring/Edge rounding: Yes; Mark: Remove.
 - **Assembly: both sides**, 5 pcs
 - 7 Extended parts (feeder fee ~$3 each): U2 module, U1 USBLC6 (ST C7519),
