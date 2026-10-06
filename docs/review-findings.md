@@ -246,3 +246,11 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   `1326113C0F027321E4`). No PCB-printed serial / JLC barcode. Mapping
   inferred (Espressif OUI, neighbouring MAC to the bring-up unit), to be
   confirmed on one unit at rev-B bring-up (docs/bringup.md).
+- 2026-10-06 · GATE B2 · low · **PROJECT** (owner decisions) · Labels
+  approved with: L1 `N$1`/`N$2` → `LED_PWR_A`/`LED_STATUS_A`; L2 `IO0_BOOT`
+  → `IO0` (naming rule); L3 connector legends; L4 TP function labels;
+  L6 R2/U2 fab-only; L7 0.8 mm text. L5: board/version label **"v1.0 Rev B"**
+  — rev B is fixes only; the major number is reserved for feature additions
+  (supersedes the "tag v2.0" in the rev-B brief). Applied in d344173.
+  **PROCESS candidate:** "Name every net in schematic-as-code — an
+  auto-generated net name in a review artifact is a missing label."
