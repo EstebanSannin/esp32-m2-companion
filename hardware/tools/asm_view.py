@@ -205,7 +205,7 @@ def main():
                     and abs(mm(g.GetRadius()) - 1.75) < 0.01):
                 c = g.GetCenter()
                 x, y = v.P(mm(c.x), mm(c.y))
-                v.out.append(f'<text x="{x + 1.75 * SCALE + 2:.2f}" y="{y + 3:.2f}" '
+                v.out.append(f'<text x="{x - 22:.2f}" y="{y - 5:.2f}" '
                              f'font-size="3" fill="#c0392b" font-family="sans-serif">'
                              f'R1.75 mounting notch — routed with the outline, '
                              f'not plated, no copper</text>')
