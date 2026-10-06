@@ -76,8 +76,8 @@ def mm(v):
 def main():
     comps, nets = parse_netlist()
     b = pcbnew.LoadBoard(str(PCB))
-    rev = subprocess.run(["git", "describe", "--tags", "--always", "--dirty"],
-                         cwd=ROOT, capture_output=True, text=True).stdout.strip()
+    from gitrev import gitrev
+    rev = gitrev()
     pol = json.loads((HERE / "build" / "fab" / "polarity.json").read_text()) \
         if (HERE / "build" / "fab" / "polarity.json").exists() else {"parts": []}
     polrow = {p["ref"]: p for p in pol["parts"]}

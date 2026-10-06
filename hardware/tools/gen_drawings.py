@@ -28,8 +28,8 @@ def main():
     if OUT.exists():
         shutil.rmtree(OUT)
     OUT.mkdir(parents=True)
-    rev = subprocess.run(["git", "describe", "--tags", "--always", "--dirty"],
-                         cwd=ROOT, capture_output=True, text=True).stdout.strip()
+    from gitrev import gitrev
+    rev = gitrev()
     rev = f"v1.0 Rev B · {rev}"
     date = datetime.date.today().isoformat()
     subprocess.run([str(KPY), str(HERE / "tools" / "asm_view.py"), str(OUT),
