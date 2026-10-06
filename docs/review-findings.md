@@ -254,3 +254,12 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   (supersedes the "tag v2.0" in the rev-B brief). Applied in d344173.
   **PROCESS candidate:** "Name every net in schematic-as-code — an
   auto-generated net name in a review artifact is a missing label."
+- 2026-10-06 · Rev B · low · **PROCESS** (self-caught, **corrects my own
+  earlier claim**) · D3/D4 on the board had **no library nickname**
+  (`"LED_TJ-S1706_SideView"` instead of `esp32_m2_companion:…`), so KiCad
+  could not link them and DRC library parity silently skipped them. My
+  statements in ca83220 / 28ceb78 that "DRC library parity confirms" the LED
+  re-sync were therefore **unverified**. → Linked; parity now actually checks
+  them and passes (graphics, cathode bar, 3D model). All footprints now carry
+  a library nickname. **PROCESS candidate:** "Before trusting a parity check,
+  confirm every footprint is linked to a library (`lib:name` FPID)."

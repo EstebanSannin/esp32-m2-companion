@@ -1,0 +1,7 @@
+#VRML V2.0 utf8
+# TOGIALED TJ-S1706 side-view LED, simplified (1.70 x 0.60 x 1.10 mm).
+# Generated for esp32-m2-companion rev B; lens = emitting face (footprint +y).
+Transform { translation 0.0000 0.0000 0.2165 children [ Shape { appearance Appearance { material Material { diffuseColor 0.95 0.95 0.92 specularColor 0.2 0.2 0.2 shininess 0.3 transparency 0.0 } } geometry Box { size 0.5748 0.2362 0.4331 } } ] }
+Transform { translation 0.0000 -0.1201 0.2382 children [ Shape { appearance Appearance { material Material { diffuseColor 1.0 1.0 0.85 specularColor 0.6 0.6 0.6 shininess 0.8 transparency 0.35 } } geometry Box { size 0.4528 0.0047 0.2382 } } ] }
+Transform { translation -0.3110 0.0000 0.0787 children [ Shape { appearance Appearance { material Material { diffuseColor 0.75 0.75 0.78 specularColor 0.9 0.9 0.9 shininess 0.9 transparency 0.0 } } geometry Box { size 0.0472 0.2244 0.1575 } } ] }
+Transform { translation 0.3110 0.0000 0.0787 children [ Shape { appearance Appearance { material Material { diffuseColor 0.75 0.75 0.78 specularColor 0.9 0.9 0.9 shininess 0.9 transparency 0.0 } } geometry Box { size 0.0472 0.2244 0.1575 } } ] }

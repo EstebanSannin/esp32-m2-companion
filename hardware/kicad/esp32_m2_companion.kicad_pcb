@@ -5452,7 +5452,7 @@
 			)
 		)
 	)
-	(footprint "LED_TJ-S1706_SideView"
+	(footprint "esp32_m2_companion:LED_TJ-S1706_SideView"
 		(layer "B.Cu")
 		(uuid "994bd6a1-232c-412c-9542-d60a76a84e41")
 		(at 90.2 126.4 90)
@@ -5634,6 +5634,17 @@
 			(uuid "1f77596b-3821-42b5-a94d-5310b2af2771")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/3dmodels/LED_TJ-S1706_SideView.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "TestPoint:TestPoint_Pad_D1.5mm"
 		(layer "B.Cu")
@@ -6199,7 +6210,7 @@
 		)
 		(embedded_fonts no)
 	)
-	(footprint "LED_TJ-S1706_SideView"
+	(footprint "esp32_m2_companion:LED_TJ-S1706_SideView"
 		(layer "B.Cu")
 		(uuid "b8b1aa2f-e5e4-49a2-b415-3fa007eb5177")
 		(at 90.2 129.8 90)
@@ -6381,6 +6392,17 @@
 			(uuid "e13143e4-5aeb-4251-9160-33a608c68028")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/3dmodels/LED_TJ-S1706_SideView.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "B.Cu")
