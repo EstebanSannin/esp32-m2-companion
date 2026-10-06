@@ -37,14 +37,10 @@ NET_SOURCE = {
     "USB_D_N_ESD": "derived: USB_D_N between U1 and series R8",
     "USB_D_P_ESD": "derived: USB_D_P between U1 and series R7",
     "LED_STATUS_n": "functional (IO48, active-low LED cathode)",
-    "IO0_BOOT": "functional (IO0 strap)", "N$1": "SKiDL auto", "N$2": "SKiDL auto",
+    "LED_PWR_A": "functional (D3 anode / R3, rev B; was auto N$1)",
+    "LED_STATUS_A": "functional (D4 anode / R4, rev B; was auto N$2)",
 }
-FLAGS = {
-    "N$1": "**AUTO-GENERATED name** (D3 anode / R3.2). Proposal: `LED_PWR_A`.",
-    "N$2": "**AUTO-GENERATED name** (D4 anode / R4.2). Proposal: `LED_STATUS_A`.",
-    "IO0_BOOT": "**Rule deviation:** CLAUDE.md lists MCU nets as WROOM pin names "
-                "(`IO0`). Proposal: rename to `IO0` (or keep + document the exception).",
-}
+FLAGS = {}   # rev-B naming deviations all resolved at GATE B2 (L1, L2)
 SILK_MARK = {
     "D3": "silk bar = cathode (pad 1) — NEW in rev B (v1 had none)",
     "D4": "silk bar = cathode (pad 1) — NEW in rev B (v1 had none)",
@@ -94,15 +90,16 @@ def main():
     w("Review artifacts: `docs/review/rev_b_schematic.pdf`, "
       "`docs/review/rev_b_drawings.pdf` (assembly + fab), "
       "`fab/polarity_checklist.md` (after `make fab`).\n")
-    w("## Decisions requested\n")
-    w("| # | Label | Proposal (implemented unless noted) | Alternative |\n|---|---|---|---|")
-    w("| L1 | Nets `N$1`, `N$2` | rename → `LED_PWR_A`, `LED_STATUS_A` (**not yet applied**) | keep auto names |")
-    w("| L2 | Net `IO0_BOOT` | rename → `IO0` per CLAUDE.md (**not yet applied**) | keep, add a documented exception |")
-    w("| L3 | J3/J4 silk | legends `J3 QWIIC` / `J4 UART/SPI` beside the pin-1 arrows; per-pin pinout in DATASHEET | 2-char per-pin labels `GND 3V3 SDA SCL` (J3 pins 2–3 collide with the B-key notch) / `TX RX CS MO CK MI 14 21` (0.05 mm between columns at 0.8 mm) |")
-    w("| L4 | TP1–TP6 silk | function names `EN BOOT TX RX 3V3 GND`; `TPn` on fab layer only | `TPn` on silk (v1) |")
-    w("| L5 | Board text | `ESP32-M2-COMPANION` / `v2.0  Stefano Viola` / `2026-10` | `Rev B` instead of `v2.0` |")
-    w("| L6 | Fab-only refdes | R2, U2 (no legal silk spot; shown on assembly drawing) | shrink below the 0.8 mm board minimum (not recommended) |")
-    w("| L7 | Silk text size | 0.8 mm / 0.153 mm stroke = JLC minimum, board rule `min_text_height` | JLC *recommends* ≥ 1.0 mm — would not fit on this card |")
+    w("## GATE B2 decisions (owner, 2026-10-06)\n")
+    w("| # | Label | Decision |\n|---|---|---|")
+    w("| L1 | Nets `N$1`, `N$2` | renamed → `LED_PWR_A`, `LED_STATUS_A` |")
+    w("| L2 | Net `IO0_BOOT` | renamed → `IO0` (WROOM-1 pin name, CLAUDE.md rule) |")
+    w("| L3 | J3/J4 silk | legends `J3 QWIIC` / `J4 UART/SPI` + pin-1 arrows; per-pin pinout in DATASHEET |")
+    w("| L4 | TP1–TP6 silk | function names `EN BOOT TX RX 3V3 GND`; `TPn` on fab layer |")
+    w("| L5 | Board text | `v1.0 Rev B` — fixes only; major number reserved for feature additions |")
+    w("| L6 | Fab-only refdes | R2, U2 (no legal silk spot) |")
+    w("| L7 | Silk text size | 0.8 mm / 0.153 mm (JLC minimum = board rule) |")
+    w("| L8 | Unit serial | ESP32-S3 base MAC = module Data Matrix; no PCB serial (confirm at bring-up) |")
     w("")
 
     # 1. refdes & values

@@ -28,7 +28,7 @@ F.Fab as the intended direction and should be confirmed on a physical
 sample at GATE 3 (low risk: 120 deg beam + edge placement).
 """
 
-from skidl import Part
+from skidl import Net, Part
 
 from blocks.common import R_0603, _bom, _next_tag, subcircuit
 
@@ -45,13 +45,17 @@ def leds(v3v3, gnd, led_status_n):
     # Power LED: +3V3 -> R -> LED -> GND
     r_pwr = R_0603("100R", lcsc="C22775", mpn="0603WAF1000T5E", ref="R3")
     led_pwr = _led_sideview("green", "C273616", "TJ-S1706SW6TGLC2G-A5", "D3")
+    led_pwr_a = Net("LED_PWR_A")      # named (rev B: was SKiDL auto "N$1")
     r_pwr[1] += v3v3
-    r_pwr[2] += led_pwr[2]   # anode
+    r_pwr[2] += led_pwr_a
+    led_pwr[2] += led_pwr_a  # anode
     led_pwr[1] += gnd        # cathode
 
     # Status LED: +3V3 -> R -> LED -> IO48 (GPIO low = ON)
     r_st = R_0603("330R", lcsc="C23138", mpn="0603WAF3300T5E", ref="R4")
     led_st = _led_sideview("red", "C273612", "TJ-S1706SW6TGLC2R-A5", "D4")
+    led_status_a = Net("LED_STATUS_A")  # named (rev B: was SKiDL auto "N$2")
     r_st[1] += v3v3
-    r_st[2] += led_st[2]     # anode
+    r_st[2] += led_status_a
+    led_st[2] += led_status_a  # anode
     led_st[1] += led_status_n  # cathode -> GPIO sinks

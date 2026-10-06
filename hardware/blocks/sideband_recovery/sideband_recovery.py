@@ -29,7 +29,7 @@ from blocks.common import BAT54A, C_0603, R_0603, TESTPOINT, subcircuit
 
 
 @subcircuit
-def sideband_recovery(en, io0_boot, perst_n, pcie_1_gpio_5, w_disable1_n,
+def sideband_recovery(en, io0, perst_n, pcie_1_gpio_5, w_disable1_n,
                       v3v3, gnd):
     # EN: pull-up + RC delay + diode from PERST#
     r_en = R_0603("10k", lcsc="C25804", mpn="0603WAF1002T5E", ref="R1")
@@ -48,13 +48,13 @@ def sideband_recovery(en, io0_boot, perst_n, pcie_1_gpio_5, w_disable1_n,
     # BOOT (IO0): pull-up + diode-OR from pin 20 (Mallow) and pin 8.
     r_boot = R_0603("10k", lcsc="C25804", mpn="0603WAF1002T5E", ref="R2")
     r_boot[1] += v3v3
-    r_boot[2] += io0_boot
+    r_boot[2] += io0
 
     d_boot = BAT54A(ref="D2")
-    d_boot[3] += io0_boot        # common anode
+    d_boot[3] += io0        # common anode
     d_boot[1] += pcie_1_gpio_5   # Mallow path
     d_boot[2] += w_disable1_n    # generic Key-B hosts (rev B, restored)
 
     # Test points (SPEC 6.7)
     TESTPOINT("TP_EN", ref="TP1")[1] += en
-    TESTPOINT("TP_BOOT", ref="TP2")[1] += io0_boot
+    TESTPOINT("TP_BOOT", ref="TP2")[1] += io0

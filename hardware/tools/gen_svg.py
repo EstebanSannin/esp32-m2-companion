@@ -51,9 +51,9 @@ def blk_usb_esd():
 
 def blk_sideband_recovery():
     from blocks.sideband_recovery.sideband_recovery import sideband_recovery
-    n = _nets("EN", "IO0_BOOT", "PERST_n", "PCIE_1_GPIO_5", "W_DISABLE1_n",
+    n = _nets("EN", "IO0", "PERST_n", "PCIE_1_GPIO_5", "W_DISABLE1_n",
               "+3V3", "GND")
-    sideband_recovery(n["EN"], n["IO0_BOOT"], n["PERST_n"],
+    sideband_recovery(n["EN"], n["IO0"], n["PERST_n"],
                       n["PCIE_1_GPIO_5"], n["W_DISABLE1_n"],
                       n["+3V3"], n["GND"], tag="blk")
 
@@ -61,9 +61,9 @@ def blk_sideband_recovery():
 def blk_esp32s3_companion():
     from blocks.esp32s3_companion.esp32s3_companion import esp32s3_companion
     ios = _nets("IO8", "IO9", "IO10", "IO11", "IO12", "IO13", "IO14", "IO21")
-    n = _nets("+3V3", "GND", "EN", "IO0_BOOT", "USB_D_N", "USB_D_P",
+    n = _nets("+3V3", "GND", "EN", "IO0", "USB_D_N", "USB_D_P",
               "LED_STATUS_n", "TXD0", "RXD0")
-    esp32s3_companion(n["+3V3"], n["GND"], n["EN"], n["IO0_BOOT"],
+    esp32s3_companion(n["+3V3"], n["GND"], n["EN"], n["IO0"],
                       n["USB_D_N"], n["USB_D_P"], n["LED_STATUS_n"], ios,
                       n["TXD0"], n["RXD0"], tag="blk")
 

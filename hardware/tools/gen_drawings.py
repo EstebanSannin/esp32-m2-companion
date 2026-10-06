@@ -30,7 +30,7 @@ def main():
     OUT.mkdir(parents=True)
     rev = subprocess.run(["git", "describe", "--tags", "--always", "--dirty"],
                          cwd=ROOT, capture_output=True, text=True).stdout.strip()
-    rev = f"B (v2.0 draft) · {rev}"
+    rev = f"v1.0 Rev B · {rev}"
     date = datetime.date.today().isoformat()
     subprocess.run([str(KPY), str(HERE / "tools" / "asm_view.py"), str(OUT),
                     "ESP32-M2-COMPANION", rev, date], check=True)

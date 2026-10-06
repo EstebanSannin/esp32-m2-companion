@@ -38,7 +38,7 @@ def _connector_table(part, fn_map):
     rows = []
     for pin in sorted(part.pins, key=lambda p: int(p.num)):
         net = pin.nets[0].name if pin.nets else "—"
-        sig = net.replace("IO0_BOOT", "IO0")
+        sig = net
         rows.append(f"| {pin.num} | {sig} | {fn_map.get(net, '')} |")
     return "\n".join(rows)
 

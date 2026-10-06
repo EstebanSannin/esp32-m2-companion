@@ -259,9 +259,9 @@ def more_fixups(board):
         if p.GetNetname() == "GND":
             p.SetLocalZoneConnection(pcbnew.ZONE_CONNECTION_FULL)
 
-    # IO0_BOOT: D2.3 -> R2.2 lane (locked). U2.27 (module) and TP2 are
+    # IO0 (rev A name IO0_BOOT): D2.3 -> R2.2 lane (locked). U2.27 (module) and TP2 are
     # completed by freerouting on the decompressed placement.
-    io0 = net(board, "IO0_BOOT")
+    io0 = net(board, "IO0")
     d2_3 = pad_pos(board, "D2", 3)
     r2_2 = pad_pos(board, "R2", 2)
     add_track(board, io0, pcbnew.B_Cu,
