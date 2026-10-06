@@ -68,12 +68,18 @@ individual DRC violations.
   re-pour, DRC. Iterate this in **seconds**. This is where convergence
   actually happens.
 
-### 5. The genuinely impossible corner → interactive GUI
+### 5. The "impossible" corner → feasibility probe first, then GUI
 - A 0.5 mm-pitch, 3-conductor interleave where 2 conductors need
   layer-change vias (vias 0.6 mm > 0.5 mm pitch) cannot be placed blindly.
-  On this board that was M.2 pins 7/8/9 (USB D+/W_DISABLE/USB D−). Route it
-  in pcbnew interactively (fan the pair's vias apart a few mm south first),
-  or accept it as an owner GUI task. Do NOT script-iterate it.
+  On this board that was M.2 pins 7/8/9 (USB D+/W_DISABLE/USB D−). Do NOT
+  script-iterate it.
+- *(Rev B)* v1 declared it unroutable and dropped pin 8 — on a hand trace.
+  Rev B routed it: (a) check no via sits inside the B-key notch (v1's D− via
+  was milled away), (b) put the vias in the free band (finger tips ↔ inner
+  plane feed), 0.45 mm vias, (c) run a **one-net feasibility probe** (grid
+  search over all copper layers with the real DRC clearances, everything
+  else fixed) — it found pin 8's corridor in ~4 s. Only if the probe says
+  "no path" is it a GUI / re-placement task.
 
 ## Tooling notes (this repo)
 
@@ -83,7 +89,9 @@ individual DRC violations.
   **destroys routing**; only for pre-route placement changes).
 - Once routing starts, switch to KiCad "Update PCB from netlist" for
   schematic tweaks so tracks survive.
-- DRC headless: `kicad-cli pcb drc --severity-error ...`.
+- DRC headless: `make drc` (fails on any non-excluded violation or unconnected item; exclusions with reasons in `tools/check_drc.py`).
 - Ratsnest count (real unrouted): `board.GetConnectivity().GetUnconnectedCount(True)`.
-- Known-benign DRC on this board: 3 J1 footprint-internal artifacts
-  (mounting-pad/keepout/silk polygons on the edge connector).
+- Known-benign DRC on this board *(Rev B)*: 2 documented exclusions — the
+  NPTH screw notch inside the module's antenna keep-out, and a
+  serialization-only U2 library mismatch. Never waive a whole footprint:
+  v1's J1-wide edge-clearance waiver hid a via milled away in the notch.

@@ -4,7 +4,7 @@ Run: uv run python tools/gen_fab.py   (or `make fab`)
 Outputs into hardware/build/fab/ and copies the 3 upload files to repo fab/.
 
 CPL contains exactly the parts in the generated BOM (build/bom.csv, which
-gen_bom already DNP-filters) - no hand-kept DNP list here (rev A had one;
+gen_bom already DNP-filters) - no hand-kept DNP list here (v1 had one;
 PROCESS rule: DNP is enforced by the BOM generator, not per-tool lists).
 
 Polarity guard (rev B, after the v1 LED reversal):

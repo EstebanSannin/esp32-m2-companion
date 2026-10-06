@@ -21,3 +21,21 @@ Land pattern = 0603 placeholder — verify against the TOGIALED drawing and
 emitting-face orientation on the assembly drawing at GATE 3.
 An earlier note claiming "the card bottom faces up in the Mallow slot" was
 WRONG and is corrected in docs/layout-notes.md.
+
+## Amendment (2026-10-06, owner, v1.0 Rev B): LED assembly orientation + drive
+
+- **v1 was assembled with D3/D4 180° reversed** (dark, reverse-biased). The
+  footprint/netlist were right; JLC/LCSC's rotation convention for
+  C273616/C273612 differs from the footprint and the flipped placement
+  preview was approved by eye. Rev B: CPL rotation = KiCad +180°
+  (`hardware/tools/gen_fab.py` `JLC_ROT`), `make fab` stays ORDER BLOCKED
+  until every polarized part is checked against JLC's preview
+  (`fab/polarity_checklist.md`), and the anode-on-resistor-side rule is
+  asserted by `tools/polarity_report.py`.
+- Land pattern: the 0603 placeholder above was replaced (2026-08-30) by the
+  custom `LED_TJ-S1706_SideView` (1.80 mm c-c, per datasheet); it soldered
+  fine on v1. Rev B adds a **silk cathode bar** at pad 1.
+- Emit face **confirmed on v1 hardware** (a hand-rotated D4 blinks and is
+  visible from the left edge).
+- Series resistors: **R3 (green) 100R C22775** (330R under-drove the green
+  InGaN part at 3.3 V); R4 (red) stays 330R C23138.

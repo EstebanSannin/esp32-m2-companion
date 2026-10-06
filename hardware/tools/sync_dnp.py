@@ -3,7 +3,7 @@
 Run with KiCad's python:  .../python3 tools/sync_dnp.py [--check]
 --check: change nothing, exit 1 if the board disagrees with the netlist.
 
-Rev A: the netlist (and so BOM/CPL) knew R5/R6/C8/C9 were DNP, the board
+v1: the netlist (and so BOM/CPL) knew R5/R6/C8/C9 were DNP, the board
 did not - the assembly drawing would have shown them as fitted.
 """
 

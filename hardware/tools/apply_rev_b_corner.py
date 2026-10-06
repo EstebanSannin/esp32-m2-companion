@@ -1,4 +1,4 @@
-"""ONE-SHOT rev-B board edit (applied 2026-10-06; asserts rev-A geometry, so
+"""ONE-SHOT rev-B board edit (applied 2026-10-06; asserts v1 geometry, so
 it refuses to run twice). Mirrors tools/route.py Leg 1 + preroute_fixups.
 Usage: kicad-python tools/apply_rev_b_corner.py kicad/esp32_m2_companion.kicad_pcb"""
 import sys

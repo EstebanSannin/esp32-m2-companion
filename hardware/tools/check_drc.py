@@ -4,7 +4,7 @@ Run: uv run python tools/check_drc.py   (or `make drc`)
 Report: hardware/build/drc.json
 
 "DRC clean" means zero entries left after EXCLUDE. Every exclusion needs a
-reason; add sparingly. Rev A shipped with 57 unexamined warnings plus a
+reason; add sparingly. v1 shipped with 57 unexamined warnings plus a
 board-wide edge-clearance waiver that hid a real fab defect.
 """
 

@@ -5,7 +5,7 @@ Run with KiCad's python (needs pcbnew); gen_fab.py calls it:
 
 Asserts, per LED: the anode pad (KiCad Device:LED pin 2 = A) shares its net
 with a series resistor AND is the LED pad physically nearer that resistor
-pad - i.e. "+" is on the resistor-side pad by design. Rev A's footprint
+pad - i.e. "+" is on the resistor-side pad by design. v1's footprint
 already satisfied this; the reversal entered at JLC, which is why the
 report also prints where "+" / pin 1 must appear in the JLC preview.
 

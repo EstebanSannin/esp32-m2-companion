@@ -1,6 +1,6 @@
 # ADR 0002 — Recovery sideband mapping & Schottky isolation
 
-Date: 2026-08-28 · Status: **accepted** (GATE 1, owner)
+Date: 2026-08-28 · Status: **accepted** (GATE 1, owner) · amended 2026-08-28, 2026-08-30 (v1), 2026-10-06 (Rev B)
 
 ## Decision
 
@@ -50,7 +50,7 @@ satisfy this. Two host-behavior failure modes recorded in docs/risks.md:
 W_DISABLE1# held low at boot forces download mode (R10); a stock Mallow
 image's PCIe driver may leave PERST# asserted (R9).
 
-## Amendment (2026-08-30, owner): pin-8 (W_DISABLE1#) BOOT leg DROPPED in v1
+## Amendment (2026-08-30, owner): pin-8 (W_DISABLE1#) BOOT leg DROPPED in v1 — *superseded by the Rev B amendment below*
 
 The BOOT diode-OR originally took two inputs: M.2 pin 20 (PCIE_1_GPIO_5,
 Mallow) and M.2 pin 8 (W_DISABLE1_n, generic non-Mallow hosts). The pin-8

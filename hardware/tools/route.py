@@ -105,7 +105,7 @@ def preroute_usb(board):
 
     # --- Leg 1: fingers (F) -> vias -> U1 pins 1/3 (B) ---
     # U1 (flipped) has pins 1/2/3 stacked on its LEFT column (x 106.56,
-    # y 144.25/143.30/142.35). Rev B: rev A put the D- via at (105.55,
+    # y 144.25/143.30/142.35). Rev B: v1 put the D- via at (105.55,
     # 146.8) - INSIDE the B-key notch cut-out (milled away on v1). All
     # corner vias now live in the one free band y ~146.4-147.2 between the
     # finger tips (147.5) and the In2 +3V3_M2 feed (y 145.9), >= 0.3 mm
@@ -238,12 +238,12 @@ def more_fixups(board):
         add_via(board, gnd, *pt)
     # EPAD via grid (HDG: >=9 GND vias under the module thermal pad) is
     # provided by the JLC footprint itself: its 12 pad-41 satellites are
-    # plated 0.3 mm through-holes, solid zone connect. Rev A also dropped a
+    # plated 0.3 mm through-holes, solid zone connect. v1 also dropped a
     # via on each -> 12 co-located duplicate drill hits (holes_co_located).
     # Removed in rev B; do not re-add.
 
     # Rev B: pads the GND pours cannot reach (B.Cu pockets fully enclosed
-    # by locked tracks) - rev A left both floating (tools/gnd_islands.py).
+    # by locked tracks) - v1 left both floating (tools/gnd_islands.py).
     # U1.2 (USBLC6 GND): via under the SOT-23-6 body between pad columns,
     # west of J3.MP's helper no-via keepout.
     add_track(board, gnd, pcbnew.B_Cu,
@@ -259,7 +259,7 @@ def more_fixups(board):
         if p.GetNetname() == "GND":
             p.SetLocalZoneConnection(pcbnew.ZONE_CONNECTION_FULL)
 
-    # IO0 (rev A name IO0_BOOT): D2.3 -> R2.2 lane (locked). U2.27 (module) and TP2 are
+    # IO0 (v1 name IO0_BOOT): D2.3 -> R2.2 lane (locked). U2.27 (module) and TP2 are
     # completed by freerouting on the decompressed placement.
     io0 = net(board, "IO0")
     d2_3 = pad_pos(board, "D2", 3)
@@ -327,7 +327,7 @@ def preroute_fixups(board):
     add_track(board, g5, pcbnew.B_Cu,
               [j20, (104.5, 147.2), (103.5, 146.6), (103.5, d2_1[1]), d2_1],
               width=0.15)
-    # J1 pad 11 (F-side GND finger, the USB pair's neighbour). Rev A ran a
+    # J1 pad 11 (F-side GND finger, the USB pair's neighbour). v1 ran a
     # stub west across the B-key notch "into open pour" - the milling cut
     # it and J1.11 floated. Rev B: north between the notch (>=0.3 mm) and
     # the D- via (hole clearance 0.255), then west to the GND via.

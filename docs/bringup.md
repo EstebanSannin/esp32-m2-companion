@@ -41,6 +41,8 @@ connector assembly (no bridges between adjacent 1.0 mm-pitch pins).
   meter that couldn't forward-bias them). Needs a working meter or coin-cell
   bench test on a spare LED. Rev-B footprint carries an emit-direction caveat
   (`hardware/blocks/leds/datasheets.md`).
+  **→ Resolved 2026-10-05:** LEDs were assembled 180° reversed (see below);
+  emit face confirmed by a hand-rotated D4. Fixed in Rev B.
 - **SPI loopback:** needs IO11 (MOSI) ↔ IO13 (MISO) jumpered on J4 — not run
   (would require external wiring).
 - **I2C sensor:** needs a Qwiic peripheral on J3 — not run.
@@ -128,12 +130,18 @@ bake the corrected rotation into the CPL export, re-confirm the emit face, and
 drop R3→~68-100 Ω (green under-drive). Current boards: no software fix (polarity
 is physical); hand-rotating a 0603 side-view LED 180° is possible but not worth
 it on prototypes — everything else on the card works.
+**→ Done in Rev B:** D3/D4 CPL rotation +180° (`gen_fab.py` `JLC_ROT`, order
+blocked until preview-verified), emit face confirmed, R3 = 100 Ω (C22775),
+silk cathode bar added.
 
 **Rev-B actions (LEDs):** revisit the custom `LED_TJ-S1706_SideView` footprint —
 verify pad size/pitch against the part terminals so it reliably solders; confirm
 emit-face orientation on a sample; consider a more standard/forgiving LED
 package. Also drop the green series resistor (R3) from 330 Ω toward ~68–100 Ω
 (green runs sub-mA at 3.3 V by design). See `hardware/blocks/leds/`.
+**→ Rev B outcome:** footprint kept (1.80 mm c-c pads soldered fine on v1;
+the hand-rotated part works), silk cathode bar added, R3 = 100 Ω. No package
+change needed.
 
 ## Rev B — unit identification check (first rev-B board)
 

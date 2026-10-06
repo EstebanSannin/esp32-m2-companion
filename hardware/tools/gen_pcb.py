@@ -224,7 +224,7 @@ def write_project(pcb_path):
                     "min_clearance": 0.127,
                     # 0.3 mm (JLCPCB routed edge). Gold fingers get a
                     # pad-only waiver in the .kicad_dru - never 0 globally
-                    # (rev A's 0.0 hid copper in the B-key notch).
+                    # (v1's 0.0 hid copper in the B-key notch).
                     "min_copper_edge_clearance": 0.3,
                     "min_hole_to_hole": 0.25,
                     "min_microvia_diameter": 0.2,
