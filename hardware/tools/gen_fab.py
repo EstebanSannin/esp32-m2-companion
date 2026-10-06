@@ -68,7 +68,10 @@ def main():
     GERB.mkdir(parents=True)
 
     run("pcb", "export", "gerbers", "--output", f"{GERB}/", str(PCB))
-    run("pcb", "export", "drill", "--output", f"{GERB}/", str(PCB))
+    # separate PTH / NPTH files: rev B's mounting notch is NPTH - keep it in
+    # its own file so JLC's CAM cannot plate it (v1: plated -> $38 fee)
+    run("pcb", "export", "drill", "--excellon-separate-th",
+        "--output", f"{GERB}/", str(PCB))
     run("pcb", "export", "pos", "--format", "csv", "--units", "mm",
         "--side", "both", "--output", str(FAB / "cpl_raw.csv"), str(PCB))
 

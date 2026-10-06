@@ -3,7 +3,7 @@
 HW := hardware
 UV := cd $(HW) && uv run
 
-.PHONY: check drc netlist bom sch svg render datasheet 3d fab clean
+.PHONY: check drc netlist bom sch svg render datasheet 3d fab drawings clean
 
 # ERC + netlist + BOM: run after every schematic-source change.
 check:
@@ -24,6 +24,10 @@ svg:
 # Product datasheet (DATASHEET.md) with live pin tables from the design.
 datasheet:
 	$(UV) python tools/gen_datasheet.py
+
+# Assembly (top/bottom, pad numbers, DNP crossed) + drill-map PDFs -> docs/review/.
+drawings:
+	$(UV) python tools/gen_drawings.py
 
 # JLCPCB fab package: gerbers.zip + BOM + CPL (-> fab/).
 fab:
