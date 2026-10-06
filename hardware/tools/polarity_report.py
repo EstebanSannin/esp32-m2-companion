@@ -31,7 +31,7 @@ PCB = HERE / "kicad" / "esp32_m2_companion.kicad_pcb"
 PIN1_MEANING = {
     "D1": "pin 1 = cathode-1 (BAT54A common-anode SOT-23: pins 1,2 = K, 3 = A)",
     "D2": "pin 1 = cathode-1 (BAT54A common-anode SOT-23: pins 1,2 = K, 3 = A)",
-    "U1": "pin 1 = I/O1 (USBLC6-2SC6; pin-1 dot)",
+    "U1": "pin 1 = I/O1 (USBLC6-2SC6; package pin-1 mark)",
     "J3": "pin 1 = GND (Qwiic order GND, 3V3, SDA, SCL)",
     "J4": "pin 1 = TXD0",
     "U2": "module pin 1 = GND (antenna end toward N)",

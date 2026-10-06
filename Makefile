@@ -3,7 +3,7 @@
 HW := hardware
 UV := cd $(HW) && uv run
 
-.PHONY: check drc netlist bom sch svg render datasheet 3d fab drawings clean
+.PHONY: check drc netlist bom sch svg render datasheet 3d fab drawings labels clean
 
 # ERC + netlist + BOM: run after every schematic-source change.
 check:
@@ -28,6 +28,12 @@ datasheet:
 # Assembly (top/bottom, pad numbers, DNP crossed) + drill-map PDFs -> docs/review/.
 drawings:
 	$(UV) python tools/gen_drawings.py
+
+# Label inventory for the owner's label review -> docs/review/ (needs make check).
+KPY := $(HOME)/Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/3.9/bin/python3
+labels:
+	cd $(HW) && $(KPY) tools/polarity_report.py build/fab && $(KPY) tools/label_inventory.py
+	cp $(HW)/build/esp32_m2_companion_schematic.pdf docs/review/rev_b_schematic.pdf
 
 # JLCPCB fab package: gerbers.zip + BOM + CPL (-> fab/).
 fab:
