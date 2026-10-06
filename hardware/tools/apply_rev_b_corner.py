@@ -75,3 +75,6 @@ trk("W_DISABLE1_n", B, [(100.8,143.1),(98.9,141.2),(98.9,141.15),(98.85,141.1),
     (100.6625,138.75)], 0.15)
 pcbnew.ZONE_FILLER(b).Fill(b.Zones())
 pcbnew.SaveBoard(P, b)
+
+from kicad_exit import hard_exit  # noqa: E402
+hard_exit(0)

@@ -206,4 +206,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    from kicad_exit import run
+    run(main)

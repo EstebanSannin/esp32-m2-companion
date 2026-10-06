@@ -87,3 +87,6 @@ gs = sorted(groups.values(), key=len, reverse=True)
 print(f"{NET}: {len(gs)} connected group(s); main group {len(gs[0])} items")
 for g in gs[1:]:
     print("  ISLAND:", "; ".join(g))
+
+from kicad_exit import hard_exit  # noqa: E402
+hard_exit(0)

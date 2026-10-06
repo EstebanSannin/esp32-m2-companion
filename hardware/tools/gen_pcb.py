@@ -245,6 +245,10 @@ def write_project(pcb_path):
 
 
 if __name__ == "__main__":
-    p = build_pcb()
-    postprocess(p)
-    write_project(p)
+    from kicad_exit import run
+
+    def _main():
+        p = build_pcb()
+        postprocess(p)
+        write_project(p)
+    run(_main)
