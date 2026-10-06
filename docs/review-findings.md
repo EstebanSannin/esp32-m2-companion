@@ -206,3 +206,37 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   macOS Python segfaults in interpreter finalization after every pcbnew
   script → "Python quit unexpectedly" dialog per run (owner-reported; results
   unaffected). → All pcbnew tools exit via `kicad_exit.hard_exit()`.
+
+## Rev B label pass (2026-10-06, toward GATE B2)
+
+- 2026-10-06 · Rev B labels · **high** · **BLOCK leds** (self-caught) · The
+  `LED_TJ-S1706_SideView` footprint had **no silkscreen polarity mark** —
+  the one part family that was assembled reversed on v1 carried nothing on
+  the board to check against. → Silk cathode bar at pad 1 (= the part's
+  black cathode mark); assembly drawing shows explicit '+'/'K'.
+  **PROCESS candidate:** "Every polarized footprint carries a silk polarity
+  mark that matches the part's physical marking; custom footprints are
+  checked for this at creation."
+- 2026-10-06 · Rev B labels · medium · **PROCESS** (self-caught) · DNP lived
+  only in the netlist/BOM; the board had no DNP attribute, so the assembly
+  drawing would have shown R5/R6/C8/C9 as fitted. → `tools/sync_dnp.py`;
+  `make drawings` refuses on mismatch. Extends the 2026-08-28 rule: "DNP
+  is enforced by the generator **in every output**, including drawings."
+- 2026-10-06 · Rev B labels · medium · **PROJECT** (self-caught) · v1 label
+  errors in DATASHEET.md: "bevelled gold fingers" (never possible — JLC
+  can't bevel <50 mm boards) and "plated GND pad" (never had a net). v1
+  fab/README listed 7 Extended parts but named only 5 lines (LEDs missing).
+  → Corrected.
+- 2026-10-06 · Rev B labels · low · **BLOCK io_header** · Per-pin silk on
+  1.0 mm-pitch JST SH cannot be legible at the 0.8 mm minimum text height
+  (~0.05 mm between columns), and J3 pins 2–3 sit over the B-key notch. →
+  Proposal: connector legends + pin-1 arrows, pinout in DATASHEET (owner
+  decision L3 at GATE B2).
+- 2026-10-06 · Rev B labels · low · **PROCESS** (tooling) · KiCad 9's SWIG
+  build returns raw, unwrapped pointers for the rest of a process after any
+  `Remove()` (board or footprint), and segfaults on `Flip()` of an off-board
+  footprint. → label_pass runs Remove-stages in their own process; library
+  footprints are parsed as text. Recorded in tools docstrings.
+- 2026-10-06 · Rev B labels · low · **PROCESS** · kicad-cli's PDF plot has no
+  scale option, so assembly drawings of a 22×42 mm card are unreadable on A4.
+  → `tools/asm_view.py` draws scaled assembly/fab sheets from the board.

@@ -35,3 +35,6 @@
   resistor-side pad and prints what the JLC preview must show. R3 330R →
   100R (C22775). Emit face: closed by v1 evidence (hand-rotated D4 blinks,
   polarity and emit direction restore together) - no package change.
+- 2026-10-06 (rev B labels): the custom footprint had no silk polarity mark
+  at all. Added a cathode bar at pad 1 (matches the part's black cathode
+  mark). Any custom polarized footprint: silk mark from day one.
