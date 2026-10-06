@@ -20,7 +20,7 @@ GROUP = "silk_label"
 # --- placement (absolute board mm; card top edge y=108, C6/C7 silk from ~118) ---
 LOGO_CX, LOGO_CY = 93.0, 114.2       # logo center; x mirrored for bottom silk
 TEXT_X = 96.0                        # text left edge (via right-justify + mirror)
-TEXT = [("ESP32-M2-COMPANION", 112.6), ("v1.0  Stefano Viola", 114.6), ("2026-08", 116.6)]
+TEXT = [("ESP32-M2-COMPANION", 112.6), ("v2.0  Stefano Viola", 114.6), ("2026-10", 116.6)]
 TEXT_H = 0.8
 TEXT_TH = 0.15
 
