@@ -357,3 +357,11 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   host); drop TP3–TP6 (TXD0/RXD0/3V3/GND duplicate J4 pins 1/2 and J3 pins
   2/1). Frees the module↔finger band. Schematic re-checked (ERC + contract
   netlist check PASS), review PDF/BOM refreshed.
+- 2026-10-07 · GATE V3 · medium · **PROCESS** (self-caught) · Rev B routed
+  signals on its plane layers (IO8, EN, RXD0, LED_STATUS_n, +3V3 … on In1
+  GND and on the +3V3 plane layer). On 6 layers L2 (GND) and L5 (+3V3) must
+  stay solid and In2/In3 carry signals → all rev-B routing ripped up except
+  the validated USB pair (42 items, locked), parts re-placed
+  (`tools/v2_ripup.py`, `tools/v2_place.py`: nearest legal spot to a
+  routing-aware target). Consistent with ADR 0008 ("re-placement, not a
+  patch").
