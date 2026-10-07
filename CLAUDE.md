@@ -74,6 +74,13 @@ Knowledge management per SPEC §12 (findings log, block LESSONS.md, this file).
   autorouter to chase individual DRC violations. Read real pad extents before
   placing tracks; verify every edit applied.
 
+## Carrier interface (v2)
+
+- `docs/carrier-interface.md` is the contract for every carrier/accessory
+  board (ADR 0006–0008). Any change to edge pins, CONFIG, power or mechanics
+  updates it **in the same commit**. Carrier repos `@`-import it from their
+  own CLAUDE.md, so keep it self-contained and mark items fixed/proposed.
+
 ## Parts
 
 - Every BOM line: LCSC part number + Basic/Extended status; Extended parts
