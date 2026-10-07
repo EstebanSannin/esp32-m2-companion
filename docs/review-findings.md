@@ -263,3 +263,29 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   them and passes (graphics, cathode bar, 3D model). All footprints now carry
   a library nickname. **PROCESS candidate:** "Before trusting a parity check,
   confirm every footprint is linked to a library (`lib:name` FPID)."
+
+## v2.0 Rev A — GATE V0 (2026-10-07)
+
+- 2026-10-07 · GATE V0 · — · **PROJECT** (owner decisions) · v2 scope approved:
+  SPEC A3 + ADR 0006 (hardware-gated 12-line expansion bus, CONFIG state 6,
+  carrier signature 75+1, host-facing LED_1#/WAKE_ON_WWAN#/W_DISABLE2#),
+  ADR 0007 (TPS259470A eFuse OVP, 0.1 % OVLO divider — owner: "do it
+  properly"), ADR 0008 (stay 2242, go 6 layers; 2252/2260 reserved for a
+  future "plus" model). Q4: GPIO_0..8 pins not used always-on. Q6: ESP32
+  family only, no multi-MCU bus spec. EXP numbering = ascending M.2 pin
+  (proposed by me, accepted with A3). Branch renamed `v2.0-revA` → `v2`.
+- 2026-10-07 · GATE V0 · medium · **BLOCK m2_keyb_edge** (self-caught, also
+  applies to v1/Rev B) · v1/Rev B leaves all CONFIG pins NC = M.2 state 15
+  "No Module Present"; a CONFIG-aware host (laptop BIOS) may ignore the slot.
+  Harmless on Mallow and adapters. Fixed in v2 by G10 (state 6); Rev B
+  unchanged (fix-only, already ordered).
+- 2026-10-07 · GATE V0 · medium · **PROJECT** (self-caught) · M.2 Rev 3.0
+  labels the supply pins "3.3V/VBAT" (up to ~4.4 V on tablet-style hosts);
+  v1/Rev B has no protection (ESP32-S3 abs max 3.6 V). Fixed in v2 by G11
+  (ADR 0007); Rev B: document "3.3 V hosts only".
+- 2026-10-07 · GATE V0 · low · **PROCESS** (self-caught, tooling) ·
+  Freerouting 2.3 reports 108 violations on the *untouched* rev-B board and
+  hits internal errors, so its "unrouted" counts were meaningless here.
+  Replaced by `v2/probe/gridprobe.py` (grid search, real JLC clearances,
+  KiCad DRC as judge). **PROCESS candidate:** "Before trusting an
+  autorouter's verdict, run it on the known-good baseline board first."
