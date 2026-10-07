@@ -236,6 +236,78 @@ review. Never proceed past a gate without explicit approval.
   version number and adds a revision letter (**v1.0 Rev B**); the major
   number is reserved for feature additions. Every fabricated revision is git-
   tagged on the exact commit whose fab package was ordered.
+- **A3 (2026-10-07, owner): v2.0 scope.** Opens
+  **v2.0 Rev A** (feature revision per A2) on branch `v2`. Everything
+  in §1–§12 stays the baseline unless changed below.
+  Decisions: ADR 0006 (edge interface), ADR 0007 (input OVP), ADR 0008
+  (2242 / 6 layers).
+  **Normative by reference:** `docs/carrier-interface.md`. Items marked
+  *fixed* there are part of this SPEC; items marked *proposed* are decided
+  at GATE V1.
+  - **New goals:**
+    - **G8.** Carrier expansion bus: 12 lines (EXP_0..11 on M.2 pins 30, 32,
+      34, 36, 40, 59–65), 3.3 V, bidirectional.
+      - Enabled **only in hardware**, and only when CONFIG_2 (75) and
+        CONFIG_3 (1) are both at 0 V.
+      - High-Z (≤ 2 µA, 0–3.6 V) when disabled or unpowered.
+      - Independent of firmware.
+    - **G9.** Host-facing standard sidebands, active on every host:
+      LED_1# (10) and WAKE_ON_WWAN# (23) as open-drain, W_DISABLE2# (26)
+      as an input (radio kill). Voltage-agnostic, with no back-feed into an
+      unpowered card.
+    - **G10.** Declare CONFIG **state 6** (21 + 69 to GND), replacing v1's
+      state 15.
+    - **G11.** Input overvoltage protection.
+      - Card stays off, undamaged, for supply > ~3.55 V (trip window
+        3.47–3.63 V) up to 28 V; auto-recovers.
+      - Normal operation from 3.135 V.
+  - **§3 non-goals, changed:**
+    - "No level shifting beyond 3.3 V IO" becomes: the card tolerates any
+      host level (0–3.6 V) on every new edge pin through isolation (switch /
+      NMOS), but still does no active level translation. The expansion bus is
+      3.3 V-only and exists only on carriers that follow
+      `docs/carrier-interface.md`.
+    - "No SIM interface" stays: the UIM pins are reused only behind the
+      switch.
+    - "Powered only from M.2 3.3 V" stays, now protected (G11).
+  - **§5 changed:** layer count **6** (SIG / GND / SIG / SIG / PWR / SIG,
+    JLC06081H family, exact stackup at GATE V3), replacing "4 layers".
+    2242 × 0.8 mm, ENIG gold fingers, no bevel (A1) are unchanged.
+  - **§6.2 changed:** "No regulator in v1" becomes an **eFuse (TPS259470A)
+    between the M.2 rail and the 3V3 rail** (ADR 0007). Re-evaluate FB1
+    (75 mV drop at 0.5 A).
+  - **§6.4 and §6.6 unchanged:** EN/BOOT mapping incl. the pin-8 leg (ADR 0002),
+    and the J3/J4 JST SH connectors (ADR 0005). Re-placement may move J3/J4
+    but not remove them.
+  - **New §6.8 Edge interface:** as in `docs/carrier-interface.md` and
+    ADR 0006. Any change to edge pins, CONFIG, power or mechanics updates
+    the contract in the same commit (CLAUDE.md).
+  - **§9 gates for v2** (same rules: never cross without owner approval):
+    - **GATE V0:** this amendment + ADR 0006–0008.
+    - **GATE V1:** pinmap (EXP → ESP32-S3 GPIO incl. ADC/I²C/UART
+      capability, ID EEPROM format), parts + BOM with LCSC/Basic-Extended,
+      CONFIG/signature circuit values.
+    - **GATE V2:** schematic (`make check`, `make sch`).
+    - **GATE V3:** placement + `v2/probe/gridprobe.py` routing all new nets
+      DRC-clean (pre-route gate), then layout DRC-clean (`make drc`).
+    - **GATE V4:** fab package (`make fab` exit 0), cost check.
+  - **§10 success criteria added for v2:**
+    - S-v2-1. Expansion bus measured **off** (≤ 2 µA per EXP pin at 0 /
+      1.8 / 3.3 V) on Mallow, a laptop WWAN slot, an M.2→USB adapter, and
+      the dev carrier with its signature jumpers set to open / 1.8 V / 3.3 V
+      pull-up. Also with the card unpowered.
+    - S-v2-2. Bus **on** with the signature grounded on the dev carrier;
+      every EXP line proven both ways by a firmware self-test.
+    - S-v2-3. OVP trips within 3.47–3.63 V on a bench supply, the card
+      survives 5 V, and it recovers below ~3.23 V.
+    - S-v2-4. All v1 success criteria (§10) still pass.
+  - **§11 risks added:**
+    - R-v2-1: 2242/6L routability (fallback 2252/4L, ADR 0008).
+    - R-v2-2: newer paywalled M.2 revisions may redefine pins used by EXP.
+    - R-v2-3: hosts that whitelist by CONFIG (e.g. Dell BIOS) may treat
+      state 6 differently from state 15.
+    - R-v2-4: only ~40 mV of supply margin on a 3.135 V host.
+    - R-v2-5: all new silicon is JLC Extended (≈ +$3.5/board @100 incl. 6L).
 
 ---
 

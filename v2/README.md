@@ -2,7 +2,7 @@
 
 Local-only brainstorm space for the next feature revision (v2.0 per SPEC §13 A2).
 
-- Lives on branch `v2.0-revA` (worktree `../esp32-m2-companion-v2`, branched
+- Lives on branch `v2` (worktree `../esp32-m2-companion-v2`, branched
   from `rev-b` @ 27ee487 = the ordered rev-B state).
 - Not in git (see `.gitignore`): `research/datasheets/*.pdf` (re-download via
   `research/datasheets/SOURCES.md`) and the probe's generated boards/DRC
