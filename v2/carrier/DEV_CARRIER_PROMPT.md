@@ -100,7 +100,7 @@ Dev-carrier specifics on top of the contract:
   - Power LED.
   - **Test option:** a jumper that disconnects the regulator from the M.2
     3.3 V pins and feeds them from a screw/2-pin bench-supply input instead.
-    This is for testing the v2 overvoltage protection (trips ~3.55 V) and
+    This is for testing the v2 overvoltage protection (trips 3.44–3.57 V) and
     brown-out.
   - Default position = regulator. Big silkscreen warning: Rev-B cards have
     NO overvoltage protection, so never exceed 3.6 V with a Rev-B card

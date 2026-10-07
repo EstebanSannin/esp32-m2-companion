@@ -289,3 +289,32 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   Replaced by `v2/probe/gridprobe.py` (grid search, real JLC clearances,
   KiCad DRC as judge). **PROCESS candidate:** "Before trusting an
   autorouter's verdict, run it on the known-good baseline board first."
+
+## v2.0 Rev A — GATE V1 package (2026-10-07, awaiting owner)
+
+- 2026-10-07 · GATE V1 · high · **BLOCK edge_expansion** (self-caught) · The
+  `EXP_OE` pull-up of 100 kΩ (brainstorm + probe) cannot hold the 12 TMUX1511
+  SEL inputs high: IIH up to ±2 µA each + 6 MΩ internal pull-downs → up to
+  ~30 µA → ~3 V drop, OE ≈ 0.3 V < VIH 1.2 V; the bus would never enable.
+  → 10 kΩ (OE ≥ 2.99 V worst case), C 1 µF keeps τ ≈ 10 ms.
+  **PROCESS candidate:** "Sum the input leakage of every pin on a shared
+  pull-up net against the datasheet max, not typ."
+- 2026-10-07 · GATE V1 · medium · **BLOCK power_3v3** (self-caught) · OVLO
+  window conflict: host max 3.465 V vs ESP abs max 3.6 V leaves 135 mV, but
+  the TPS259470A reference alone spans ±1.7 %. 100 k/51 k (ADR 0007) can let
+  3.63 V through; proposed 100 k/52.3 k 0.1 % (3.44–3.57 V) → owner decision
+  (`docs/v2-gate-v1.md` §1.4). ADR 0007 / A3 G11 window to be updated after.
+- 2026-10-07 · GATE V1 · medium · **BLOCK edge_expansion** (self-caught) ·
+  ID-EEPROM I²C pull-ups were specified "card side behind the switch" in the
+  contract — that would put 3.3 V on host pins 30/32 with the bus off and
+  break the high-Z promise. → MCU side of the switch (4.7 kΩ).
+- 2026-10-07 · GATE V1 · low · **BLOCK esp32s3_companion** · ESP32-S3
+  datasheet v2.2: IO39 (MTCK) has a weak pull-up at reset (EFUSE_DIS_PAD_JTAG
+  = 0) and IO18 a 60 µs high glitch at power-up → neither may drive an
+  always-on host pin (LED/WAKE gates); both placed on EXP lines (switch off
+  during power-up).
+- 2026-10-07 · GATE V1 · — · **PROJECT** (owner decision) · GATE V1
+  approved: pin allocation (`docs/pinmap.md` §6), circuit values, ID EEPROM
+  format v1 + firmware rule, EXP_0/1 permanently I²C, BOM approach. OVLO
+  divider **100 k / 52.3 k 0.1 %** (trip 3.44–3.57 V, never above the 3.6 V
+  abs max). Contract capability column + ID EEPROM now **fixed**.

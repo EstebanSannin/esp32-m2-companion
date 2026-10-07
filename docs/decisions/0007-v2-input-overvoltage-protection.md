@@ -1,6 +1,6 @@
 # ADR 0007 — v2 input overvoltage protection (eFuse with OVLO)
 
-Date: 2026-10-07 · Status: **accepted** (owner: "yes, let's do it properly")
+Date: 2026-10-07 · Status: **accepted** (owner: "yes, let's do it properly") · amended GATE V1 2026-10-07 (divider)
 
 ## Context
 
@@ -39,3 +39,13 @@ straight from the M.2 rail (only FB1 in between, 150 mΩ).
   - Details: `v2/research/ovp_and_prices.md`.
 - **Fixture:** the dev carrier provides a bench-supply input to test the trip
   point. Rev-B cards must never see > 3.6 V.
+
+## Amendment (GATE V1, 2026-10-07, owner): divider 100 k / 52.3 k
+
+The host maximum (3.465 V) and the ESP absolute maximum (3.6 V) are 135 mV apart. The OVLO
+reference tolerance alone (±1.7 %) is wider than that, so no divider satisfies both.
+
+- The owner chose **never exceed 3.6 V**: 100 k / **52.3 k** 0.1 % trips at **3.44–3.57 V**
+  (3.49 V typ) and re-enables below ~3.17 V.
+- A worst-case part may trip on a host sitting at its +5 % limit.
+- This supersedes "100 k / 51 k, 3.47–3.63 V" above. Details: `docs/v2-gate-v1.md` §1.4.

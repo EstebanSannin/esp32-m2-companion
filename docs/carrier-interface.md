@@ -6,7 +6,7 @@ repo's `CLAUDE.md` with
 `@/Users/stefano.viola/code/esp32-m2-companion-v2/docs/carrier-interface.md`
 (after v2 merges: `…/esp32-m2-companion/docs/carrier-interface.md`).
 
-Version: **v2.0 Rev A draft, 2026-10-07**. Decisions: ADR 0006 (edge interface),
+Version: **v2.0 Rev A, GATE V1 approved 2026-10-07**. Decisions: ADR 0006 (edge interface),
 ADR 0007 (input OVP), ADR 0008 (form factor). Background, research and
 rejected alternatives: `v2/edge-expansion-brainstorm.md`,
 `v2/research/m2_pins_research.md`.
@@ -55,7 +55,7 @@ the EXP pins and pins 10/23/26 are simply unconnected on the card.
     the v2 eFuse current limit is ~1 A.
 - **Fixed:** **never more than 3.6 V.**
   - Rev-B cards have no protection: the ESP32-S3 absolute maximum is 3.6 V.
-  - v2 cards cut off at ~3.55 V and stay off, without damage, up to 28 V
+  - v2 cards cut off at ~3.49 V (3.44–3.57 V window) and stay off, without damage, up to 28 V
     (ADR 0007). Even so, the 3.6 V limit applies to every carrier.
 - GND on all 11 GND fingers (3, 5, 11, 27, 33, 39, 45, 51, 57, 71, 73).
 
@@ -99,39 +99,40 @@ PERST# → ROM download mode over the same USB → flash → release BOOT.
 **Fixed: the M.2 pin ↔ EXP name mapping**, numbered by ascending M.2 pin, so
 it is independent of layout:
 
-| EXP | M.2 pin | WWAN standard name (for reference only) |
-|---|---:|---|
-| EXP_0 | 30 | UIM_RESET |
-| EXP_1 | 32 | UIM_CLK |
-| EXP_2 | 34 | UIM_DATA |
-| EXP_3 | 36 | UIM_PWR |
-| EXP_4 | 40 | GPIO_0 (SIM_DET2 / GNSS_SCL) |
-| EXP_5 | 59 | ANTCTL0 |
-| EXP_6 | 60 | COEX3 |
-| EXP_7 | 61 | ANTCTL1 |
-| EXP_8 | 62 | COEX2 |
-| EXP_9 | 63 | ANTCTL2 |
-| EXP_10 | 64 | COEX1 |
-| EXP_11 | 65 | ANTCTL3 |
+| EXP | M.2 pin | WWAN name (reference) | **Capability (fixed, GATE V1)** | ESP32-S3 GPIO (informative — may swap within class until v2 fab) |
+|---|---:|---|---|---|
+| EXP_0 | 30 | UIM_RESET | **I²C SDA** (ID EEPROM bus, 4.7 k pull-up on card) | IO39 |
+| EXP_1 | 32 | UIM_CLK | **I²C SCL** (ID EEPROM bus, 4.7 k pull-up on card) | IO41 |
+| EXP_2 | 34 | UIM_DATA | digital, **ADC**, touch | IO1 |
+| EXP_3 | 36 | UIM_PWR | digital, **ADC**, touch | IO2 |
+| EXP_4 | 40 | GPIO_0 | digital | IO18 |
+| EXP_5 | 59 | ANTCTL0 | digital, **ADC**, touch | IO4 |
+| EXP_6 | 60 | COEX3 | digital, **ADC**, touch | IO5 |
+| EXP_7 | 61 | ANTCTL1 | digital, **ADC**, touch | IO6 |
+| EXP_8 | 62 | COEX2 | digital, **ADC**, touch | IO7 |
+| EXP_9 | 63 | ANTCTL2 | digital | IO15 |
+| EXP_10 | 64 | COEX1 | digital | IO16 |
+| EXP_11 | 65 | ANTCTL3 | digital | IO17 |
+
+"Digital" = GPIO, UART, SPI, PWM, RMT (ESP32-S3 GPIO matrix routes them to any line). ADC =
+ADC1, usable with WiFi on. Layout may swap GPIOs **within a capability class only**; carriers
+design against the capability column, never the GPIO column.
 
 - **Fixed electrical:**
   - **3.3 V** logic, bidirectional through a TMUX1511 switch (Ron ≤ 4.5 Ω).
   - Behind ~220 Ω series resistors on the ESP side.
   - High-Z when the bus is off or the card is unpowered (≤ 2 µA at 0–3.6 V).
-- *Proposed:*
-  - **ESP32-S3 GPIO behind each EXP line**, frozen at v2 GATE 1. Carriers
-    must not depend on GPIO numbers: firmware maps EXP_n → GPIO.
-  - **Capabilities:** at least 4 lines ADC-capable (ADC1, usable with WiFi
-    on), one hardware-I²C-capable pair, one UART-capable pair. The ESP32-S3
-    GPIO matrix routes most digital peripherals to any line; ADC is
-    pin-bound.
-- *Proposed:* **carrier ID EEPROM**, 24C02-class at I²C address **0x50**,
-  on **EXP_0 (SDA) / EXP_1 (SCL)**.
-  - Pull-ups on the card side behind the switch.
-  - Content format (vendor / product / revision / per-EXP function map) is
-    TBD at v2 GATE 1.
-  - Firmware reads it right after the bus enables, and keeps every EXP line
-    an input until a valid ID is read.
+- **Fixed (GATE V1, 2026-10-07):** the capability column above (6 ADC lines, EXP_0/1 = I²C), and the
+  **carrier ID EEPROM**, 24C02-class at I²C **0x50** on **EXP_0 (SDA) /
+  EXP_1 (SCL)**.
+  - The bus pull-ups are on the card, on the MCU side of the switch, so they stay isolated when
+    the bus is off. Carriers add none, but may hang other I²C devices on the same bus.
+  - Format v1: `docs/v2-gate-v1.md` §2 (magic `"M2CI"`, vendor/product/revision/serial, a 12-entry
+    EXP function map, CRC-32).
+  - **Firmware rule:** after the bus enables, only EXP_0/1 are initialised. EXP_2..11 stay high-Z
+    until a valid EEPROM is read. With no EEPROM or an invalid one, the carrier is "unknown":
+    inputs only, unless the host overrides.
+  - Recommended on every production carrier. DNP on the dev carrier.
 
 ### 4.4 Host-facing pins (v2; also work in any normal M.2 host)
 

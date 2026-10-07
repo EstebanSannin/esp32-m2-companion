@@ -258,8 +258,9 @@ review. Never proceed past a gate without explicit approval.
     - **G10.** Declare CONFIG **state 6** (21 + 69 to GND), replacing v1's
       state 15.
     - **G11.** Input overvoltage protection.
-      - Card stays off, undamaged, for supply > ~3.55 V (trip window
-        3.47–3.63 V) up to 28 V; auto-recovers.
+      - Card stays off, undamaged, for supply > ~3.49 V (trip window
+        3.44–3.57 V, ADR 0007 GATE V1 amendment) up to 28 V; auto-recovers
+        below ~3.17 V.
       - Normal operation from 3.135 V.
   - **§3 non-goals, changed:**
     - "No level shifting beyond 3.3 V IO" becomes: the card tolerates any
@@ -298,8 +299,8 @@ review. Never proceed past a gate without explicit approval.
       pull-up. Also with the card unpowered.
     - S-v2-2. Bus **on** with the signature grounded on the dev carrier;
       every EXP line proven both ways by a firmware self-test.
-    - S-v2-3. OVP trips within 3.47–3.63 V on a bench supply, the card
-      survives 5 V, and it recovers below ~3.23 V.
+    - S-v2-3. OVP trips within 3.44–3.57 V on a bench supply, the card
+      survives 5 V, and it recovers below ~3.17 V.
     - S-v2-4. All v1 success criteria (§10) still pass.
   - **§11 risks added:**
     - R-v2-1: 2242/6L routability (fallback 2252/4L, ADR 0008).

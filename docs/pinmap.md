@@ -240,3 +240,54 @@ Still open (not blocking Phase 1):
   if ST, owner drops the ST PDF into `docs/datasheets/`.
 - M.2 2242 mechanical outline source for Phase 2 (licensed M.2 EM spec or
   verified derived drawing) — needed before GATE 3, not before schematic.
+
+---
+
+## 6. v2.0 Rev A pin allocation (GATE V1 — approved 2026-10-07, owner)
+
+Sources: **[S3]** ESP32-S3 Series Datasheet v2.2 (`docs/datasheets/esp32-s3_datasheet_en.pdf`):
+Table 2-1 Pin Overview (reset states, p. 16–17), Table 2-2 power-up glitches (p. 18),
+Table 2-8 analog functions + "ADC2 cannot be used with Wi-Fi" note. **[WROOM]** as §2.
+Edge pins: ADR 0006, `docs/carrier-interface.md`. Unchanged from Rev B: USB (IO19/20), EN, IO0,
+J3/J4 (IO8–14, IO21, TXD0/RXD0), status LED IO48, straps IO3/45/46 NC, IO35–37 NC (N16R8 compat).
+
+### 6.1 Constraints found in [S3] (all 16 spare GPIOs checked)
+
+- **No spare GPIO has an internal pull at reset** (Table 2-1: IO1/2/17/18/38/40–42/47 = IE only;
+  IO4–7/15/16 = nothing) — **except IO39/MTCK: WPU at reset while EFUSE_DIS_PAD_JTAG = 0**
+  (footnote 7; stock modules) → IO39 must not drive an always-on host pin.
+- **IO18 has a 60 µs high-level glitch at power-up** (Table 2-2); IO1–17 only low-level glitches
+  → IO18 must not drive an always-on host pin. Both are fine on EXP lines: the bus switch is off
+  during power-up (§6.3 RC).
+- ADC usable with Wi-Fi on = **ADC1 only = IO1–IO10**; spare ADC1 pins: IO1, 2, 4, 5, 6, 7 (6).
+  Touch: IO1–14 (same 6 spare).
+- IO47 (SPICLK_P) is 1.8 V only on R8V/R16V chips; WROOM-1 **N8R2** (and N16R8 fallback) run it
+  at 3.3 V ✔.
+- Digital peripherals (I²C, UART, SPI, PWM/LEDC, RMT) route to any GPIO through the GPIO matrix;
+  native IO-MUX speed only matters for SPI > 40 MHz (not a carrier use case).
+
+### 6.2 Allocation (16 spare → 12 EXP + 4 host/diagnostic)
+
+| EXP / function | M.2 pin | Module pad | GPIO | Capabilities | Why here |
+|---|---:|---:|---|---|---|
+| **EXP_0 = ID-EEPROM SDA** | 30 | 32 | IO39 | digital (I²C SDA) | reset WPU harmless behind switch; keeps ADC pins free |
+| **EXP_1 = ID-EEPROM SCL** | 32 | 34 | IO41 | digital (I²C SCL) | non-ADC |
+| EXP_2 | 34 | 39 | IO1 | **ADC1_CH0**, touch | right-top pad, near middle fingers |
+| EXP_3 | 36 | 38 | IO2 | **ADC1_CH1**, touch | " |
+| EXP_4 | 40 | 11 | IO18 | digital (U1RXD default) | power-up high glitch → bus line only |
+| EXP_5 | 59 | 4 | IO4 | **ADC1_CH3**, touch | left pads ↔ left fingers |
+| EXP_6 | 60 | 5 | IO5 | **ADC1_CH4**, touch | " |
+| EXP_7 | 61 | 6 | IO6 | **ADC1_CH5**, touch | " |
+| EXP_8 | 62 | 7 | IO7 | **ADC1_CH6**, touch | " |
+| EXP_9 | 63 | 8 | IO15 | digital (XTAL_32K_P) | " |
+| EXP_10 | 64 | 9 | IO16 | digital (XTAL_32K_N) | " |
+| EXP_11 | 65 | 10 | IO17 | digital (U1TXD default) | " |
+| LED_1# drive (Q2a gate) | 10 | 35 | IO42 | out | no reset pull, no glitch |
+| WAKE_ON_WWAN# drive (Q2b gate) | 23 | 24 | IO47 | out | no reset pull, no glitch; pad near fingers 23/26 |
+| W_DISABLE2# sense (Q3 drain, inverted) | 26 | 33 | IO40 | in | |
+| EXP_OE readback | — | 31 | IO38 | in | diagnostic: firmware sees the hardware gate state |
+
+Summary for carriers: **6 ADC-capable lines (EXP_2, 3, 5, 6, 7, 8)**, EXP_0/1 = fixed I²C bus
+(ID EEPROM + any carrier I²C devices), any two other lines = UART / SPI / PWM via GPIO matrix.
+Pad numbers are WROOM-1 pins [WROOM Table 3-1]; final pad↔finger routing at GATE V3 may swap
+lines **within the same capability class only** (contract keeps EXP↔capability, not EXP↔GPIO).
