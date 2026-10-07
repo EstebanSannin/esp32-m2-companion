@@ -68,3 +68,26 @@ signals; planes poured last. Method and the lessons behind it:
 [`routing-method.md`](routing-method.md). Full source of truth for every
 track/via is the KiCad PCB file — open it in the PCB Editor to explore
 interactively (click a net to highlight it end-to-end).
+
+---
+
+## v2.0 Rev A — 6 layers, JLC06081H-2116 (ADR 0008, GATE V3, 2026-10-07)
+
+Source: JLC's own stackup + impedance APIs (Polar SI9000 backend), `v2/research/jlc_6l_stackup.md`.
+
+| Layer | KiCad | Use | Dielectric below |
+|---|---|---|---|
+| L1 | F.Cu (0.035) | SIG | 2116 prepreg 0.1164 mm, Dk 4.16 |
+| L2 | In1.Cu (0.0152) | **GND** plane | core 0.13 mm, Dk 4.17 |
+| L3 | In2.Cu | SIG (new) | 7628 prepreg 0.2028 mm, Dk 4.4 |
+| L4 | In3.Cu | SIG (new) | core 0.13 mm |
+| L5 | In4.Cu | **+3V3** plane (moved from rev-B In2) | 2116 prepreg 0.1164 mm |
+| L6 | B.Cu (0.035) | SIG | — |
+
+Finished 0.83 ± 0.10 mm. JLC's general/free 0.8 mm 6-layer stackup ("No requirement" maps to it,
+expedite allowed). Multilayer minimum 0.09/0.09 mm; vias are epoxy-filled and capped by default on
+6 layers (via-in-pad OK); 6 layers is ENIG-only.
+
+**USB pair, L1 over L2 GND:** 90 Ω ⇒ W 0.15 / S 0.13 (89.6 Ω, JLC solver). The rev-B routed pair
+(0.14/0.14) solves to ~92 Ω on this stackup, inside ±10 %, so it is kept as routed. The
+`USB_DIFF` net class is set to 0.15/0.13 for any new USB routing.
