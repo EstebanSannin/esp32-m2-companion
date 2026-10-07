@@ -20,7 +20,7 @@ Rail test points per SPEC 6.7.
 
 from skidl import Part
 
-from blocks.common import R_0603, TESTPOINT, subcircuit
+from blocks.common import R_0603, subcircuit
 
 
 @subcircuit
@@ -58,5 +58,4 @@ def io_header(v3v3, gnd, ios, txd0, rxd0):
         r[2] += ios[sig]
 
     # Rail test points (SPEC 6.7)
-    TESTPOINT("TP_3V3", ref="TP5")[1] += v3v3
-    TESTPOINT("TP_GND", ref="TP6")[1] += gnd
+    # v2 (owner, GATE V3): TP5/TP6 dropped - 3V3/GND already on J3 (Qwiic)

@@ -105,7 +105,7 @@ design = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='1',name='~',func=pin_types.PASSIVE,unit=1),
             Pin(num='3',name='~',func=pin_types.PASSIVE,unit=1),
             Pin(num='2',name='~',func=pin_types.NOCONNECT,unit=1)], 'unit_defs':[] }),
-        Part(**{ 'name':'TestPoint', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'TestPoint'}), 'ref_prefix':'TP', 'fplist':[''], 'footprint':'TestPoint:TestPoint_Pad_D1.5mm', 'keywords':'test point tp', 'description':'test point', 'datasheet':'~', 'pins':[
+        Part(**{ 'name':'TestPoint', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'TestPoint'}), 'ref_prefix':'TP', 'fplist':[''], 'footprint':'TestPoint:TestPoint_Pad_D1.0mm', 'keywords':'test point tp', 'description':'test point', 'datasheet':'~', 'pins':[
             Pin(num='1',name='1',func=pin_types.PASSIVE,unit=1)], 'unit_defs':[] }),
         Part(**{ 'name':'ESP32-S3-WROOM-1', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'ESP32-S3-WROOM-1'}), 'ref_prefix':'U', 'fplist':['RF_Module:ESP32-S3-WROOM-1'], 'footprint':'esp32m2:ESP32-S3-WROOM-1_JLC', 'keywords':'RF Radio BT ESP ESP32-S3 Espressif onboard PCB antenna', 'description':'RF Module, ESP32-S3 SoC, Wi-Fi 802.11b/g/n, Bluetooth, BLE, 32-bit, 3.3V, onboard antenna, SMD', 'datasheet':'https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf', 'pins':[
             Pin(num='3',name='EN',func=pin_types.INPUT,unit=1),

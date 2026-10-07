@@ -349,3 +349,11 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   generated schematic is not an effective owner-review artifact; the
   approval rests on `check_v2_netlist.py` + ERC. From GATE V3 on, provide a
   reviewer-oriented view (per-block connection diagram / net tables).
+
+## v2.0 Rev A — GATE V3 layout (2026-10-07, in progress)
+
+- 2026-10-07 · GATE V3 · — · **PROJECT** (owner decision) · Test points:
+  keep TP1 (EN) / TP2 (BOOT) as 1.0 mm pads (flying-lead recovery on any
+  host); drop TP3–TP6 (TXD0/RXD0/3V3/GND duplicate J4 pins 1/2 and J3 pins
+  2/1). Frees the module↔finger band. Schematic re-checked (ERC + contract
+  netlist check PASS), review PDF/BOM refreshed.

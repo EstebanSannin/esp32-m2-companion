@@ -76,8 +76,9 @@ def BAT54A(ref=None):
 
 
 def TESTPOINT(name, ref=None):
+    # v2: 1.0 mm pads (was 1.5 mm) - frees the module<->finger band (GATE V3)
     p = Part("Connector", "TestPoint", value=name, ref=ref, tag=_next_tag("TP"),
-             footprint="TestPoint:TestPoint_Pad_D1.5mm")
+             footprint="TestPoint:TestPoint_Pad_D1.0mm")
     p.fields.update(LCSC="", JLC="PCB", MPN="")
     return p
 

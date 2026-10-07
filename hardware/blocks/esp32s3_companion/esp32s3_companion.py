@@ -12,7 +12,7 @@ Decoupling per HDG: 10 uF + 100 nF at the module 3V3 pin.
 
 from skidl import Part, Pin
 
-from blocks.common import C_0603, TESTPOINT, subcircuit
+from blocks.common import C_0603, subcircuit
 
 # (module pin number, expected KiCad symbol pin name) - datasheet Table 3-1
 _DATASHEET_PINS = {
@@ -89,8 +89,7 @@ def esp32s3_companion(v3v3, gnd, en, io0, usb_d_n, usb_d_p,
     # UART0 (doubles as ROM console fallback)
     u[37] += txd0
     u[36] += rxd0
-    TESTPOINT("TP_TXD0", ref="TP3")[1] += txd0
-    TESTPOINT("TP_RXD0", ref="TP4")[1] += rxd0
+    # v2 (owner, GATE V3): TP3/TP4 dropped - TXD0/RXD0 already on J4 pins 1/2
 
     # v2: expansion bus (MCU side of the 220R arrays) + host/diagnostic pins
     assert len(exp_ios) == 12

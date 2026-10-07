@@ -82,7 +82,10 @@ def stage1():
     gone = []
     for fp in list(b.GetFootprints()):
         ref = fp.GetReference()
-        if ref in comps and comps[ref][1] and fpid_str(fp) != comps[ref][1]:
+        if ref not in comps:
+            gone.append(f"{ref}: removed from netlist")
+            b.Remove(fp)
+        elif comps[ref][1] and fpid_str(fp) != comps[ref][1]:
             gone.append(f"{ref}: {fpid_str(fp)} -> {comps[ref][1]}")
             b.Remove(fp)
     pcbnew.SaveBoard(str(PCB), b)
