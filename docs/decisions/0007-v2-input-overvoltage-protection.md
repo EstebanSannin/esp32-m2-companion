@@ -26,7 +26,8 @@ straight from the M.2 rail (only FB1 in between, 150 mΩ).
 ## Consequences
 
 - A 4.4 V host leaves the card **off and undamaged**. It also survives 5 V
-  or more by mistake (VIN absolute max 28 V).
+  or more by mistake. Limit: the OVLO pin abs max 6.5 V caps IN at ~18.9 V
+  with the 52.3 k divider (the IC itself is rated 28 V) — GATE V2 correction.
 - **Cost:** +$0.81/board @100, up to 4 new BOM lines (Extended: no Basic
   eFuse with adjustable OVLO; 0.1 % resistors are Extended too).
   About 16 mm² on the board.

@@ -39,3 +39,6 @@ All pin assignments in `docs/pinmap.md` trace to these files. Fetched
 | File | Source URL | Version | Used for |
 |---|---|---|---|
 | `esp32-s3_datasheet_en.pdf` | https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf | v2.2 | Chip-level pin reset states (Table 2-1 + footnote 7: IO39/MTCK WPU at reset), power-up glitches (Table 2-2: IO18 high glitch), ADC1/ADC2 mapping + "ADC2 unusable with Wi-Fi" — drives `docs/pinmap.md` §6 |
+| `tps25947.pdf` | https://www.ti.com/lit/ds/symlink/tps25947.pdf | SLVSFC9C (rev. May 2026) | U6 TPS259470A: Table 5-1 pinout, §6.1/6.3 EN/OVLO limits (note 2: ≥ 350 kΩ pull-up), VOV(R)/VOV(F), RILM range |
+| `tmux1511.pdf` | https://www.ti.com/lit/ds/symlink/tmux1511.pdf | SCDS390B | U3–U5: Table 4-1 UQFN pinout, §5.5 SEL VIH/VIL/IIH/RPD, IPOFF, tON(VDD) |
+| `ssm6n56fe.pdf` | https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/1806150923_TOSHIBA-SSM6N56FE-LM_C146449.pdf (LCSC mirror of Toshiba Rev 1.0) | Rev 1.0 | Q1–Q3: §3 pin assignment, VGS(th), RDS(on), IGSS |

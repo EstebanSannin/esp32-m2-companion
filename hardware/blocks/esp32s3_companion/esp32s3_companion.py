@@ -21,13 +21,27 @@ _DATASHEET_PINS = {
     3: "EN", 13: "USB_D-", 14: "USB_D+", 27: "IO0", 25: "IO48",
     12: "IO8", 17: "IO9", 18: "IO10", 19: "IO11", 20: "IO12",
     21: "IO13", 22: "IO14", 23: "IO21", 36: "RXD0", 37: "TXD0",
+    # v2.0 Rev A (docs/pinmap.md §6): EXP lines + host/diagnostic pins
+    39: "IO1", 38: "IO2", 4: "IO4", 5: "IO5", 6: "IO6", 7: "IO7",
+    8: "IO15", 9: "IO16", 10: "IO17", 11: "IO18", 24: "IO47",
+    31: "IO38", 32: "IO39", 33: "IO40", 34: "IO41", 35: "IO42",
 }
+
+# v2 GPIO allocation by datasheet pin number (docs/pinmap.md §6.2):
+# EXP index -> module pin. Capability classes are contractual
+# (docs/carrier-interface.md §4.3); swaps only within a class.
+EXP_MODULE_PINS = [32, 34, 39, 38, 11, 4, 5, 6, 7, 8, 9, 10]
+#                 IO39 IO41 IO1 IO2 IO18 IO4 IO5 IO6 IO7 IO15 IO16 IO17
+HOST_MODULE_PINS = {"IO42": 35, "IO47": 24, "IO40": 33, "IO38": 31}
 
 
 @subcircuit
 def esp32s3_companion(v3v3, gnd, en, io0, usb_d_n, usb_d_p,
-                      led_status_n, header_ios, txd0, rxd0):
-    """header_ios: dict {'IO8':net, 'IO9':net, 'IO10':..., 'IO14', 'IO21'}"""
+                      led_status_n, header_ios, txd0, rxd0, exp_ios,
+                      host_ios):
+    """header_ios: dict {'IO8':net, 'IO9':net, 'IO10':..., 'IO14', 'IO21'}
+    exp_ios: list of 12 MCU-side EXP nets (index = EXP number)
+    host_ios: dict {'IO42','IO47','IO40','IO38': net}"""
     u = Part("RF_Module", "ESP32-S3-WROOM-1", ref="U2", tag="U_MCU",
              footprint="esp32m2:ESP32-S3-WROOM-1_JLC")  # vendored: EPAD vias 0.3mm drill (JLC min)
     u.fields.update(
@@ -78,10 +92,17 @@ def esp32s3_companion(v3v3, gnd, en, io0, usb_d_n, usb_d_p,
     TESTPOINT("TP_TXD0", ref="TP3")[1] += txd0
     TESTPOINT("TP_RXD0", ref="TP4")[1] += rxd0
 
-    # Everything else deliberately unconnected in v1:
+    # v2: expansion bus (MCU side of the 220R arrays) + host/diagnostic pins
+    assert len(exp_ios) == 12
+    for pin, net in zip(EXP_MODULE_PINS, exp_ios):
+        u[pin] += net
+    for name, pin in HOST_MODULE_PINS.items():
+        assert u[pin].name == name, (pin, u[pin].name, name)
+        u[pin] += host_ios[name]
+
+    # Everything else deliberately unconnected:
     # strapping IO3(15)/IO45(26)/IO46(16) float per datasheet §4 defaults;
-    # IO35-37 (28-30) reserved for octal-PSRAM variants; spares NC.
-    for pin in (4, 5, 6, 7, 8, 9, 10, 11, 15, 16, 24, 26,
-                28, 29, 30, 31, 32, 33, 34, 35, 38, 39):
+    # IO35-37 (28-30) reserved for octal-PSRAM variants.
+    for pin in (15, 16, 26, 28, 29, 30):
         u[pin].func = Pin.types.NOCONNECT
         u[pin].do_erc = False

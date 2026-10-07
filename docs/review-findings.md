@@ -318,3 +318,34 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   format v1 + firmware rule, EXP_0/1 permanently I²C, BOM approach. OVLO
   divider **100 k / 52.3 k 0.1 %** (trip 3.44–3.57 V, never above the 3.6 V
   abs max). Contract capability column + ID EEPROM now **fixed**.
+
+## v2.0 Rev A — GATE V2 schematic (2026-10-07)
+
+- 2026-10-07 · GATE V2 · high · **PROCESS** (self-caught, tooling) ·
+  `tools/gen_sch.py` only placed parts listed in its hard-coded BLOCK_REFS;
+  every new v2 part fell into an unplaced "misc" group, so the GATE PDF
+  rendered clean **without any v2 circuitry** (37 of 63 parts). → v2 blocks
+  added, generic box symbols for code-defined parts, and an assert that no
+  part is unassigned. **PROCESS candidate:** "A review artifact generator
+  must fail on anything it does not render — compare its part count with
+  the netlist."
+- 2026-10-07 · GATE V2 · medium · **PROJECT** (self-caught, corrects ADR
+  0007 / A3 / contract) · "Survives up to 28 V" was the eFuse IC rating; with
+  the 100 k / 52.3 k divider the OVLO pin (abs max 6.5 V) limits IN to
+  ~18.9 V. Docs corrected; still far above any M.2/USB fault.
+- 2026-10-07 · GATE V2 · low · **BLOCK power_3v3** · TPS25947 EN/UVLO must
+  not be tied straight to IN when IN can exceed 5 V (Table 6.3 note 2:
+  ≥ 350 kΩ pull-up) → 470 kΩ.
+- 2026-10-07 · GATE V2 · low · **PROCESS** · New
+  `tools/check_v2_netlist.py` (in `make check`) asserts the v2 contract
+  pin-by-pin on the generated netlist (EXP chain finger→switch→array→module
+  pad, edge nets touch only J1 + switch, detect, host cells, eFuse);
+  mutation-tested (fails on a renamed net).
+- 2026-10-07 · GATE V2 · — · **PROJECT** (owner decision) · GATE V2
+  approved: schematic as generated, FB1 = BLM18PG121SN1D (low-DCR ferrite,
+  not 0 Ω). Owner verbatim: "for me it's really hard review schematics like
+  the one you produce because it's extremely time consuming understand how
+  component are connected. I'll trust you". → **PROCESS:** a label-only
+  generated schematic is not an effective owner-review artifact; the
+  approval rests on `check_v2_netlist.py` + ERC. From GATE V3 on, provide a
+  reviewer-oriented view (per-block connection diagram / net tables).

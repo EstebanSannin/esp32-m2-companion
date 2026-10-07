@@ -6,8 +6,10 @@ UV := cd $(HW) && uv run
 .PHONY: check drc netlist bom sch svg render layers views datasheet 3d fab drawings labels clean
 
 # ERC + netlist + BOM: run after every schematic-source change.
+# v2: the netlist must also implement the v2 contract pin-by-pin.
 check:
 	$(UV) python design.py
+	$(UV) python tools/check_v2_netlist.py
 
 # DRC gate: fails on any non-excluded violation (tools/check_drc.py).
 drc:

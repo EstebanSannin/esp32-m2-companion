@@ -174,6 +174,50 @@ def make_edge_symbol():
     return body
 
 
+def make_box_symbol(part):
+    """Generic box symbol for parts defined in SKiDL code (no KiCad lib
+    symbol): pins in number order, first half left, second half right,
+    pin names = the datasheet names used in blocks/common.py."""
+    pins = sorted(part.pins, key=lambda p: int(p.num))
+    half = (len(pins) + 1) // 2
+    left, right = pins[:half], pins[half:]
+    rows = max(len(left), len(right))
+    h = (rows + 1) * 2.54
+    w = 20.32
+    name = part.name
+    body = [S("symbol"), f"v2gen:{name}",
+            [S("pin_names"), [S("offset"), 1.02]],
+            [S("exclude_from_sim"), S("no")],
+            [S("in_bom"), S("yes")], [S("on_board"), S("yes")],
+            [S("property"), "Reference", part.ref_prefix,
+             [S("at"), 0, h / 2 + 2.54, 0],
+             [S("effects"), [S("font"), [S("size"), 1.27, 1.27]]]],
+            [S("property"), "Value", name, [S("at"), 0, -h / 2 - 2.54, 0],
+             [S("effects"), [S("font"), [S("size"), 1.27, 1.27]]]]]
+    unit = [S("symbol"), f"{name}_1_1",
+            [S("rectangle"), [S("start"), -w / 2, h / 2],
+             [S("end"), w / 2, -h / 2],
+             [S("stroke"), [S("width"), 0.254], [S("type"), S("default")]],
+             [S("fill"), [S("type"), S("background")]]]]
+    for side, plist in ((0, left), (1, right)):
+        for i, pin in enumerate(plist):
+            y = h / 2 - (i + 1) * 2.54
+            x, ang = ((-w / 2 - 2.54, 0) if side == 0 else (w / 2 + 2.54, 180.0))
+            unit.append([S("pin"), S("passive"), S("line"),
+                         [S("at"), x, y, ang], [S("length"), 2.54],
+                         [S("name"), str(pin.name),
+                          [S("effects"), [S("font"), [S("size"), 1.27, 1.27]]]],
+                         [S("number"), str(pin.num),
+                          [S("effects"), [S("font"), [S("size"), 1.27, 1.27]]]]])
+    body.append(unit)
+    return body
+
+
+def _is_code_part(part):
+    return part.ref != "J1" and part.name in (
+        "R_Array_4x0402", "SSM6N56FE", "TMUX1511_RSV", "TPS259470A_RPW")
+
+
 # ----------------------------------------------------------------- schematic
 
 def build_schematic():
@@ -196,12 +240,18 @@ def build_schematic():
     # usable hierarchy attribute)
     BLOCK_REFS = {
         "m2_keyb_edge": {"J1"},
-        "power_3v3": {"FB1", "C1", "C2", "C3"},
+        "power_3v3": {"FB1", "C1", "C2", "C3",
+                      "U6", "R31", "R32", "R33", "R34", "C14"},
         "usb_esd": {"U1", "C4", "R7", "R8", "C8", "C9"},
         "sideband_recovery": {"R1", "R2", "C5", "D1", "D2", "TP1", "TP2"},
         "esp32s3_companion": {"U2", "C6", "C7", "TP3", "TP4"},
         "leds": {"R3", "R4", "D3", "D4"},
         "io_header": {"J3", "J4", "R5", "R6", "TP5", "TP6"},
+        # v2.0 Rev A (ADR 0006)
+        "edge_expansion": {"RN1", "RN2", "RN3", "R20", "R21", "U3", "U4",
+                           "U5", "C10", "C11", "C12", "R22", "R23", "R24",
+                           "R25", "Q1", "R26", "C13"},
+        "host_sideband": {"Q2", "Q3", "R27", "R28", "R29", "R30"},
     }
 
     def block_of(part):
@@ -222,15 +272,23 @@ def build_schematic():
         g.sort(key=refkey)
 
     ORDER = ["m2_keyb_edge", "power_3v3", "usb_esd", "sideband_recovery",
-             "esp32s3_companion", "leds", "io_header"]
+             "esp32s3_companion", "leds", "io_header", "edge_expansion",
+             "host_sideband"]
+    # every part must belong to a block: a silently unplaced part would make
+    # the GATE artifact look clean while missing circuitry (GATE V2 finding)
+    assert "misc" not in groups, (
+        "parts not assigned to a schematic block: "
+        + ", ".join(p.ref for p in groups["misc"]))
     TITLES = {
         "m2_keyb_edge": "M.2 KEY-B 2242 EDGE",
-        "power_3v3": "POWER 3V3 (SPEC 6.2)",
+        "power_3v3": "POWER 3V3 + eFUSE (SPEC 6.2, ADR 0007)",
         "usb_esd": "USB + ESD (SPEC 6.3)",
         "sideband_recovery": "SIDEBAND RECOVERY (ADR 0002)",
         "esp32s3_companion": "ESP32-S3 MODULE",
         "leds": "LEDS (ADR 0003)",
         "io_header": "IO CONNECTORS (ADR 0005)",
+        "edge_expansion": "EXPANSION BUS + CARRIER DETECT (ADR 0006)",
+        "host_sideband": "HOST SIDEBANDS (ADR 0006)",
     }
 
     def place_part(part, x, y, rot=0):
@@ -240,6 +298,9 @@ def build_schematic():
         if part.ref == "J1":
             sym = make_edge_symbol()
             lib_id = "esp32m2:M2_KEYB_2242_EDGE"
+        elif _is_code_part(part):
+            sym = make_box_symbol(part)
+            lib_id = f"v2gen:{part.name}"
         else:
             lib = part.lib.filename if hasattr(part.lib, "filename") else str(part.lib)
             lib = Path(str(lib)).stem
@@ -376,7 +437,7 @@ def build_schematic():
             # symbol has vertically-arranged pins (R/C/FB are vertical in
             # the KiCad lib; LED is already horizontal)
             rot = 0
-            if len(part.pins) == 2 and part.ref != "J1":
+            if len(part.pins) == 2 and part.ref != "J1" and not _is_code_part(part):
                 lib = Path(str(part.lib.filename if hasattr(part.lib, "filename")
                                 else str(part.lib))).stem
                 try:
@@ -392,7 +453,8 @@ def build_schematic():
                 y_cursor = 42.0
                 x_cursor += col_w + 30.0
                 col_w = 30.0
-        x_cursor += col_w + 34.0
+        # long block titles (2.2 mm font) need room: ~1.9 mm per character
+        x_cursor += max(col_w + 34.0, len(TITLES[block]) * 1.9 + 8.0)
 
     tb = [S("title_block"),
           [S("title"), "ESP32 M.2 Companion - Key-B 2242 USB companion MCU"],
@@ -409,7 +471,7 @@ def build_schematic():
            [S("generator"), "gen_sch"],
            [S("generator_version"), "9.0"],
            [S("uuid"), ROOT_UUID],
-           [S("paper"), "A2"],
+           [S("paper"), "A1"],
            tb,
            [S("lib_symbols")] + list(lib_symbols.values())]
     sch += texts + placed + wires + labels

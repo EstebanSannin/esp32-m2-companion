@@ -259,7 +259,7 @@ review. Never proceed past a gate without explicit approval.
       state 15.
     - **G11.** Input overvoltage protection.
       - Card stays off, undamaged, for supply > ~3.49 V (trip window
-        3.44–3.57 V, ADR 0007 GATE V1 amendment) up to 28 V; auto-recovers
+        3.44–3.57 V, ADR 0007 GATE V1 amendment) up to ~18 V (OVLO pin abs max; GATE V2 correction); auto-recovers
         below ~3.17 V.
       - Normal operation from 3.135 V.
   - **§3 non-goals, changed:**

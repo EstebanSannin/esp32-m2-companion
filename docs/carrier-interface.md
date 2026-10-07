@@ -55,7 +55,7 @@ the EXP pins and pins 10/23/26 are simply unconnected on the card.
     the v2 eFuse current limit is ~1 A.
 - **Fixed:** **never more than 3.6 V.**
   - Rev-B cards have no protection: the ESP32-S3 absolute maximum is 3.6 V.
-  - v2 cards cut off at ~3.49 V (3.44–3.57 V window) and stay off, without damage, up to 28 V
+  - v2 cards cut off at ~3.49 V (3.44–3.57 V window) and stay off, without damage, up to ~18 V (OVLO pin limit)
     (ADR 0007). Even so, the 3.6 V limit applies to every carrier.
 - GND on all 11 GND fingers (3, 5, 11, 27, 33, 39, 45, 51, 57, 71, 73).
 

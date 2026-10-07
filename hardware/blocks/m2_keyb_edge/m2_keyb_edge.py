@@ -12,7 +12,13 @@ notch (v1's D- via was milled away) - DRC edge clearance 0.3 mm, waiver
 for the finger pads only.
 
 Positions 12-19 are the Key-B notch: no pins exist there.
-Pin 75 (CONFIG_2) is not listed in Mallow Table 10; kept NC.
+Pin 75 (CONFIG_2) is not listed in Mallow Table 10.
+
+v2.0 Rev A (ADR 0006, docs/carrier-interface.md): pin NAMES keep the Mallow /
+WWAN-standard names (host-datasheet traceability); the NETS on them carry the
+contract names (EXP_n, LED_1_n, WAKE_ON_WWAN_n, W_DISABLE2_n, CONFIG_n).
+CONFIG_0/CONFIG_1 grounded (state 6); CONFIG_2/CONFIG_3 = carrier-signature
+sense inputs; EXP pins = expansion bus (behind TMUX1511).
 """
 
 from skidl import Part, Pin, SKIDL, TEMPLATE
@@ -22,11 +28,12 @@ _PWRIN = Pin.types.PWRIN
 _BIDIR = Pin.types.BIDIR
 _IN = Pin.types.INPUT
 _NC = Pin.types.NOCONNECT
+_PAS = Pin.types.PASSIVE
 
 _PINS = [
     # (number, name, func)  -- names follow Mallow X17 verbatim where wired,
     # M.2 WWAN standard names otherwise ('#' -> '_n').
-    (1, "CONFIG_3", _NC),
+    (1, "CONFIG_3", _IN),
     (2, "VCC_3V3", _PWRIN),
     (3, "GND", _PWRIN),
     (4, "VCC_3V3", _PWRIN),
@@ -35,30 +42,30 @@ _PINS = [
     (7, "USBH3_D_P", _BIDIR),
     (8, "W_DISABLE1_n", _IN),            # BOOT source (diode-OR), ADR 0002
     (9, "USBH3_D_N", _BIDIR),
-    (10, "WWAN_LED_n", _NC),
+    (10, "WWAN_LED_n", _PAS),
     (11, "GND", _PWRIN),
     # 12-19: notch
     (20, "PCIE_1_GPIO_5", _IN),          # BOOT source via Mallow X16.19 jumper
-    (21, "CONFIG_0", _NC),
+    (21, "CONFIG_0", _PAS),
     (22, "PCIE_1_GPIO_6", _NC),
-    (23, "PCIE_1_GPIO_11", _NC),
+    (23, "PCIE_1_GPIO_11", _PAS),
     (24, "PCIE_1_GPIO_7", _NC),
     (25, "DPR", _NC),
-    (26, "PCIE_1_GPIO_10", _NC),
+    (26, "PCIE_1_GPIO_10", _PAS),
     (27, "GND", _PWRIN),
     (28, "PCIE_1_GPIO_8", _NC),
     (29, "USBH3_SSRX_N", _NC),
-    (30, "PCIE_1_UIM_RESET", _NC),
+    (30, "PCIE_1_UIM_RESET", _BIDIR),
     (31, "USBH3_SSRX_P", _NC),
-    (32, "PCIE_1_UIM_CLK", _NC),
+    (32, "PCIE_1_UIM_CLK", _BIDIR),
     (33, "GND", _PWRIN),
-    (34, "PCIE_1_UIM_DATA", _NC),
+    (34, "PCIE_1_UIM_DATA", _BIDIR),
     (35, "USBH3_SSTX_N", _NC),
-    (36, "PCIE_1_UIM_PWR", _NC),
+    (36, "PCIE_1_UIM_PWR", _BIDIR),
     (37, "USBH3_SSTX_P", _NC),
     (38, "SDX2AP_STATUS", _NC),
     (39, "GND", _PWRIN),
-    (40, "PCIE_1_GPIO_0", _NC),
+    (40, "PCIE_1_GPIO_0", _BIDIR),
     (41, "PCIE_1_L0_RX_N", _NC),
     (42, "PCIE_1_GPIO_1", _NC),
     (43, "PCIE_1_L0_RX_P", _NC),
@@ -77,23 +84,23 @@ _PINS = [
     (56, "RFFE_CLK", _NC),
     (57, "GND", _PWRIN),
     (58, "RFFE_DATA", _NC),
-    (59, "LAA_TX_EN", _NC),
-    (60, "WLAN_TX_EN", _NC),
-    (61, "ANTCTL1", _NC),
-    (62, "COEX_RXD", _NC),
-    (63, "ANTCTL2", _NC),
-    (64, "COEX_TXD", _NC),
-    (65, "RFFE_VIO_1V8", _NC),
+    (59, "LAA_TX_EN", _BIDIR),
+    (60, "WLAN_TX_EN", _BIDIR),
+    (61, "ANTCTL1", _BIDIR),
+    (62, "COEX_RXD", _BIDIR),
+    (63, "ANTCTL2", _BIDIR),
+    (64, "COEX_TXD", _BIDIR),
+    (65, "RFFE_VIO_1V8", _BIDIR),
     (66, "PCIE_1_UIM_CD", _NC),
     (67, "M2_CARD_RESET_n", _NC),        # 1.8 V domain, driver undocumented
     (68, "AP2SDX_STATUS", _NC),
-    (69, "CONFIG_1", _NC),
+    (69, "CONFIG_1", _PAS),
     (70, "VCC_3V3", _PWRIN),
     (71, "GND", _PWRIN),
     (72, "VCC_3V3", _PWRIN),
     (73, "GND", _PWRIN),
     (74, "VCC_3V3", _PWRIN),
-    (75, "CONFIG_2", _NC),
+    (75, "CONFIG_2", _IN),
 ]
 
 
