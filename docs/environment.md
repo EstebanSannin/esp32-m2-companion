@@ -21,5 +21,6 @@ Network notes (this machine/sandbox):
 | 2026-08-28 | skidl 2.3.0 + pypdf | `uv add` in hardware/ | schematic-as-code (ADR 0001), PDF merge |
 | 2026-08-28 | node 26 + graphviz (incl. rsvg-convert) | `brew install node graphviz` | netlistsvg rendering, SVG→PDF |
 | 2026-08-28 | netlistsvg | `npm install -g netlistsvg` | schematic-style SVG from netlists |
+| 2026-10-09 | gerbonara 1.6.3 + numpy + pillow (Python 3.12) | ephemeral `uv run --no-project --with …` (no install; cached by uv) | `make jlc-check`: compare JLC production files with ours |
 
 Still to install (Phase 4): ESP-IDF.

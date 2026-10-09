@@ -46,16 +46,26 @@ uploaded for that preview.
 - DNP (not placed): R5, R6, C8, C9 — excluded from BOM + CPL by the netlist,
   crossed out on the assembly drawing (docs/review/rev_b_drawings.pdf)
 
-## Order steps (rev B — after the v1 LED reversal)
-1. `make fab` → upload the 3 files above.
-2. In the **assembly placement preview**, open `fab/polarity_checklist.md`.
-3. For **every row** (D1–D4, U1, U2, J3, J4) check the preview against the
-   row, using N/S (screw-notch edge / gold fingers) — the bottom-side preview
-   is mirrored, so E/W is not reliable. **LEDs: the "+" must be on the pad
-   level with the series resistor (R3/R4), i.e. the N pad.**
-   **Never approve a preview by eye.** If a part is rotated, fix `JLC_ROT`
-   (not the footprint) and regenerate.
-4. Set the verified date for each `JLC_ROT` entry, re-run `make fab` (must
-   exit 0), re-upload the CPL, re-check the preview once more, then order.
+## Order steps (rev B — after the v1 LED reversal; updated with the Rev B order experience)
+1. `make fab` → upload the 3 files above. Select **Confirm Parts Placement:
+   Yes** and **Confirm Production File: Yes** — the real checks happen after
+   ordering, and production waits for your confirmation.
+2. The placement preview shown **before** ordering is generated automatically
+   ("for reference only"): JLC's 3D models may sit off their pads and polarity
+   marks can mislead. Note anything odd, but **do not rotate parts in JLC's
+   editor** — the CPL is the source of truth.
+3. **Production files** (email, ~48 h to confirm): download JLC's zip and run
+   `make jlc-check JLC=<zip>`. It must report **PASS** (stored upload identical,
+   every drill hole matched); then look at `hardware/build/jlc_check/diff_*.png`
+   — expected differences are listed in `tools/check_jlc_production.py`.
+   Also check the panel: V-cut on the long sides only, nothing on the finger
+   edge, no castellation.
+4. **Final DFM placement** (engineers, "Confirm" button on the order page):
+   check every row of `fab/polarity_checklist.md` using N/S (screw-notch edge /
+   gold fingers). **LEDs: the "+" must be on the pad level with the series
+   resistor (R3/R4), i.e. the N pad.** **Never approve a preview by eye.** If
+   something is wrong, reply to the engineers on the order page.
+5. After confirming, record the confirmed rotations with today's date in
+   `JLC_ROT` (`hardware/tools/gen_fab.py`) so the next `make fab` exits 0.
 
 Do not order before GATE B3 (owner). See docs/review-findings.md.

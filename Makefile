@@ -3,7 +3,7 @@
 HW := hardware
 UV := cd $(HW) && uv run
 
-.PHONY: check drc netlist bom sch svg render layers views datasheet 3d fab drawings labels clean
+.PHONY: check drc netlist bom sch svg render layers views datasheet 3d fab drawings labels jlc-check clean
 
 # ERC + netlist + BOM: run after every schematic-source change.
 check:
@@ -38,6 +38,12 @@ labels:
 # JLCPCB fab package: gerbers.zip + BOM + CPL (-> fab/).
 fab:
 	$(UV) python tools/gen_fab.py
+
+# Compare JLC's processed production files with fab/ (before confirming them).
+# Usage: make jlc-check JLC=~/Downloads/<order>_gerbers_Y6.zip
+jlc-check:
+	@test -n "$(JLC)" || { echo "usage: make jlc-check JLC=<jlc production zip>"; exit 2; }
+	cd $(HW) && uv run --no-project --python 3.12 --with gerbonara==1.6.3 --with numpy --with pillow python tools/check_jlc_production.py $(JLC)
 
 # 3D renders for the README (docs/img/, committed).
 KCLI := $(HOME)/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli
