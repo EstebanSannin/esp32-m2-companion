@@ -35,7 +35,7 @@ drawings:
 KPY := $(HOME)/Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/3.9/bin/python3
 labels:
 	cd $(HW) && $(KPY) tools/polarity_report.py build/fab && $(KPY) tools/label_inventory.py
-	cp $(HW)/build/esp32_m2_companion_schematic.pdf docs/review/rev_b_schematic.pdf
+	cp $(HW)/build/esp32_m2_companion_schematic.pdf docs/review/v2_reva_schematic.pdf
 
 # JLCPCB fab package: gerbers.zip + BOM + CPL (-> fab/).
 fab:
@@ -53,7 +53,8 @@ views:
 	cd $(HW) && $(KPY) tools/gen_views.py
 
 # Per-layer copper views for docs/stackup.md (docs/img/layers/).
-LAYERS := 1_top_signal:F.Cu 2_gnd_plane:In1.Cu 3_pwr_plane:In2.Cu 4_bottom_signal:B.Cu
+# v2 6-layer JLC06081H-2116 (ADR 0008)
+LAYERS := 1_top_signal:F.Cu 2_gnd_plane:In1.Cu 3_inner_signal:In2.Cu 4_inner_signal:In3.Cu 5_pwr_plane:In4.Cu 6_bottom_signal:B.Cu
 layers:
 	@for e in $(LAYERS); do n=$${e%%:*}; l=$${e##*:}; \
 	  $(KCLI) pcb export svg --layers $$l,Edge.Cuts --mode-single --exclude-drawing-sheet --page-size-mode 2 \

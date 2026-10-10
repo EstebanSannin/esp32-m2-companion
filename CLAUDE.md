@@ -68,7 +68,12 @@ Knowledge management per SPEC §12 (findings log, block LESSONS.md, this file).
   SPEC §13 A1; hand-chamfer the leading edge). Rev B: 4-layer
   SIG/GND/PWR/SIG. **v2: 6-layer JLC06081H-2116, SIG/GND/SIG/SIG/PWR/SIG**
   (ADR 0008, `docs/stackup.md`); In1 GND and In4 +3V3 stay solid planes —
-  no signal tracks on them.
+  no signal tracks on them. v2 vias: 0.45/0.3, 0.45/0.2 and 0.35/0.2 (the
+  paid JLC "0.2mm/(0.3/0.35mm)" option, owner-approved GATE V3 — order with
+  it selected); hole-to-copper 0.2 mm (JLC inner-layer value).
+- Gold fingers: no copper between fingers; enter each finger from its top
+  edge only. Every GND finger must reach the GND plane (v2 had 4 floating
+  ones hidden behind other nets' vias — DRC "unconnected" on pour islands).
 - DRC: copper-to-edge clearance 0.3 mm; the edge-clearance waiver covers only
   J1's SMD finger pads — never a whole footprint, vias, tracks or zones (a
   J1-wide waiver hid a via milled away in the B-key notch on v1). Mounting

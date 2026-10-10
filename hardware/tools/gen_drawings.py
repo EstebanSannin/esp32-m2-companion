@@ -1,6 +1,7 @@
 """Assembly + fab drawings for review gates (`make drawings`).
 
-Output: docs/review/rev_b_drawings.pdf (also hardware/build/drawings/)
+Output: docs/review/<REV_TAG>_drawings.pdf (tools/revision.py; also
+hardware/build/drawings/)
   sheet 1  assembly: top + bottom-as-seen-from-below at 4:1, pads, refs,
            pad numbers on polarized parts, LED '+'/'K', DNP crossed
   sheet 2  fab: outline + dimensions, hole table (PTH/NPTH), fab notes
@@ -30,7 +31,8 @@ def main():
     OUT.mkdir(parents=True)
     from gitrev import gitrev
     rev = gitrev()
-    rev = f"v1.0 Rev B · {rev}"
+    from revision import REV_LABEL, REV_TAG
+    rev = f"{REV_LABEL} · {rev}"
     date = datetime.date.today().isoformat()
     subprocess.run([str(KPY), str(HERE / "tools" / "asm_view.py"), str(OUT),
                     "ESP32-M2-COMPANION", rev, date], check=True)
@@ -38,8 +40,8 @@ def main():
     subprocess.run(["rsvg-convert", "-f", "pdf", "-o", str(pdf),
                     str(OUT / "assembly.svg"), str(OUT / "fab.svg")], check=True)
     DOCS.mkdir(parents=True, exist_ok=True)
-    shutil.copy(pdf, DOCS / "rev_b_drawings.pdf")
-    print("wrote", DOCS / "rev_b_drawings.pdf")
+    shutil.copy(pdf, DOCS / f"{REV_TAG}_drawings.pdf")
+    print("wrote", DOCS / f"{REV_TAG}_drawings.pdf")
 
 
 if __name__ == "__main__":

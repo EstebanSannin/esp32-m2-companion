@@ -9,3 +9,7 @@
   give the TVS GND pin its own via to the reference plane, placed with the
   pre-routed pair, not left to the pour; run tools/gnd_islands.py. Side
   effect: v1 U1 *orientation* is not proven by function either.
+- 2026-10-10 (GATE V3, self-caught): a USB leg on an outer layer under a
+  fine-pitch part blocks every escape via of that part (through vias need
+  all layers). Run the pair on In2 (over the In1 GND plane) and drop into
+  the module pads with via-in-pad (6-layer vias are filled + capped).

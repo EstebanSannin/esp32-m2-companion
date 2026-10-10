@@ -3437,6 +3437,17 @@
 			(uuid "88c6e964-a95c-4c1d-a14f-83fc9a6cea84")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/3dmodels/TI_RSV0016A_UQFN-16_1.8x2.6mm_P0.4mm.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_Array_Convex_4x0402"
 		(layer "B.Cu")
@@ -6601,6 +6612,17 @@
 			(uuid "6d6a2e42-136a-48d6-ba30-f1b28d0dc5e7")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/Package_DFN_QFN.3dshapes/Texas_RUN0010A_WQFN-10_2x2mm_P0.5mm.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "B.Cu")
@@ -7256,6 +7278,17 @@
 			(uuid "8efd5c65-c2c2-4bef-ae28-eda4f52ada8f")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/3dmodels/TI_RSV0016A_UQFN-16_1.8x2.6mm_P0.4mm.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "TestPoint:TestPoint_Pad_D1.0mm"
 		(layer "B.Cu")
@@ -8254,6 +8287,17 @@
 			(uuid "d63f763f-15a8-474e-a3be-149b292c171d")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/3dmodels/TI_RSV0016A_UQFN-16_1.8x2.6mm_P0.4mm.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_0402_1005Metric"
 		(layer "B.Cu")

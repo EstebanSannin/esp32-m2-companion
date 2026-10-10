@@ -397,3 +397,68 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   shorter than KiCad's) for escape room; orphaned fan-out from moved parts
   removed by `tools/v2_drop_orphan_fanout.py` (anchored-to-pad test, not
   DRC's dangling list, which unravels signal nets).
+- 2026-10-10 · GATE V3 · — · **PROJECT** (owner decision) · Smaller vias:
+  JLC option "Min via 0.2mm/(0.3/0.35mm)" approved (quote 2026-10-10:
+  100 pcs $156.80 → $207.49, +$0.51/board; adds 4-wire Kelvin test + FR4
+  TG155; 8 layers was no cheaper at 100 pcs ($202.60) and +$149 engineering
+  fee per order). As built: 90 of 213 vias are 0.35/0.2, on every EXP net and
+  the crowded module/sideband nets — wider use than the "switch escapes
+  only" first proposed; same per-order fee. → must be selected at order
+  (GATE V4, CLAUDE.md design rules).
+- 2026-10-10 · GATE V3 · medium · **PROJECT** (self-caught) · Hole-to-copper
+  rule relaxed 0.25 → 0.2 mm = JLC capabilities "Inner layer via hole to
+  copper clearance 0.2mm" (checked on the page 2026-10-10). The 0.25 mm
+  margin, not via size, was what sealed the 0.4 mm-pitch switch pins.
+- 2026-10-10 · GATE V3 · high · **BLOCK usb_esd** (self-caught; supersedes the
+  2026-10-10 "In2 → F through the pad channels" entry) · The F.Cu leg of
+  USB_D_P/N ran under U4/U5 at y 135.2/136.5 and blocked every escape via
+  there. → In2 down the module's left pad column, via-in-pad on U2.13/14;
+  no F/B run under the switches (`tools/v2_usb_route.py`).
+- 2026-10-10 · GATE V3 · high · **BLOCK m2_keyb_edge** (self-caught) · Four
+  GND fingers (3/5, 11, 57) were not connected on the card side: their F
+  pour pieces were cut off by other nets' vias right above them (the +3V3_M2
+  fingers-2/4 via, the LED_1_n escape, a thin +3V3_M2 link running along the
+  finger tops). DRC showed it only as "unconnected" between pour islands.
+  → vias moved, finger-57 stub + via, stitching tool, rule areas
+  GND11_STRIP/BAND for finger 11's only F pour path. CLAUDE.md rule added.
+- 2026-10-10 · GATE V3 · high · **PROCESS** (self-caught, tooling) · The grid
+  router ran thin tracks between gold fingers 70-74 (contact area) and walled
+  EXP fingers 59-65 with a sideways +3V3_M2 trunk. → finger-zone keep-out in
+  the router; +3V3_M2 trunk and the EXP_7/10, LED_1_n fan-ins hand-routed and
+  locked (`v2_power_route.py`, `v2_fanin_route.py`).
+- 2026-10-10 · GATE V3 · medium · **PROCESS** (self-caught, tooling) · Router
+  bugs found while hand-finishing: (1) a net could not change layer through
+  its own existing via (escape vias were unusable); (2) terminals ignored
+  copper already attached to a pad (hand stubs / escapes); (3) rule areas
+  blocked every layer, not their own; (4) grid quantisation refuses legal
+  45° paths 0.47 mm from a via. Fixed (1)-(3); (4) worked around by hand.
+  `--debug/--dump` reachability added — use it before rip-up guessing.
+- 2026-10-10 · GATE V3 · medium · **PROCESS** (self-caught, repeat) · Pruning
+  on KiCad's track_dangling flag unravelled complete nets again (KiCad flags
+  route ends on rounded pad corners). → `v2_prune_branches.py` prunes by
+  real copper overlap; `v2_tie_vias.py` handles "dangling" single-layer vias.
+  A hand stub was also placed after probing only its via spot, not its path
+  (finger 57 → short to an EXP_6 via): probe the whole path.
+- 2026-10-10 · GATE V3 · medium · **BLOCK power_3v3** (self-caught) · RPW
+  footprint L-pins: bar and leg rects only abutted, so KiCad saw U6 pin 1
+  (EN) as two unconnected pads. → leg overlaps bar 0.15 mm
+  (`gen_fp_rpw.py`). Also: C14/R34 sat in the J1 courtyard (DRC error carried
+  since the first placement) → eFuse cluster re-placed: C1/C2 bulk caps moved
+  to the module 3V3 pin, U6 +1.7 mm, FB1 right above U6 (OUT hop 1.5 mm).
+- 2026-10-10 · GATE V3 · low · **PROJECT** (owner decision) · USBH3_D_N
+  (rev-B locked route) finger-9 via moved 1.7 mm up (0.35/0.2 via, +0.2 mm
+  length): it capped finger 10 (LED_1_n, new in v2) against the B-key notch.
+- 2026-10-10 · GATE V3 · low · **PROJECT** (owner decision) · Silkscreen:
+  name on top split around the notch; back = logo + version + "Designed in
+  Italy" + samnium.tech; owner hand-edited reference labels; 0.8 mm minimum
+  kept (owner's 0.5/0.6 mm drafts raised). DRU waiver `gnd_single_spoke_pads`
+  (R28.2, C11.2, Q1.4 via-backed; J1.21 no room). NB: `min_resolved_spokes`
+  takes a bare number — `(min 1)` made KiCad silently drop the whole .kicad_dru.
+- 2026-10-10 · GATE V3 · low · **PROCESS** · GATE V2 asked for the RPW
+  footprint "from TI's CAD model, not PDF reading"; it was drawn from the
+  datasheet land/stencil drawings (every labelled dimension cross-checked).
+  → open item: compare against TI's CAD model before GATE V4.
+- 2026-10-10 · GATE V3 · — · **PROCESS** · SPEC A3 GATE V3 names
+  `v2/probe/gridprobe.py` as the pre-route gate; in practice it grew into the
+  production router `hardware/tools/v2_route.py` (same obstacle model) and
+  the gate evidence is `make drc` = 0 violations / 0 unconnected.

@@ -42,4 +42,8 @@
 		(solder_mask_margin 0.05))
 	(pad "16" smd roundrect (at -0.6 -1.2) (size 0.2 0.6) (layers "F.Cu" "F.Mask" "F.Paste") (roundrect_rratio 0.25)
 		(solder_mask_margin 0.05))
+	(model "${KIPRJMOD}/3dmodels/TI_RSV0016A_UQFN-16_1.8x2.6mm_P0.4mm.wrl"
+		(offset (xyz 0 0 0))
+		(scale (xyz 1 1 1))
+		(rotate (xyz 0 0 0)))
 )

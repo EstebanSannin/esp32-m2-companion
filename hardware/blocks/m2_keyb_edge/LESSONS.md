@@ -56,3 +56,13 @@
 - 2026-10-06: mounting notch now NPTH with no copper (library + board). The
   NPTH still sits inside U2's antenna keep-out - unavoidable (M.2 screw
   position is fixed); documented DRC exclusion in tools/check_drc.py.
+- 2026-10-10 (GATE V3, self-caught): a GND finger is only grounded if its
+  pour piece reaches the plane. A via of another net right above a finger
+  (fingers alternate F/B at 0.25 mm) isolates it, and DRC reports it only
+  as "unconnected" between pour islands — four GND fingers were floating.
+  Keep the strip above each GND finger via-free or give it a stub + GND via.
+- 2026-10-10 (GATE V3): fingers next to the B-key notch (10, 11) have one
+  0.5 mm strip between the notch edge and the next run: it holds either a
+  via or a pour path, never both. Plan these before routing.
+- 2026-10-10 (GATE V3): no copper between gold fingers — enter every finger
+  from its top edge (the router once joined 70/72/74 across the contact area).

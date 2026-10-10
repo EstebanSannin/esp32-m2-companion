@@ -1,5 +1,10 @@
 # Layer stackup & routing
 
+> **This branch is v2.0 Rev A: 6 layers, JLC06081H-2116** — see
+> [the v2 section](#v20-rev-a--6-layers-jlc06081h-2116-adr-0008-gate-v3-2026-10-07)
+> at the end. The 4-layer description below is the ordered **rev B** (history);
+> its layer images are served from the `rev-b` branch.
+
 4-layer, 0.8 mm, **SIG / GND / PWR / SIG** — JLCPCB **JLC04081H-3313** stackup.
 Layer renders below are generated from the routed board
 (`hardware/kicad/esp32_m2_companion.kicad_pcb`); regenerate with `make render`
@@ -32,26 +37,26 @@ plus the per-layer export in `docs/`. Blue = copper.
 ## The four copper layers
 
 ### 1 — F.Cu (top signal)
-![top signal](img/layers/1_top_signal.png)
+![top signal](https://github.com/EstebanSannin/esp32-m2-companion/blob/rev-b/docs/img/layers/1_top_signal.png?raw=true)
 
 Component pads for the module (U2) and the two JST connectors (J3/J4), plus
 short top-side signal segments. The dashed rectangle at the top is the antenna
 keep-out (no copper under the module antenna).
 
 ### 2 — In1.Cu (GND plane)
-![gnd plane](img/layers/2_gnd_plane.png)
+![gnd plane](https://github.com/EstebanSannin/esp32-m2-companion/blob/rev-b/docs/img/layers/2_gnd_plane.png?raw=true)
 
 Solid ground pour — the USB pair's return-current reference. Kept continuous
 under the signal layers; the antenna region is excluded.
 
 ### 3 — In2.Cu (+3V3 power plane)
-![pwr plane](img/layers/3_pwr_plane.png)
+![pwr plane](https://github.com/EstebanSannin/esp32-m2-companion/blob/rev-b/docs/img/layers/3_pwr_plane.png?raw=true)
 
 The 3.3 V card rail. Every +3V3 component pad reaches this plane through a via,
 so power distribution is the plane, not surface traces.
 
 ### 4 — B.Cu (bottom signal)
-![bottom signal](img/layers/4_bottom_signal.png)
+![bottom signal](https://github.com/EstebanSannin/esp32-m2-companion/blob/rev-b/docs/img/layers/4_bottom_signal.png?raw=true)
 
 Where most of the routing lives. The gold fingers are at the bottom edge; the
 dot grid under the module is the EPAD ground-via array (thermal + GND,
@@ -91,3 +96,28 @@ expedite allowed). Multilayer minimum 0.09/0.09 mm; vias are epoxy-filled and ca
 **USB pair, L1 over L2 GND:** 90 Ω ⇒ W 0.15 / S 0.13 (89.6 Ω, JLC solver). The rev-B routed pair
 (0.14/0.14) solves to ~92 Ω on this stackup, inside ±10 %, so it is kept as routed. The
 `USB_DIFF` net class is set to 0.15/0.13 for any new USB routing.
+
+### v2 routing rules as built (GATE V3, 2026-10-10)
+
+| Rule | Value | Note |
+|---|---|---|
+| Track / clearance | 0.127 / 0.127 mm | power trunk 0.35 mm (≈ 1 A eFuse limit) |
+| Vias | 0.45/0.3, 0.45/0.2, **0.35/0.2** | 0.35-pad vias = JLC option "Min via 0.2mm/(0.3/0.35mm)" (owner-approved; +4-wire Kelvin test, FR4 TG155; ≈ +$0.5/board @100): 90 of 213 vias, every EXP net + crowded module/sideband nets |
+| Hole to copper | 0.2 mm | JLC "Inner layer via hole to copper clearance 0.2mm" (was 0.25 in v1) |
+| Hole to hole | 0.25 mm | JLC 0.2 |
+| Copper to edge | 0.3 mm | J1 finger pads waived only (`.kicad_dru`) |
+| Gold fingers | no copper between fingers | every finger entered from its top edge only (router keep-out) |
+| Pour paths | rule areas `GND11_STRIP` / `GND11_BAND` | keep GND finger 11 tied to the F pour (no vias / tracks) |
+
+The MCU-side USB pair (`USB_D_P/N`, full speed) runs on **In2 over the In1 GND plane** down the
+module's left pads into via-in-pad on U2.13/14 (it used to cross the switch strip on F). The host
+pair `USBH3_D_P/N` keeps its rev-B route except the D_N finger-9 via, moved 1.7 mm up to free
+finger 10 (`tools/v2_usbh3_dn_reroute.py`).
+
+Copper per signal layer (v2):
+
+| F.Cu | In2.Cu | In3.Cu | B.Cu |
+|---|---|---|---|
+| ![F](img/layers/1_top_signal.png) | ![In2](img/layers/3_inner_signal.png) | ![In3](img/layers/4_inner_signal.png) | ![B](img/layers/6_bottom_signal.png) |
+
+Planes: ![In1 GND](img/layers/2_gnd_plane.png) ![In4 +3V3](img/layers/5_pwr_plane.png)

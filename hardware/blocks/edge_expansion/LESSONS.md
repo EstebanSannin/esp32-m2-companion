@@ -5,3 +5,7 @@
   (TMUX1511 IIH ±2 µA ×12 + 12 × 6 MΩ). 10k chosen.
 - 2026-10-07 (GATE V1, self-caught): pull-ups for an isolated bus belong on
   the MCU side of the isolation switch, or they leak onto the host's pins.
+- 2026-10-10 (GATE V3): 0.4 mm-pitch escapes were sealed by the 0.25 mm
+  hole-to-copper margin, not by via pad size; JLC's 0.2 mm (inner layers)
+  plus 0.35/0.2 vias opened them. The 12 EXP edge nets end at 7 consecutive
+  fingers (59-65) at 0.25 mm F/B pitch: fix 2-3 fan-ins by hand first.

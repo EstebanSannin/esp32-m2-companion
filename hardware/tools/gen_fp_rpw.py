@@ -77,6 +77,11 @@ def main():
     for xc, yc in APERTURES:
         lines.append(f'\t(pad "" smd roundrect (at {xc} {yc}) (size 0.28 1.06) '
                      f'(layers "F.Paste") (roundrect_rratio 0.1786))')
+    # 3D (visual only): KiCad's TI RUN0010A WQFN-10 2x2 P0.5 - same body size
+    # and pitch family as RPW (VQFN-HR); terminals differ, rendering only.
+    lines.append('\t(model "${KICAD9_3DMODEL_DIR}/Package_DFN_QFN.3dshapes/'
+                 'Texas_RUN0010A_WQFN-10_2x2mm_P0.5mm.step"\n\t\t(offset (xyz 0 0 0))'
+                 '\n\t\t(scale (xyz 1 1 1))\n\t\t(rotate (xyz 0 0 0)))')
     lines.append(')')
     OUT.write_text("\n".join(lines) + "\n")
     print("wrote", OUT)

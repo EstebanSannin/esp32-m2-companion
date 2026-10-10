@@ -8,3 +8,12 @@
   `tools/gen_fp_rpw.py` from the rendered datasheet drawing (p.73 land, p.74
   stencil), every labelled dimension cross-checked — text extraction of a
   dimensioned drawing is NOT reliable, render the page and measure.
+- 2026-10-10 (GATE V3, self-caught): L-shaped QFN pins drawn as two rects
+  must OVERLAP, not abut — with rounded corners KiCad sees two separate pads
+  (U6 pin 1 EN was "unconnected").
+- 2026-10-10 (GATE V3): the eFuse IN/OUT are 0.3 mm strips 0.2 mm apart;
+  only one of them can leave the package at full width from each end.
+  Put the output bead (FB1) right at the OUT end and the input cap on the
+  IN end; route the sense branches (OVLO divider, EN pull-up) thin.
+- 2026-10-10 (GATE V3): the J1 courtyard (≈ 4.8 mm from the edge) is a hard
+  keep-out for parts — C14/R34 sat inside it from the first placement.
