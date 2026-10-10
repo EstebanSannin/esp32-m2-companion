@@ -1,6 +1,7 @@
 """Hand-finish helper: remove all tracks/vias of the named nets (separate
 process - never keep using a board after Remove()). Refuses the USB nets.
-  $KPY tools/v2_ripnets.py NET1,NET2,...
+  $KPY tools/v2_ripnets.py NET1,NET2,... [--keep-locked]
+--keep-locked: leave hand-routed (locked) copper, rip only the router's.
 """
 import sys
 from pathlib import Path
@@ -20,7 +21,7 @@ def main():
     b = pcbnew.LoadBoard(str(PCB))
     n = 0
     for t in list(b.GetTracks()):
-        if t.GetNetname() in nets:
+        if t.GetNetname() in nets and not ("--keep-locked" in sys.argv and t.IsLocked()):
             b.Remove(t)
             n += 1
     pcbnew.SaveBoard(str(PCB), b)

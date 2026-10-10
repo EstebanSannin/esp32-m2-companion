@@ -62,6 +62,8 @@ if "--drill" in sys.argv:
 if "--via" in sys.argv:
     VD = float(sys.argv[sys.argv.index("--via") + 1])
 ESCAPE_ONLY = "--escape-only" in sys.argv
+DEBUG = "--debug" in sys.argv     # on failure: extent of the reachable region
+SEEN = set()
 EDGE = 0.35   # 0.3 rule + margin: J1 edge arcs are polygonized (GATE V3)
 SAFE = 0.02
 # hole-to-copper 0.2 = JLC "Inner layer via hole to copper clearance 0.2mm"
@@ -216,7 +218,10 @@ def main():
         bb = (T(bbo.GetLeft()), T(bbo.GetTop()), T(bbo.GetRight()), T(bbo.GetBottom()))
         f = box_dist(bb)
         if z.GetDoNotAllowTracks():
-            raster(gt, BLOCK, f, bb, TW / 2 + CLR + SAFE)
+            # only the rule area's own layers (a F-only pour keep-out must not
+            # close B / inner routing under it)
+            zl = [gt[lidx[l]] for l in sig if z.IsOnLayer(l)]
+            raster(zl, BLOCK, f, bb, TW / 2 + CLR + SAFE)
         if z.GetDoNotAllowVias():
             raster([gv], BLOCK, f, bb, VD / 2 + SAFE)
     outline = pcbnew.SHAPE_POLY_SET()
@@ -298,6 +303,8 @@ def main():
             f, g, s = heapq.heappop(pq)
             if g > dist.get(s, 1e18):
                 continue
+            if DEBUG:
+                SEEN.add(s)
             if is_target(s):
                 path = [s]
                 while s in prev:
@@ -402,6 +409,59 @@ def main():
         pts = ([(T(t.GetX()), T(t.GetY()))] if t.Type() == pcbnew.PCB_VIA_T else
                [(T(t.GetStart().x), T(t.GetStart().y)), (T(t.GetEnd().x), T(t.GetEnd().y))])
         own_copper.setdefault(t.GetNetname(), []).extend(pts)
+
+    # existing copper per net, for terminal growth: ("via", (x, y)) |
+    # ("seg", layer_idx, (x1, y1), (x2, y2))
+    net_items = {}
+    for t in board.GetTracks():
+        n_ = t.GetNetname()
+        if t.Type() == pcbnew.PCB_VIA_T:
+            net_items.setdefault(n_, []).append(("via", (T(t.GetX()), T(t.GetY()))))
+        elif t.GetLayer() in lidx:
+            net_items.setdefault(n_, []).append(
+                ("seg", lidx[t.GetLayer()], (T(t.GetStart().x), T(t.GetStart().y)),
+                 (T(t.GetEnd().x), T(t.GetEnd().y))))
+
+    def grow_terminal(net, on, bb):
+        """Pad cells + centreline cells of the net's existing copper attached
+        to this pad (escape stubs, hand-routed fan-ins): a route may end on
+        that copper instead of squeezing to the pad itself (GATE V3)."""
+        cells = set(pad_cells(on, bb))
+        items = net_items.get(net, [])
+        if not items:
+            return list(cells)
+        E = 0.02
+
+        def pts(it):
+            return [it[1]] if it[0] == "via" else [it[2], it[3]]
+
+        def lays(it):
+            return set(range(nl)) if it[0] == "via" else {it[1]}
+        padl = {lidx[l] for l in on}
+        attached, frontier = set(), []
+        for k, it in enumerate(items):
+            if lays(it) & padl and any(bb[0] - E <= x <= bb[2] + E and bb[1] - E <= y <= bb[3] + E
+                                       for x, y in pts(it)):
+                attached.add(k); frontier.append(k)
+        while frontier:
+            a = items[frontier.pop()]
+            for k, it in enumerate(items):
+                if k in attached or not (lays(a) & lays(it)):
+                    continue
+                if any(math.hypot(px - qx, py - qy) < E for px, py in pts(a) for qx, qy in pts(it)):
+                    attached.add(k); frontier.append(k)
+        for k in attached:
+            it = items[k]
+            if it[0] == "via":
+                ix, iy = int(round((it[1][0] - X0) / G)), int(round((it[1][1] - Y0) / G))
+                cells.update((m, ix, iy) for m in range(nl))
+            else:
+                (x1, y1), (x2, y2) = it[2], it[3]
+                nseg = max(1, int(math.hypot(x2 - x1, y2 - y1) / (G / 2)))
+                for j in range(nseg + 1):
+                    x = x1 + (x2 - x1) * j / nseg; y = y1 + (y2 - y1) * j / nseg
+                    cells.add((it[1], int(round((x - X0) / G)), int(round((y - Y0) / G))))
+        return list(cells)
 
     def connected(net, bb):
         return any(bb[0] - 0.01 <= x <= bb[2] + 0.01 and bb[1] - 0.01 <= y <= bb[3] + 0.01
@@ -522,7 +582,7 @@ def main():
                     zone.update((m, c[1], c[2]) for m in range(nl))
             NECKZ[own] = zone
             neck = lambda c, zone=zone: c in zone
-        tl = [(r_, pad_cells(on, bb)) for r_, _p, on, bb in pads_by_net[n]]
+        tl = [(r_, grow_terminal(n, on, bb)) for r_, _p, on, bb in pads_by_net[n]]
         tl = [(r_, c) for r_, c in tl if c]
         if n in WIDE:   # power-carrying terminals first, sense branches last
             tl.sort(key=lambda rc: rc[0] in NARROW_BRANCH)
@@ -557,6 +617,24 @@ def main():
                 miss = [ (round(cell_xy(t[0][1], t[0][2])[0], 2), round(cell_xy(t[0][1], t[0][2])[1], 2),
                           ["F", "In2", "In3", "B"][t[0][0]]) for t in todo]
                 print(f"    {n}: unreached terminal(s) at {miss}")
+                if DEBUG and SEEN:
+                    for li in range(nl):
+                        cs = [c for c in SEEN if c[0] == li]
+                        if cs:
+                            xs = [X0 + c[1] * G for c in cs]; ys = [Y0 + c[2] * G for c in cs]
+                            print(f"      reached {['F', 'In2', 'In3', 'B'][li]}: {len(cs)} cells "
+                                  f"x {min(xs):.2f}-{max(xs):.2f} y {min(ys):.2f}-{max(ys):.2f}")
+                    SEEN.clear()
+                    if "--dump" in sys.argv:
+                        dx_, dy_ = map(float, sys.argv[sys.argv.index("--dump") + 1].split(","))
+                        cx_, cy_ = int(round((dx_ - X0) / G)), int(round((dy_ - Y0) / G))
+                        for li in range(nl):
+                            print(f"      {['F', 'In2', 'In3', 'B'][li]} own={own}")
+                            for jy in range(cy_ - 4, cy_ + 5):
+                                print("        " + " ".join(
+                                    "." if gt[li][idx(jx, jy)] == 0 else ("o" if gt[li][idx(jx, jy)] == own
+                                    else ("X" if gt[li][idx(jx, jy)] == BLOCK else "n"))
+                                    for jx in range(cx_ - 6, cx_ + 7)))
                 break
             commit(own, path, w_now, neck=neck if w_now != TW else None)
             end = path[-1]

@@ -9,3 +9,16 @@
   (condition "A.Type == 'Pad' && A.memberOfFootprint('J1') && A.Pad_Type == 'SMD'")
   (severity ignore)
   (constraint edge_clearance))
+
+# v2 GATE V3: GND pads whose pour connection resolves to a single thermal
+# spoke. Each is still solidly on GND - waive the 2-spoke minimum for these
+# pads only (never net- or board-wide):
+#   R28.2, C11.2, Q1.4 (B): own GND via touching the pad (checked 2026-10-10)
+#   J1.21 (F, GND finger): connected by the F pour; at 0.25 mm finger pitch
+#     there is no room for a stub via between WAKE_ON_WWAN_n (F, x 103.85)
+#     and PCIE_1_GPIO_5 (B, x 104.5); many other GND fingers in parallel.
+# NB: min_resolved_spokes takes a bare number; '(min 1)' made KiCad drop the
+# WHOLE file silently (the finger edge waiver above vanished: 67 errors).
+(rule "gnd_single_spoke_pads"
+  (condition "A.Type == 'Pad' && A.NetName == 'GND' && (A.memberOfFootprint('R28') || A.memberOfFootprint('C11') || A.memberOfFootprint('Q1') || (A.memberOfFootprint('J1') && A.Pad_Number == '21'))")
+  (constraint min_resolved_spokes 1))

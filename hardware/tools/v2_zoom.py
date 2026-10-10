@@ -1,5 +1,6 @@
-"""Debug aid: render a window of the board (pads, tracks, vias of one layer
-+ all vias) as an SVG with net-name labels, to see why a net is blocked.
+"""Debug aid: render a window of the board (zone fills + rule areas, pads,
+tracks, vias of one layer + all vias) as an SVG with net-name labels, to see
+why a net is blocked or a pour fragment is isolated.
 
   $KPY tools/v2_zoom.py X0 Y0 X1 Y1 LAYER OUT.svg [HIGHLIGHT_NET ...]
 """
@@ -30,6 +31,25 @@ def main():
 
     def col(net):
         return "#d62728" if net in hl else ("#888" if net in ("GND", "+3V3") else "#1f77b4")
+    # zone fills on this layer (pale), each fragment outlined - to see pour
+    # connectivity; rule areas dashed
+    for z in b.Zones():
+        if not z.IsOnLayer(layer):
+            continue
+        if z.GetIsRuleArea():
+            ol = z.Outline().Outline(0)
+            pts_ = " ".join(f"{X(T(ol.CPoint(k).x)):.1f},{Y(T(ol.CPoint(k).y)):.1f}"
+                            for k in range(ol.PointCount()))
+            el.append(f'<polygon points="{pts_}" fill="none" stroke="#2ca02c" '
+                      f'stroke-width="1.5" stroke-dasharray="4,3"/>')
+            continue
+        fp_ = z.GetFilledPolysList(layer)
+        for k in range(fp_.OutlineCount()):
+            ol = fp_.Outline(k)
+            pts_ = " ".join(f"{X(T(ol.CPoint(j).x)):.1f},{Y(T(ol.CPoint(j).y)):.1f}"
+                            for j in range(ol.PointCount()))
+            el.append(f'<polygon points="{pts_}" fill="#ffe08a" fill-opacity="0.5" '
+                      f'stroke="#c9a400" stroke-width="0.8"/>')
     for fp in b.GetFootprints():
         for p in fp.Pads():
             if not p.IsOnLayer(layer):

@@ -1,7 +1,7 @@
 """v2 GATE V3: hand-route (scripted, explicit geometry, locked) the +3V3_M2
 input trunk: fingers 70/72/74 (B) -> C14.1 (input cap) -> U6.5 (eFuse IN),
 0.35 mm (~1 A, = eFuse limit), plus the stubs + via of the right-side 3.3 V
-fingers 2/4. The 2/4 link to the trunk and the sense branches (R31 OVLO
+fingers 2/4, and the eFuse OUT hop U6.6 -> FB1.1. The 2/4 link to the trunk and the sense branches (R31 OVLO
 divider, R33 EN pull-up) are thin and left to the router (`--thin`).
 
 Why by hand: routed by the grid router, the trunk ran sideways along the
@@ -33,15 +33,22 @@ ROUTES = [
     ("B.Cu", [(92.0, 146.6), (92.375, 146.225), (92.375, 144.3)]),
     ("B.Cu", [(92.375, 144.3), (91.85, 143.775), (91.85, 142.9)]),
     # right-side 3.3 V fingers 2 / 4 (B): x 109.0 / 108.5 -> via above them;
-    # 0.2 mm (link current only) and angled away from the locked USBH3_D_P
-    # via at (108.1, 146.95)
+    # 0.2 mm (link current only), angled away from the locked USBH3_D_P via
+    # at (108.1, 146.95); the via sits 1.9 mm up so GND fingers 3/5 (F) keep a
+    # F pour channel to the GND pour (a via right above finger 3 isolated them)
 ]
 THIN = 0.2
 THIN_ROUTES = [
-    ("B.Cu", [(108.6, 147.6), (108.75, 147.3), (108.75, 146.65)]),
+    ("B.Cu", [(108.6, 147.6), (108.75, 147.3), (108.75, 145.6)]),
     ("B.Cu", [(108.95, 147.6), (108.75, 147.3)]),
 ]
-VIAS = [(108.75, 146.65)]
+VIAS = [(108.75, 145.6)]
+# +3V3_EFUSE: U6.6 OUT strip (x 91.20-91.50, top y 140.70) -> FB1.1 (x 91.55-
+# 92.425, y 138.725-139.675; FB1 sits right above U6 since GATE V3). 0.175 mm
+# to the U6.5 IN strip and the U6.10 corner; the IN sense branches (R31, R33)
+# therefore leave from the trunk side, not from the strip top.
+OUT_NET = "+3V3_EFUSE"
+OUT_ROUTES = [("B.Cu", [(91.35, 140.8), (91.35, 140.3), (91.8, 139.85), (91.8, 139.5)])]
 
 
 def main():
@@ -57,13 +64,22 @@ def main():
                 t.SetEnd(pcbnew.VECTOR2I(mm(x2), mm(y2)))
                 t.SetWidth(mm(w)); t.SetLayer(layer); t.SetNet(ni); t.SetLocked(True)
                 b.Add(t)
+    no = b.FindNet(OUT_NET)
+    for lname, pts in OUT_ROUTES:
+        for (x1, y1), (x2, y2) in zip(pts, pts[1:]):
+            t = pcbnew.PCB_TRACK(b)
+            t.SetStart(pcbnew.VECTOR2I(mm(x1), mm(y1)))
+            t.SetEnd(pcbnew.VECTOR2I(mm(x2), mm(y2)))
+            t.SetWidth(mm(W)); t.SetLayer(b.GetLayerID(lname)); t.SetNet(no)
+            t.SetLocked(True)
+            b.Add(t)
     for x, y in VIAS:
         v = pcbnew.PCB_VIA(b)
         v.SetPosition(pcbnew.VECTOR2I(mm(x), mm(y)))
         v.SetWidth(mm(VD)); v.SetDrill(mm(VDR)); v.SetNet(ni); v.SetLocked(True)
         b.Add(v)
     pcbnew.SaveBoard(str(PCB), b)
-    print(f"{NET}: trunk + finger 2/4 stubs placed (locked)")
+    print(f"{NET}: trunk + finger 2/4 stubs, {OUT_NET}: U6 -> FB1 placed (locked)")
 
 
 if __name__ == "__main__":
