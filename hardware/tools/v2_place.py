@@ -33,8 +33,8 @@ TARGETS = [
     ("R32", 93.6, 144.0, 90), ("R34", 93.6, 145.6, 90), ("R33", 89.9, 141.6, 90),
     ("FB1", 94.9, 142.6, 90),
     # switches in the freed test-point strip, above their fingers
-    ("U4", 93.6, 136.0, 0), ("U5", 96.4, 136.0, 0), ("U3", 101.0, 136.0, 0),
-    ("C11", 95.0, 134.2, 0), ("C12", 97.8, 134.2, 0), ("C10", 102.4, 134.2, 0),
+    ("U4", 93.9, 134.8, 0), ("U5", 98.0, 134.8, 0), ("U3", 102.6, 134.8, 0),
+    ("C11", 93.9, 132.2, 0), ("C12", 98.0, 132.6, 0), ("C10", 102.6, 132.4, 0),
     # resistor arrays next to the module pads
     ("RN2", 95.4, 125.0, 0), ("RN3", 95.4, 128.4, 0), ("RN1", 106.4, 122.6, 0),
     ("R20", 105.0, 120.2, 90), ("R21", 106.0, 120.2, 90),
@@ -120,8 +120,26 @@ def main():
                     return False
         return True
 
+    # --refs R1,R2 [--at REF=x,y,rot ...]: (re)place only these
+    if "--refs" in sys.argv:
+        only = sys.argv[sys.argv.index("--refs") + 1].split(",")
+        over = {}
+        for k, a in enumerate(sys.argv):
+            if a == "--at":
+                r_, xyz = sys.argv[k + 1].split("=")
+                x_, y_, rt = map(float, xyz.split(","))
+                over[r_] = (x_, y_, rt)
+        todo = [(r_, *over[r_]) if r_ in over else next(t for t in TARGETS if t[0] == r_)
+                for r_ in only]
+        # everything else is an obstacle now
+        targets_set = set(only)
+        crt_obs[:] = [crt(fp) for r_, fp in fps.items() if fp.IsFlipped() and r_ not in targets_set]
+        pad_obs[:] = [(bbox_mm(p.GetBoundingBox()), p.GetNetname()) for r_, fp in fps.items()
+                      if r_ not in targets_set for p in fp.Pads() if p.IsOnLayer(pcbnew.B_Cu)]
+    else:
+        todo = TARGETS
     report = []
-    for ref, x, y, rot in TARGETS:
+    for ref, x, y, rot in todo:
         fp = fps[ref]
         if not fp.IsFlipped():
             fp.Flip(fp.GetPosition(), False)

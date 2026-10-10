@@ -6,7 +6,6 @@
 | C10,C11,C12,C14,C4,C6 | 6 | 100nF 50V / CC0603KRX7R9BB104 | C14663 | Basic |  |
 | C13,C5 | 2 | 1uF 50V / CL10A105KB8NNNC | C15849 | Basic |  |
 | C3,C7 | 2 | 10uF 10V / CL10A106KP8NNNC | C19702 | Basic |  |
-| C8,C9 | 2 | SI-tune / DNP - SI tuning provision |  | Basic | DNP |
 | D1,D2 | 2 | BAT54A / LBAT54ALT1G | C12743 | Extended |  |
 | D3 | 1 | green / TJ-S1706SW6TGLC2G-A5 | C273616 | Extended |  |
 | D4 | 1 | red / TJ-S1706SW6TGLC2R-A5 | C273612 | Extended |  |
@@ -23,8 +22,6 @@
 | R32 | 1 | 52.3k 0.1% / RT0402BRD0752K3L | C852832 | Extended |  |
 | R34 | 1 | 3.3k / 0402WGF3301TCE | C25890 | Basic |  |
 | R4 | 1 | 330R / 0603WAF3300T5E | C23138 | Basic |  |
-| R5,R6 | 2 | 10k / 0603WAF1002T5E | C25804 | Basic | DNP |
-| R7,R8 | 2 | 0R / 0603WAF0000T5E | C21189 | Basic |  |
 | RN1,RN2,RN3 | 3 | 220R / 4D02WGJ0221TCE | C25498 | Extended |  |
 | U1 | 1 | USBLC6-2SC6 / USBLC6-2SC6 (ST) | C7519 | Extended |  |
 | U2 | 1 | ESP32-S3-WROOM-1 / ESP32-S3-WROOM-1-N8R2 | C2913204 | Extended |  |

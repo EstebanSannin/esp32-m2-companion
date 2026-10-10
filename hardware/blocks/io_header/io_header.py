@@ -14,13 +14,13 @@ Replaced by two JST SH 1.0 mm connectors, ASSEMBLED:
   J4 = SH-8: 1=TX(IO43) 2=RX(IO44) 3=CS(IO10) 4=MOSI(IO11) 5=CLK(IO12)
        6=MISO(IO13) 7=IO14 8=IO21 -> full native FSPI set + UART0 + 2 GPIO.
 
-I2C pull-up footprints 10k DNP (Qwiic peripherals usually carry their own).
+I2C pull-ups: none on the card (v2 removed the DNP R5/R6 footprints; Qwiic peripherals carry their own).
 Rail test points per SPEC 6.7.
 """
 
 from skidl import Part
 
-from blocks.common import R_0603, subcircuit
+from blocks.common import subcircuit
 
 
 @subcircuit
@@ -50,12 +50,8 @@ def io_header(v3v3, gnd, ios, txd0, rxd0):
     j4[7] += ios["IO14"]
     j4[8] += ios["IO21"]
 
-    # Optional I2C pull-ups, DNP (SPEC 6.6)
-    for sig, ref in (("IO8", "R5"), ("IO9", "R6")):
-        r = R_0603("10k", lcsc="C25804", mpn="0603WAF1002T5E", dnp=True,
-                   ref=ref)
-        r[1] += v3v3
-        r[2] += ios[sig]
+    # v2 (owner, GATE V3): the DNP I2C pull-up footprints R5/R6 are removed
+    # - Qwiic modules carry their own pull-ups; the space went to the switches.
 
     # Rail test points (SPEC 6.7)
     # v2 (owner, GATE V3): TP5/TP6 dropped - 3V3/GND already on J3 (Qwiic)

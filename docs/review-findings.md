@@ -365,3 +365,24 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   (`tools/v2_ripup.py`, `tools/v2_place.py`: nearest legal spot to a
   routing-aware target). Consistent with ADR 0008 ("re-placement, not a
   patch").
+- 2026-10-10 · GATE V3 · high · **BLOCK usb_esd** (self-caught, revises
+  my own GATE V3 decision) · The rev-B USB route kept "as validated" ran on
+  B.Cu straight through the new switch strip and fenced U3/U5 in. → USB
+  re-routed (scripted, locked, `tools/v2_usb_route.py`): U1 → vias at the
+  right edge → In2 (on the L2 GND plane) → vias → F.Cu into module pads
+  13/14 through the pad channels. Pair skew 5.2 mm (FS budget: rev B
+  asserted < 10 mm). **PROCESS candidate:** "Kept routing from a previous
+  placement is only 'validated' for that placement — re-check it against
+  the new parts before locking."
+- 2026-10-10 · GATE V3 · — · **PROJECT** (owner decision) · Removed R5/R6
+  (DNP Qwiic pull-ups), C8/C9 (DNP USB SI shunts) and R7/R8 (0 Ω USB links):
+  frees the row the bus switches need for pin escapes; U1 now connects
+  straight to the module. ERC + contract netlist check PASS, BOM 25 lines.
+- 2026-10-10 · GATE V3 · medium · **PROCESS** (self-caught, tooling) ·
+  Sequential maze routing walled pads in twice: a wide power track around
+  the eFuse OVLO pin, and a short net hugging a 0.5 mm-pitch array column.
+  Fixes: neck-down for wide nets, sense branches routed thin, shortest
+  nets first, and escape fan-out (stub + via per fine-pitch pad) before
+  any net routing. Iterated dangling-copper removal also unravelled nets
+  whose end no longer met a moved pad — rerouted, but **don't iterate
+  dangling cleanup blindly**.
