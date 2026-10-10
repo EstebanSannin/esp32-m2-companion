@@ -2,7 +2,8 @@
 fan-in of the EXP nets the grid router could not escape: EXP_10
 (finger 64, B), EXP_7 (finger 61, F) and LED_1_n (finger 10, B). Fingers
 59-65 sit at 0.25 mm alternating F/B pitch; a via at one finger's x blocks
-both neighbours, so these are fixed first and the rest of EXP_5..EXP_11 route around them.
+both neighbours, so these are fixed first and the rest of EXP_5..EXP_11
+route around them.
 
   EXP_10  B: finger top -> up-left stub to (93.3, 146.6), clear of the F
           stubs of 63 / 65; the route continues on B from there (the via
