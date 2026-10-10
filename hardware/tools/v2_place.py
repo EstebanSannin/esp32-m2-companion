@@ -81,7 +81,7 @@ def main():
     for r, fp in fps.items():
         if r in targets:
             continue
-        if fp.IsFlipped():
+        if fp.IsFlipped() or r == "J1":   # J1 (card edge) keep-out spans both sides
             crt_obs.append(crt(fp))
         for p in fp.Pads():
             if p.IsOnLayer(pcbnew.B_Cu):
@@ -133,7 +133,8 @@ def main():
                 for r_ in only]
         # everything else is an obstacle now
         targets_set = set(only)
-        crt_obs[:] = [crt(fp) for r_, fp in fps.items() if fp.IsFlipped() and r_ not in targets_set]
+        crt_obs[:] = [crt(fp) for r_, fp in fps.items()
+                      if (fp.IsFlipped() or r_ == "J1") and r_ not in targets_set]
         pad_obs[:] = [(bbox_mm(p.GetBoundingBox()), p.GetNetname()) for r_, fp in fps.items()
                       if r_ not in targets_set for p in fp.Pads() if p.IsOnLayer(pcbnew.B_Cu)]
     else:

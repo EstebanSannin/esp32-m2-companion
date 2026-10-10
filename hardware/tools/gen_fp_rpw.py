@@ -7,7 +7,7 @@ drawing and cross-checked against every labelled dimension (GATE V3).
 
 Coordinates: package centre (0,0), x right, y down, top view, pin 1 top-left.
 L-shaped pins (1, 4, 7, 10) = two overlapping rect pads with the same
-number (bar + leg). Run: uv run python tools/gen_fp_rpw.py
+number (bar + leg, overlapping by 0.15 mm). Run: uv run python tools/gen_fp_rpw.py
 """
 from pathlib import Path
 
@@ -26,7 +26,9 @@ for num, sx, sy in ((1, -1, -1), (4, -1, 1), (7, 1, 1), (10, 1, -1)):
     bx0, bx1 = sorted((sx * 0.6, sx * 1.2))
     by0, by1 = sorted((sy * 0.55, sy * 0.85))
     lx0, lx1 = sorted((sx * 0.6, sx * 0.85))
-    ly0, ly1 = sorted((sy * 0.85, sy * 1.2))
+    # leg starts mid-bar: abutting rects (rounded corners) were not
+    # connected for KiCad - pin 1 EN showed as unconnected (GATE V3)
+    ly0, ly1 = sorted((sy * 0.70, sy * 1.2))
     PADS.append((num, bx0, by0, bx1, by1, "shrink"))
     PADS.append((num, lx0, ly0, lx1, ly1, "shrink"))
 # IN (5) / OUT (6): 0.3 x 2.4 bars at x = -/+0.25, paste split separately

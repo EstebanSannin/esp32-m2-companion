@@ -2,7 +2,7 @@
 / 'via_dangling'), e.g. fan-out copper left behind when a part was moved.
 Never touches the USB nets. Iterates: removing a dangling via can make its
 stub dangle. Separate process per pass (SWIG Remove() rule).
-  $KPY tools/v2_drop_dangling.py DRC.json
+  $KPY tools/v2_drop_dangling.py DRC.json [--planes-only] [--skip N1,N2]
 """
 import json
 import sys
@@ -16,6 +16,9 @@ PCB = HERE / "kicad" / "esp32_m2_companion.kicad_pcb"
 PROTECTED = {"USBH3_D_P", "USBH3_D_N", "USB_D_P", "USB_D_N"}
 # --planes-only: remove only orphaned GND/+3V3 fan-out (safe, never unravels a signal net)
 PLANES_ONLY = "--planes-only" in sys.argv
+# --skip N1,N2: leave these nets alone (unfinished nets keep their partial
+# copper for hand-finishing; only COMPLETE nets lose dead escape branches)
+SKIP = set(sys.argv[sys.argv.index("--skip") + 1].split(",")) if "--skip" in sys.argv else set()
 
 
 def main():
@@ -31,7 +34,7 @@ def main():
     b = pcbnew.LoadBoard(str(PCB))
     n = 0
     for t in list(b.GetTracks()):
-        if t.GetNetname() in PROTECTED:
+        if t.GetNetname() in PROTECTED or t.GetNetname() in SKIP:
             continue
         for x, y, kind in pts:
             if kind == "Via" and t.Type() != pcbnew.PCB_VIA_T:

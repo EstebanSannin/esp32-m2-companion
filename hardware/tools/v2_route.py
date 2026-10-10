@@ -10,7 +10,7 @@ leftovers are finished by hand. It is never looped to chase DRC errors.
 Layers (ADR 0008, JLC06081H-2116): signals on F.Cu / In2.Cu / In3.Cu / B.Cu;
 In1.Cu = GND plane, In4.Cu = +3V3 plane (no tracks).
 Rules: track 0.127 mm (power nets wider), clearance 0.127 mm,
-via 0.45/0.3 mm, hole clearance 0.25 mm, copper-to-edge 0.3 mm.
+via 0.45/0.3 mm (0.45/0.2 with --drill 0.2), hole clearance 0.25 mm, copper-to-edge 0.3 mm.
 
 Stages:
   1. power fan-out: every SMD pad on GND / +3V3 gets a via to its plane
@@ -51,9 +51,22 @@ X0, Y0, X1, Y1 = 88.9, 107.9, 111.1, 150.1
 NX, NY = int((X1 - X0) / G) + 1, int((Y1 - Y0) / G) + 1
 TW, CLR = 0.127, 0.127
 VD, VDR = 0.45, 0.3
+# --drill 0.2: 0.2 mm drill in the same 0.45 mm pad - JLC standard price
+# (surcharge only for pads < 0.45 mm; v2/research/jlc_6l_stackup.md); the
+# smaller hole shrinks the 0.25 mm hole-clearance keep-out (GATE V3)
+if "--drill" in sys.argv:
+    VDR = float(sys.argv[sys.argv.index("--drill") + 1])
+# --via 0.35 --escape-only: escape fan-out alone with 0.35 mm pads (JLC
+# "0.2mm/(0.3/0.35mm)" surcharge, owner-approved for the switch/array pin
+# escapes only); nets are then routed by a normal run with 0.45 mm vias
+if "--via" in sys.argv:
+    VD = float(sys.argv[sys.argv.index("--via") + 1])
+ESCAPE_ONLY = "--escape-only" in sys.argv
 EDGE = 0.35   # 0.3 rule + margin: J1 edge arcs are polygonized (GATE V3)
 SAFE = 0.02
-HOLE_CLR, HOLE_HOLE = 0.25, 0.25
+# hole-to-copper 0.2 = JLC "Inner layer via hole to copper clearance 0.2mm"
+# (capabilities page, checked 2026-10-10); hole-to-hole kept at 0.25 (JLC 0.2)
+HOLE_CLR, HOLE_HOLE = 0.2, 0.25
 INF_T = CLR + TW / 2 + SAFE
 INF_V = max(VD / 2 + CLR, VDR / 2 + HOLE_CLR) + SAFE
 VIA_KEEP_T = max(VD / 2 + CLR, VDR / 2 + HOLE_CLR) + TW / 2 + SAFE
@@ -67,6 +80,11 @@ KEEP_NETS = {"USBH3_D_P", "USBH3_D_N", "USB_D_P_ESD", "USB_D_N_ESD",
 # 0.35 mm on 1 oz outer ~ 1 A at +10 C (IPC-2221 external chart) = eFuse
 # current limit; 0.5 mm could not thread past the RPW pads (GATE V3).
 WIDE = {"+3V3_M2": 0.35, "+3V3_EFUSE": 0.35}
+# --thin N1,N2: route these WIDE nets at TW (their wide trunk is hand-routed:
+# tools/v2_power_route.py) - only the thin links/sense branches are left
+if "--thin" in sys.argv:
+    for _n in sys.argv[sys.argv.index("--thin") + 1].split(","):
+        WIDE.pop(_n, None)
 # MCU-side EXP nets (docs/pinmap.md §6.2) - routed with the EXP chain
 # sense-only branches of the wide nets (microamps): routed at TW
 NARROW_BRANCH = {"R31", "R33"}
@@ -138,7 +156,6 @@ def main():
     gt = [array("H", [0]) * (NX * NY) for _ in sig]
     gv = array("H", [0]) * (NX * NY)
     gh = array("B", [0]) * (NX * NY)   # 1 = a via centre here would violate hole-to-hole
-    HH = VDR + HOLE_HOLE + SAFE        # centre-to-centre for two 0.3 mm holes
 
     def hole_block(x, y, r_hole):
         rr = r_hole + VDR / 2 + HOLE_HOLE + SAFE
@@ -149,6 +166,12 @@ def main():
                 if f(X0 + ix * G, Y0 + iy * G) <= rr:
                     gh[idx(ix, iy)] = 1
     owner_of = lambda code: (code + 1) if code > 0 else BLOCK
+    # existing via centres -> owner: a net may change layers through its OWN
+    # via (gh would otherwise forbid it - escape vias were unusable)
+    via_at = {}
+
+    def cell_of(x, y):
+        return idx(int(round((x - X0) / G)), int(round((y - Y0) / G)))
 
     # ---- obstacles -------------------------------------------------------
     for t in board.GetTracks():
@@ -161,6 +184,7 @@ def main():
             raster([gv], own, f, bb, max(r + CLR + VD / 2, dr + HOLE_HOLE + VDR / 2,
                                          r + HOLE_CLR + VDR / 2, dr + HOLE_CLR + VD / 2) + SAFE)
             hole_block(c[0], c[1], dr)
+            via_at[cell_of(*c)] = own
         else:
             a = (T(t.GetStart().x), T(t.GetStart().y)); b = (T(t.GetEnd().x), T(t.GetEnd().y))
             w = T(t.GetWidth()) / 2
@@ -212,6 +236,24 @@ def main():
         bb = (min(pa[0], pb[0]), min(pa[1], pb[1]), max(pa[0], pb[0]), max(pa[1], pb[1]))
         raster(gt, BLOCK, f, bb, EDGE + TW / 2)
         raster([gv], BLOCK, f, bb, EDGE + VD / 2)
+    # gold-finger contact area (J1 pads start at y 147.5): no copper except the
+    # fingers themselves - a finger is entered only from its top edge (GATE V3:
+    # the router had run thin tracks between fingers 70-74)
+    FING_Y = 147.45
+    j1 = board.FindFootprintByReference("J1")
+    fbox = []
+    for p in j1.Pads():
+        bbo = p.GetBoundingBox()
+        fbox.append(([lidx[l] for l in sig if p.IsOnLayer(l)],
+                     T(bbo.GetLeft()), T(bbo.GetRight())))
+    for iy in range(int((FING_Y - Y0) / G), NY):
+        for ix in range(NX):
+            x = X0 + ix * G
+            i = idx(ix, iy)
+            gv[i] = BLOCK
+            for li in range(nl):
+                if not any(li in ls and l_ <= x <= r_ for ls, l_, r_ in fbox):
+                    gt[li][i] = BLOCK
     print(f"grid {NX}x{NY}x{nl} ready")
 
     def pad_cells(on, bb):
@@ -280,7 +322,8 @@ def main():
                     dist[st] = ng
                     prev[st] = s
                     heapq.heappush(pq, (ng + h(st), ng, st))
-            if via_ok and gv[idx(ix, iy)] in (0, own) and not gh[idx(ix, iy)]:
+            ci = idx(ix, iy)
+            if via_ok and ((gv[ci] in (0, own) and not gh[ci]) or via_at.get(ci) == own):
                 for m in range(nl):
                     if m == l:
                         continue
@@ -316,6 +359,7 @@ def main():
         raster(gt, own, f, bb, VIA_KEEP_T)
         raster([gv], own, f, bb, VIA_KEEP_V)
         hole_block(x, y, VDR / 2)
+        via_at[cell_of(x, y)] = own
         items.append(("via", own, (x, y)))
 
     NECK = 0.6   # mm: wide nets neck down to TW this close to their own pads
@@ -338,7 +382,8 @@ def main():
             path = fine
         for a, b in zip(path, path[1:]):
             if a[0] != b[0]:
-                put_via(own, *cell_xy(a[1], a[2]))
+                if via_at.get(idx(a[1], a[2])) != own:     # reuse own via
+                    put_via(own, *cell_xy(a[1], a[2]))
             else:
                 pa, pb = cell_xy(a[1], a[2]), cell_xy(b[1], b[2])
                 w = width
@@ -436,7 +481,9 @@ def main():
     # ---- 2./3. nets -------------------------------------------------------
     nets = [n for n, ps in pads_by_net.items()
             if n not in PLANE_NETS and n not in KEEP_NETS and len(ps) >= 2]
-    if ONLY:
+    if ESCAPE_ONLY:
+        nets = []
+    elif ONLY:
         nets = [n for n in nets if n in ONLY]
 
     def span(n):
@@ -455,6 +502,9 @@ def main():
         order = sorted(nets, key=lambda n: (n not in WIDE, span(n)))
     if ONLY and "--order-given" in sys.argv:      # hand-finish: exactly as listed
         order = [x for x in ONLY if x in nets]
+    if "--first" in sys.argv:                     # these nets before the rest
+        first = sys.argv[sys.argv.index("--first") + 1].split(",")
+        order = [x for x in first if x in nets] + [x for x in order if x not in first]
     results = {}
     for n in order:
         ni = board.FindNet(n)

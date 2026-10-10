@@ -3,13 +3,10 @@ U1 (USBLC6, ESD side) and the module, replacing the rev-B route that ran
 through the new switch strip. All items locked.
 
   ESD side  U1.4 N / U1.6 P (B) -> vias right of U1 -> In2 (L3, directly on
-            the L2 GND plane) up the right edge, left along y 134.0/133.6
-            -> via-in-pad R8.1 (N) / R7.1 (P)   [6-layer JLC vias are
-            epoxy-filled + capped: via-in-pad OK]
-  MCU side  R8.2 N / R7.2 P via-in-pad -> F.Cu -> module pads 13 (N, y
-            135.23) / 14 (P, y 136.5) through the channels between the
-            module's left-edge pads.
-  C8 (P) / C9 (N): DNP SI-tuning shunt provisions, short B stubs.
+            the L2 GND plane) up the right edge, left along y 131.4/130.9
+            [6-layer JLC vias are epoxy-filled + capped: via-in-pad OK]
+  MCU side  In2 down the module's left pad column -> via-in-pad on module
+            pads 13 (N, y 135.23) / 14 (P, y 136.5).
 Widths 0.15 mm (USB_DIFF class). FS USB (12 Mbit/s): the pair is
 GND-referenced and length-matched within the budget printed below; tight
 coupling is not required at these lengths (edges ~4 ns >> ~0.2 ns flight).
@@ -30,22 +27,24 @@ VD, VDR = 0.45, 0.3
 # net: list of (layer, [points]) polylines ; vias: net -> [(x, y)]
 ROUTES = {
     # U1 MCU-side pins (B) -> vias right of U1 -> In2 (on the L2 GND plane)
-    # up the right edge, left; P is the outer/upper track -> via up to F ->
-    # module pads through the channels between its left-edge pads.
+    # up the right edge, left above the switch strip, down the module's left
+    # pad column (x 90.45 / 89.95, under the F pads) -> via-in-pad on module
+    # pads 13 (N) / 14 (P). No F/B run under the switches: the old F.Cu leg
+    # at y 135.2/136.5 crossed U4/U5 and blocked every escape via (GATE V3).
     "USB_D_N": [
         ("B.Cu", [(108.838, 142.35), (109.90, 142.35)]),
-        ("In2.Cu", [(109.90, 142.35), (109.90, 131.4), (96.6, 131.4)]),
-        ("F.Cu", [(96.6, 131.4), (96.6, 135.23), (91.25, 135.23)]),
+        ("In2.Cu", [(109.90, 142.35), (109.90, 131.4), (90.45, 131.4),
+                    (90.45, 135.23), (91.25, 135.23)]),
     ],
     "USB_D_P": [
         ("B.Cu", [(108.838, 144.25), (110.40, 144.25)]),
-        ("In2.Cu", [(110.40, 144.25), (110.40, 130.9), (98.4, 130.9)]),
-        ("F.Cu", [(98.4, 130.9), (98.4, 136.5), (91.25, 136.5)]),
+        ("In2.Cu", [(110.40, 144.25), (110.40, 130.9), (89.95, 130.9),
+                    (89.95, 136.5), (91.25, 136.5)]),
     ],
 }
 VIAS = {
-    "USB_D_N": [(109.90, 142.35), (96.6, 131.4)],
-    "USB_D_P": [(110.40, 144.25), (98.4, 130.9)],
+    "USB_D_N": [(109.90, 142.35), (91.25, 135.23)],
+    "USB_D_P": [(110.40, 144.25), (91.25, 136.5)],
 }
 
 
