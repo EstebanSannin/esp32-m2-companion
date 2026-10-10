@@ -63,9 +63,12 @@ Knowledge management per SPEC §12 (findings log, block LESSONS.md, this file).
 
 ## Design rules
 
-- JLCPCB standard capability, ≥5/5 mil trace/space, ≥0.3 mm drill, 0.8 mm
-  4-layer (SIG/GND/PWR/SIG), ENIG hard-gold fingers, **no bevel** (JLC can't
-  bevel < 50 mm boards — SPEC §13 A1; hand-chamfer the leading edge).
+- JLCPCB standard capability, ≥5/5 mil trace/space, ≥0.3 mm drill, 0.8 mm,
+  ENIG hard-gold fingers, **no bevel** (JLC can't bevel < 50 mm boards —
+  SPEC §13 A1; hand-chamfer the leading edge). Rev B: 4-layer
+  SIG/GND/PWR/SIG. **v2: 6-layer JLC06081H-2116, SIG/GND/SIG/SIG/PWR/SIG**
+  (ADR 0008, `docs/stackup.md`); In1 GND and In4 +3V3 stay solid planes —
+  no signal tracks on them.
 - DRC: copper-to-edge clearance 0.3 mm; the edge-clearance waiver covers only
   J1's SMD finger pads — never a whole footprint, vias, tracks or zones (a
   J1-wide waiver hid a via milled away in the B-key notch on v1). Mounting
