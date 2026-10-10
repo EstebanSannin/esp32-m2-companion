@@ -14,3 +14,15 @@
 | R10 | Hosts that legitimately hold W_DISABLE1# (pin 8) low from power-up force Joint Download Boot — card appears dead | **Live again in Rev B** (pin-8 leg restored, ADR 0002 rev-B amendment). Mallow unaffected (pin 8 pull-up only). v1: moot (leg removed). | On an affected host: lift/cut D2 pin 2; TP1/TP2 recovery unaffected. |
 | R11 | Card violates M.2 height envelope: WROOM module is 3.1 mm tall vs 1.5 mm top-side component limit (self-caught, GATE 2 follow-up) | Accepted (v1, Rev B) | Works in open slots (Mallow: X17 on carrier bottom, open air below); will NOT fit enclosed hosts (laptops) or under heatsinks. Noted under the README host table. |
 | R10b | Pin-8 (W_DISABLE1#) auto-BOOT path removed in v1 | **Closed in rev B:** leg restored and routed (one-net feasibility probe found a corridor). | v1 boards: TP1(EN)+TP2(BOOT) flying-lead recovery. |
+
+## v2.0 Rev A (SPEC §13 A3 §11; state 2026-10-10)
+
+| # | Risk | Status | Mitigation |
+|---|---|---|---|
+| R-v2-1 | 2242 / 6 L routability | **Resolved** (GATE V3): routed, `make drc` 0 violations / 0 unconnected, with the 0.35/0.2 via option. | — |
+| R-v2-2 | Newer (paywalled) M.2 revisions may redefine pins used by EXP | Open | Bus stays high-Z unless the carrier signature is present (S-v2-1 test on every host). |
+| R-v2-3 | Hosts that whitelist by CONFIG (e.g. Dell BIOS) may treat state 6 unlike state 15 | Open | Test on a laptop WWAN slot at bring-up (S-v2-1). |
+| R-v2-4 | ~40 mV supply margin on a 3.135 V host (eFuse + FB1 drop) | Open | Measure at bring-up; FB1 ≤ 50 mΩ chosen for it (GATE V2). |
+| R-v2-5 | All new silicon is JLC Extended | **Assessed** (GATE V4): ≈ $11.1/board at 100 incl. 6 L, small vias, assembly. | — |
+| R-v2-6 | SSM6N56FE (Q1–Q3) stock: 7,293 → 124 in four days | **Mitigated** (owner, GATE V4): prototypes keep it; SI1024X-T1-GE3 (C86784) approved 2nd source, no PCB change. | Swap in JLC's BOM step if out of stock at order time. |
+| R-v2-7 | JLC rotation of new bottom-side parts (U3–U5, Q1–Q3: ±90° sign unverified) | Open (by design) | `make fab` ORDER BLOCKED until each row of `fab/polarity_checklist.md` is checked in JLC's preview. |

@@ -1,5 +1,9 @@
 # Phase 2 layout notes — esp32_m2_companion.kicad_pcb
 
+> History: v1 / Rev B (4-layer) layout notes. For v2.0 Rev A see
+> [`v2-gate-v3.md`](v2-gate-v3.md), [`stackup.md`](stackup.md) § v2 and
+> [`routing-method.md`](routing-method.md) § v2 addendum.
+
 > **Historical (v1 Phase 2 working notes, 2026-08).** v1.0 was routed, fabbed
 > and brought up; the board is now **v1.0 Rev B**. Do **not** re-run
 > `gen_pcb.py` (it rebuilds the board from scratch). Rev B layout changes are

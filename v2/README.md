@@ -1,17 +1,19 @@
-# v2 — scratch area (NOT part of rev B)
+# v2 — research and history behind v2.0 Rev A
 
-Local-only brainstorm space for the next feature revision (v2.0 per SPEC §13 A2).
+Background material for the v2.0 feature revision (SPEC §13 A3). The design itself now lives in the
+tracked sources: `hardware/`, `docs/v2-gate-v1.md` … `docs/v2-gate-v4.md`, ADR 0006–0008 and
+`docs/carrier-interface.md` (the carrier contract). This folder keeps the research behind those
+decisions.
 
-- Lives on branch `v2` (worktree `../esp32-m2-companion-v2`, branched
-  from `rev-b` @ 27ee487 = the ordered rev-B state).
+- Branch `v2` (worktree `../esp32-m2-companion-v2`), branched from `rev-b` @ 27ee487 = the
+  ordered Rev B state.
+- Status (2026-10-10): GATE V0–V3 approved; GATE V4 fab package ready and **paused** until the
+  Rev B boards are back from JLC (preview check of the polarized parts still to do).
 - Not in git (see `.gitignore`): `research/datasheets/*.pdf` (re-download via
-  `research/datasheets/SOURCES.md`) and the probe's generated boards/DRC
-  JSON (re-run the probe below).
-- Decisions graduated out of this folder: ADR 0006–0008 and
-  `docs/carrier-interface.md` (the carrier contract). This folder keeps the
-  history and the research behind them.
-- Nothing here is accepted. The tracked docs (`SPEC.md`, `docs/pinmap.md`,
-  ADRs) remain the contract for rev B and are not modified by this work.
+  `research/datasheets/SOURCES.md`) and the probe's generated boards and DRC JSON (re-run the probe
+  below).
+- `probe/gridprobe.py` was the routing-feasibility probe; it grew into the production router
+  `hardware/tools/v2_route.py`.
 
 ## Contents
 

@@ -6,7 +6,8 @@ repo's `CLAUDE.md` with
 `@/Users/stefano.viola/code/esp32-m2-companion-v2/docs/carrier-interface.md`
 (after v2 merges: `…/esp32-m2-companion/docs/carrier-interface.md`).
 
-Version: **v2.0 Rev A, GATE V1 approved 2026-10-07**. Decisions: ADR 0006 (edge interface),
+Version: **v2.0 Rev A, GATE V3 (layout) approved 2026-10-10** (GATE V1 pinmap 2026-10-07;
+GATE V4 fab package ready, not ordered yet). Decisions: ADR 0006 (edge interface),
 ADR 0007 (input OVP), ADR 0008 (form factor). Background, research and
 rejected alternatives: `v2/edge-expansion-brainstorm.md`,
 `v2/research/m2_pins_research.md`.
@@ -36,14 +37,16 @@ the EXP pins and pins 10/23/26 are simply unconnected on the card.
 - **Fixed:** the card has components on **both sides**.
   - Top: WROOM module (antenna at the far end from the fingers) + 2 JST SH
     connectors.
-  - Bottom: passives, SOT-23/SOT-23-6, side-view LEDs, test points.
+  - Bottom: passives, SOT-23/SOT-23-6, side-view LEDs, test points; v2 adds
+    UQFN/VQFN (TMUX1511 ×3, eFuse), SOT-563 ×3 and 4×0402 resistor arrays.
   - Choose the socket stack height so the bottom parts clear the carrier,
     and keep carrier components out of the card's footprint.
-  - Measure heights from `docs/3d/esp32_m2_companion.step` (Rev B).
+  - Measure heights from `docs/3d/esp32_m2_companion.step` (on branch `v2`:
+    the v2.0 Rev A layout; on `rev-b`: Rev B).
 - **Fixed:** antenna keep-out. No metal (copper pour, shields, tall
   parts) under or over the **far end of the card**. The WROOM PCB antenna
   keep-out spans **4.4–10.6 mm from the card's far edge** (the mounting-screw
-  end), all layers (Rev-B board, Espressif HDG). Carriers should keep the
+  end), all layers (Espressif HDG; module position identical on Rev B and v2.0 Rev A). Carriers should keep the
   whole last ~11 mm of the card clear.
 - Edge fingers are ENIG hard gold and **not bevelled** (hand-chamfered).
 
@@ -99,7 +102,7 @@ PERST# → ROM download mode over the same USB → flash → release BOOT.
 **Fixed: the M.2 pin ↔ EXP name mapping**, numbered by ascending M.2 pin, so
 it is independent of layout:
 
-| EXP | M.2 pin | WWAN name (reference) | **Capability (fixed, GATE V1)** | ESP32-S3 GPIO (informative — may swap within class until v2 fab) |
+| EXP | M.2 pin | WWAN name (reference) | **Capability (fixed, GATE V1)** | ESP32-S3 GPIO (**fixed for v2.0 Rev A** — routed, GATE V3) |
 |---|---:|---|---|---|
 | EXP_0 | 30 | UIM_RESET | **I²C SDA** (ID EEPROM bus, 4.7 k pull-up on card) | IO39 |
 | EXP_1 | 32 | UIM_CLK | **I²C SCL** (ID EEPROM bus, 4.7 k pull-up on card) | IO41 |
@@ -115,7 +118,8 @@ it is independent of layout:
 | EXP_11 | 65 | ANTCTL3 | digital | IO17 |
 
 "Digital" = GPIO, UART, SPI, PWM, RMT (ESP32-S3 GPIO matrix routes them to any line). ADC =
-ADC1, usable with WiFi on. Layout may swap GPIOs **within a capability class only**; carriers
+ADC1, usable with WiFi on. Since GATE V3 the GPIO column is the routed Rev A copper; a later card
+revision may swap GPIOs **within a capability class only**; carriers
 design against the capability column, never the GPIO column.
 
 - **Fixed electrical:**

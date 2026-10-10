@@ -1,7 +1,8 @@
 # v2.0 Rev A — GATE V4 package (fab)
 
-Status: **awaiting owner** — the preview check (step 1) is needed before approval · Previous gate:
-`docs/v2-gate-v3.md` (approved 2026-10-10)
+Status: **paused 2026-10-10 (owner)** while JLC produces v1.0 Rev B. Resume at step 1 below (the
+JLC placement-preview check), then owner approval and order. Previous gate: `docs/v2-gate-v3.md`
+(approved 2026-10-10)
 
 SPEC A3 §9: *GATE V4 = fab package (`make fab` exit 0), cost check.*
 

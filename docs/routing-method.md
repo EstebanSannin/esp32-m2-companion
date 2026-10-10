@@ -94,3 +94,31 @@ individual DRC violations.
 - Known-benign DRC on this board *(Rev B)*: 1 documented exclusion — a
   serialization-only U2 library mismatch. Never waive a whole footprint:
   v1's J1-wide edge-clearance waiver hid a via milled away in the notch.
+
+## v2.0 Rev A addendum (GATE V3, 2026-10-10)
+
+What the method looked like on a 6-layer, 0.4 mm-pitch, finger-dense board:
+
+- **Grid router instead of freerouting.** `hardware/tools/v2_route.py` is a 0.05 mm A* grid router
+  with KiCad's own rules. KiCad DRC stays the judge. freerouting reported 108 violations on the
+  untouched board.
+- **Escape first.** Every fine-pitch pad (switches, arrays) gets a stub + via before any net is
+  routed (`--escape`, `--escape-only`), and nets may change layer through their own vias.
+- **Hand-route, script and lock the critical structures**, then route around them:
+  - USB on In2 (`v2_usb_route.py`);
+  - the power trunk and the eFuse OUT hop (`v2_power_route.py`);
+  - finger fan-ins (`v2_fanin_route.py`);
+  - the moved host-USB via (`v2_usbh3_dn_reroute.py`).
+- **When a net is "unroutable", ask why before ripping up:** `v2_route.py --debug --dump X,Y`
+  shows the reachable region and the grid around a point. Every real blocker was found this way:
+  - an F.Cu USB leg under the switches;
+  - the 0.25 mm hole margin;
+  - the B-key notch;
+  - a grid-rounding artifact next to a via.
+- **Rip up the *competitors*, route the stuck net first** (`--first`, `ripnets --keep-locked`),
+  instead of looping the whole board.
+- **Never prune by KiCad's dangling flag.** Use `v2_prune_branches.py` (copper overlap) and
+  `v2_tie_vias.py`.
+- **Gold fingers:** no copper between fingers (router keep-out), and **every GND finger must reach
+  the plane**. Pour islands show up only as "unconnected" in DRC; see `v2_stitch_islands.py` and the
+  GND11 rule areas.
