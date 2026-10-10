@@ -466,3 +466,10 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   approved** as packaged in `docs/v2-gate-v3.md` (incl. the 0.35/0.2 via
   option, hole-to-copper 0.2 mm, `gnd_single_spoke_pads`, GND11 rule areas).
   Module stays ESP32-S3-WROOM-1-N8R2. → GATE V4 (fab package) started.
+- 2026-10-10 · GATE V4 · medium · **PROJECT** (owner decision) · Supply risk:
+  SSM6N56FE (Q1–Q3) JLC stock fell 7,293 → 124 in four days (300 needed per
+  100 boards). Kept for prototypes; **Vishay SI1024X-T1-GE3 (C86784)
+  approved as 2nd source** (same SOT-563 pinout; VGS max ±6 V vs our ±8 V
+  margin criterion — gates ≤ 3.6 V in this design). NTZD3154N rejected (IGSS
+  up to 5 µA vs the 1 MΩ CONFIG detect divider). → `LCSC_2nd_source` field,
+  review-BOM column "Approved 2nd source".

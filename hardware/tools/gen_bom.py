@@ -17,13 +17,14 @@ def _rows():
         key = (part.value_str if hasattr(part, "value_str") else str(part.value),
                part.footprint, part.fields.get("LCSC", ""),
                part.fields.get("MPN", ""), jlc,
-               part.fields.get("DNP", ""))
+               part.fields.get("DNP", ""), part.fields.get("LCSC_2nd_source", ""))
         groups[key].append(part.ref)
-    for (value, fp, lcsc, mpn, jlc, dnp), refs in sorted(
+    for (value, fp, lcsc, mpn, jlc, dnp, alt), refs in sorted(
             groups.items(), key=lambda kv: sorted(kv[1])[0]):
         yield {
             "refs": ",".join(sorted(refs)), "qty": len(refs), "value": value,
             "mpn": mpn, "footprint": fp, "lcsc": lcsc, "jlc": jlc, "dnp": dnp,
+            "alt": alt,
         }
 
 
@@ -39,11 +40,14 @@ def write_bom(outdir):
                         r["footprint"].split(":")[-1], r["lcsc"]])
     with open(outdir / "bom.md", "w") as f:
         f.write("# BOM — esp32-m2-companion (generated, do not edit)\n\n")
-        f.write("| Refs | Qty | Value / MPN | LCSC | JLC status | DNP |\n")
-        f.write("|---|---|---|---|---|---|\n")
+        f.write("| Refs | Qty | Value / MPN | LCSC | JLC status | DNP | Approved 2nd source |\n")
+        f.write("|---|---|---|---|---|---|---|\n")
         for r in rows:
             f.write(f"| {r['refs']} | {r['qty']} | {r['value']} / {r['mpn']} "
-                    f"| {r['lcsc']} | {r['jlc']} | {r['dnp'] or ''} |\n")
+                    f"| {r['lcsc']} | {r['jlc']} | {r['dnp'] or ''} | {r['alt']} |\n")
+        f.write("\nThe JLC upload (`bom.csv`) always carries the primary LCSC part; a 2nd "
+                "source is swapped in by hand at order time only if the primary is out "
+                "of stock.\n")
     ext = [r for r in rows if r["jlc"] == "Extended" and not r["dnp"]]
     print(f"BOM: {len(rows)} lines, {len(ext)} Extended:")
     for r in ext:

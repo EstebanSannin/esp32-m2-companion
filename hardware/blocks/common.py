@@ -143,6 +143,10 @@ def SSM6N56FE(ref=None):
     p = _SSM6N56FE_T(ref=ref, tag=_next_tag("Q"))
     p.fields["JLC_note"] = ("no Basic dual NMOS with VGS(th) <= 1.0 V "
                             "(ADR 0006)")
+    # owner-approved 2nd source (GATE V4, 2026-10-10): same SOT-563 pinout
+    # 1 S1 2 G1 3 D2 4 S2 5 G2 6 D1, Vth 0.45-0.9 V, IGSS 1 uA; VGS max +-6 V
+    # (our gates <= 3.6 V). SSM6N56FE stock was 124 on 2026-10-10.
+    p.fields["LCSC_2nd_source"] = "C86784 (Vishay SI1024X-T1-GE3)"
     return _bom(p, "C146449", "Extended", "SSM6N56FE,LM")
 
 

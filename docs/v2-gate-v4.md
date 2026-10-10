@@ -84,10 +84,12 @@ V1 research (`v2/research/dual_nmos_research.md`):
 | Vishay SI1024X-T1-GE3 (C86784) | 945 | $0.36 | Vth 0.45–0.9 V (better), IGSS 1 µA. Fails only our own VGS-max ≥ ±8 V margin (±6 V); our gates never exceed 3.6 V |
 | onsemi NTZD3154N (C145189) | 78,991 | $0.06 | IGSS up to 5 µA: too much for the 1 MΩ CONFIG detect divider. **Not recommended** |
 
-**My recommendation:**
-- Prototypes: keep SSM6N56FE, ordered soon.
-- Production: record SI1024X as the approved second source (no PCB change), and note it in the BOM
-  `JLC_note`.
+**Owner decision (2026-10-10):**
+- Prototypes: keep **SSM6N56FE** (C146449).
+- **SI1024X-T1-GE3 (C86784) is the approved second source**, with no PCB change. It's recorded in
+  the part's `LCSC_2nd_source` field and in the review BOM (`docs/review/v2_reva_bom.md`, column
+  "Approved 2nd source"). The JLC upload carries the primary part; swap by hand only if it's out of
+  stock at order time.
 
 ## 5. After the order
 
