@@ -1,6 +1,6 @@
 # v2.0 Rev A — GATE V3 package (layout)
 
-Status: **awaiting owner review** · Previous gate: `docs/v2-gate-v2.md` (approved 2026-10-07)
+Status: **approved 2026-10-10 (owner)** · Previous gate: `docs/v2-gate-v2.md` (approved 2026-10-07)
 
 SPEC A3 §9: *GATE V3 = placement + routing of all new nets DRC-clean, then layout DRC-clean
 (`make drc`).*

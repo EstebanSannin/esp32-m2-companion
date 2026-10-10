@@ -462,3 +462,7 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   `v2/probe/gridprobe.py` as the pre-route gate; in practice it grew into the
   production router `hardware/tools/v2_route.py` (same obstacle model) and
   the gate evidence is `make drc` = 0 violations / 0 unconnected.
+- 2026-10-10 · GATE V3 · — · **PROJECT** (owner decision) · **GATE V3
+  approved** as packaged in `docs/v2-gate-v3.md` (incl. the 0.35/0.2 via
+  option, hole-to-copper 0.2 mm, `gnd_single_spoke_pads`, GND11 rule areas).
+  Module stays ESP32-S3-WROOM-1-N8R2. → GATE V4 (fab package) started.
