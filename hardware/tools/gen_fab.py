@@ -34,7 +34,10 @@ KPY = Path.home() / ("Applications/KiCad/KiCad.app/Contents/Frameworks/"
 
 # Non-polar LCSC parts (R, C, ferrite): any rotation is electrically fine.
 NONPOLAR = {"C45783", "C19702", "C14663", "C15849", "C1015", "C25804",
-            "C23138", "C22775", "C21189"}
+            "C23138", "C22775", "C21189",
+            # v2.0 Rev A: 0402 resistors + FB1 ferrite
+            "C25900", "C26083", "C25741", "C25890", "C852472", "C852832",
+            "C14709"}
 
 # LCSC part -> (degrees added to KiCad rotation, verified-against-JLC-
 # preview date for THIS revision or None, basis). Rev-B entries start
@@ -50,9 +53,28 @@ JLC_ROT = {
     "C160390": (0, None, "JST SH-4: v1 pinout proven by PU/PD sweep"),
     "C160394": (0, None, "JST SH-8: v1 pinout proven by PU/PD sweep"),
     "C2913204": (0, None, "WROOM-1 module: v1 functional"),
+    # v2.0 Rev A (GATE V4, 2026-10-10). Offsets from comparing each JLC/
+    # EasyEDA library footprint with ours (pad coordinates, easyeda.com
+    # component API). All on the BOTTOM side: the sign of a +-90 correction
+    # flips under the bottom mirror and has no rev-B calibration -> +90 is a
+    # GUESS; the preview decides (pin 1 must be where polarity_checklist.md
+    # says; a wrong sign puts it in the opposite corner).
+    "C3662799": (0, None, "TPS259470A RPW: JLC lib = ours (pin 1 top-left, "
+                 "every pad within 0.015 mm) - sign-free 0"),
+    "C2673275": (90, None, "TMUX1511 RSV: JLC lib pin 1 bottom-left with the "
+                 "long axis horizontal; ours top-left, long axis vertical = "
+                 "lib rotated 90 deg; sign on the bottom side unverified"),
+    "C146449": (90, None, "SSM6N56FE SOT-563: JLC lib pin 1 bottom-left, rows "
+                "horizontal; KiCad pin 1 top-left, columns vertical = 90 deg; "
+                "sign on the bottom side unverified (180 off swaps Q-halves)"),
+    "C25498": (90, None, "4D02 array: JLC lib long axis horizontal, KiCad "
+               "vertical; 180-symmetric (4 equal resistors), so only the 90 "
+               "matters - pads must land"),
 }
 
-STD_GLOBS = ["*.gtl", "*.g1", "*.g2", "*.gbl", "*.gts", "*.gbs",
+# inner copper In1..In4 = *.g1..*.g4 (v2 is 6 layers; rev B shipped only
+# g1/g2 - a 6-layer zip from that list would silently lack In3/In4)
+STD_GLOBS = ["*.gtl", "*.g1", "*.g2", "*.g3", "*.g4", "*.gbl", "*.gts", "*.gbs",
              "*.gto", "*.gbo", "*.gtp", "*.gbp", "*.gm1", "*.drl",
              "*.gbrjob"]
 
@@ -82,6 +104,13 @@ def main():
         for g in STD_GLOBS:
             for f in sorted(GERB.glob(g)):
                 z.write(f, f.name)
+        names = z.namelist()
+    # every copper layer of the board must be in the zip (the 4L -> 6L trap)
+    import re
+    want = len(re.findall(r'^\s*\(\d+ "(?:F|B|In\d+)\.Cu" signal\)', PCB.read_text(), re.M))
+    cu_files = [n for n in names if re.search(r"\.(gtl|gbl|g\d)$", n)]
+    assert len(cu_files) == want, (f"gerber zip has {len(cu_files)} copper "
+                                   f"layers, the board has {want}: {cu_files}")
 
     # placed set + LCSC per ref, straight from the generated BOM
     lcsc = {}

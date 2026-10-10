@@ -35,6 +35,17 @@ PIN1_MEANING = {
     "J3": "pin 1 = GND (Qwiic order GND, 3V3, SDA, SCL)",
     "J4": "pin 1 = TXD0",
     "U2": "module pin 1 = GND (antenna end toward N)",
+    # v2.0 Rev A
+    "U3": "pin 1 = SEL1 (TMUX1511 RSV; package pin-1 dot)",
+    "U4": "pin 1 = SEL1 (TMUX1511 RSV; package pin-1 dot)",
+    "U5": "pin 1 = SEL1 (TMUX1511 RSV; package pin-1 dot)",
+    "U6": "pin 1 = EN/UVLO (TPS259470A RPW; L-shaped corner pad, pin-1 dot)",
+    "Q1": "pin 1 = S1 (SSM6N56FE ES6; pin-1 mark)",
+    "Q2": "pin 1 = S1 (SSM6N56FE ES6; pin-1 mark) - 180 off swaps LED_1#/WAKE#",
+    "Q3": "pin 1 = S1 (SSM6N56FE ES6; pin-1 mark)",
+    "RN1": "array: only the 90 deg matters (pads must land; 4 x 220R)",
+    "RN2": "array: only the 90 deg matters (pads must land; 4 x 220R)",
+    "RN3": "array: only the 90 deg matters (pads must land; 4 x 220R)",
 }
 
 

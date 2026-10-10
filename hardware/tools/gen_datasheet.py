@@ -23,6 +23,21 @@ J4_FN = {"TXD0": "UART0 TX (ROM console)", "RXD0": "UART0 RX",
          "IO10": "GPIO / SPI CS (FSPICS0)", "IO11": "GPIO / SPI MOSI (FSPID)",
          "IO12": "GPIO / SPI CLK (FSPICLK)", "IO13": "GPIO / SPI MISO (FSPIQ)",
          "IO14": "GPIO (FSPIWP)", "IO21": "GPIO (RTC-capable)"}
+# v2 edge pins, by NET (docs/carrier-interface.md is the contract)
+_EXP_IO = ["IO39", "IO41", "IO1", "IO2", "IO18", "IO4", "IO5", "IO6", "IO7",
+           "IO15", "IO16", "IO17"]
+NET_FN = {f"EXP_{i}": (f"Expansion bit {i} → {io} through a TMUX1511; high-Z unless a "
+                       f"carrier grounds CONFIG_2 + CONFIG_3"
+                       + (" (I²C SDA, ID-EEPROM bus, 4.7 kΩ pull-up on-card)" if i == 0 else
+                          " (I²C SCL, ID-EEPROM bus, 4.7 kΩ pull-up on-card)" if i == 1 else ""))
+          for i, io in enumerate(_EXP_IO)}
+NET_FN.update({
+    "CONFIG_2": "Carrier signature sense (1 MΩ pull-up); low together with CONFIG_3 enables the EXP bus",
+    "CONFIG_3": "Carrier signature sense (1 MΩ pull-up); low together with CONFIG_2 enables the EXP bus",
+    "LED_1_n": "WWAN LED#, open-drain, driven by IO42 (NMOS)",
+    "WAKE_ON_WWAN_n": "WAKE#, open-drain, driven by IO47 (NMOS)",
+    "W_DISABLE2_n": "W_DISABLE2# input from the host → IO40 (NMOS, inverted)",
+})
 EDGE_FN = {
     "VCC_3V3": "3.3 V supply in",
     "GND": "Ground",
@@ -50,7 +65,9 @@ def _edge_table(j1):
             continue
         net = pin.nets[0].name
         base = net.replace("+3V3_M2", "VCC_3V3")
-        fn = EDGE_FN.get(pin.name, "")
+        fn = EDGE_FN.get(pin.name, "") or NET_FN.get(net, "")
+        if not fn and net == "GND" and pin.name.startswith("CONFIG_"):
+            fn = "Grounded: CONFIG state 6 (ADR 0006)"
         rows.append(f"| {pin.num} | {pin.name} | {net} | {fn} |")
     return "\n".join(rows)
 
@@ -112,7 +129,7 @@ Toradex Verdin family (Mallow carrier).
   from the host, no buttons, no cables
 - **IO**: Qwiic/STEMMA-QT I2C port (JST SH-4) + UART/SPI/GPIO port
   (JST SH-8), 3.3 V logic
-- **Form factor**: M.2 Key-B 2242 (22 × 42 mm, 0.8 mm PCB, 4-layer),
+- **Form factor**: M.2 Key-B 2242 (22 × 42 mm, 0.8 mm PCB, 6-layer),
   single 3.3 V supply from the slot
 - **Open source hardware** (CERN-OHL-P v2), schematic-as-code (SKiDL),
   assembled by JLCPCB
@@ -129,7 +146,9 @@ flowchart LR
     subgraph CARD["esp32-m2-companion"]
         ESD["USBLC6-2 ESD"]
         DIODE["Schottky isolation"]
-        FB["Ferrite + bulk"]
+        FB["eFuse (OVP) + ferrite + bulk"]
+        SW["3x TMUX1511\\n(12 EXP lines, off by default)"]
+        DET["carrier detect\\n(CONFIG_2/3)"]
         MCU["ESP32-S3-WROOM-1\\n(USB-Serial-JTAG)"]
         LED["2x LED"]
         J3["J3 Qwiic I2C"]
@@ -138,6 +157,8 @@ flowchart LR
     USB <--> ESD <--> MCU
     GPIOs --> DIODE -->|EN / IO0| MCU
     PWR --> FB --> MCU
+    EXPB["12 EXP pins\\n(carrier boards only)"] <--> SW <--> MCU
+    DET -->|EXP_OE| SW
     MCU --> LED
     MCU <--> J3
     MCU <--> J4
@@ -147,7 +168,7 @@ flowchart LR
 
 | Parameter | Value | Source |
 |---|---|---|
-| Supply voltage | 3.3 V ±5 % from M.2 edge (no on-card regulator) | SPEC §6.2 |
+| Supply voltage | 3.3 V ±5 % from M.2 edge, through an eFuse (≈ 1 A limit, over-voltage cut-off 3.44–3.57 V, re-enable ≈ 3.17 V, input survives ≈ 18.9 V) | SPEC §6.2, ADR 0007 |
 | Supply current | ~95 mA Wi-Fi RX · ~355 mA avg TX @ 20.5 dBm (bursts higher) · design budget 500 mA | WROOM DS Table 6-4 |
 | Host interface | USB 2.0 full-speed (12 Mbps), CDC-ACM via USB-Serial-JTAG | WROOM DS §Pin Definitions |
 | Logic level (IO ports) | 3.3 V (not 5 V tolerant) | ESP32-S3 DS |
@@ -197,7 +218,7 @@ pin 20 reaches the SoM via the X16.19 jumper. Details: ADR 0002.
 {j3}
 
 Standard Qwiic pinout — off-the-shelf sensor cables plug in directly.
-I2C pull-ups are DNP on-card (Qwiic peripherals provide their own);
+No I2C pull-ups on-card for J3 (Qwiic peripherals provide their own);
 footprints R5/R6 (10 k) can be fitted if needed.
 
 ### J4 — UART / SPI / GPIO (JST SH-8, BM08B-SRSS-TB)
@@ -232,7 +253,7 @@ FSPI IOMUX group (up to 80 MHz).
 | Parameter | Value |
 |---|---|
 | Card size | M.2 Type 2242: 22.00 × 42.00 mm |
-| PCB | 0.8 mm, 4-layer (SIG/GND/PWR/SIG), ENIG, hard-gold fingers; **no bevel** (JLCPCB cannot bevel < 50 × 50 mm boards; hand-chamfer the leading edge) |
+| PCB | 0.8 mm, 6-layer (SIG/GND/SIG/SIG/PWR/SIG, JLC06081H-2116), ENIG, hard-gold fingers; **no bevel** (JLCPCB cannot bevel < 50 × 50 mm boards; hand-chamfer the leading edge) |
 | Max height, top side | 4.2 mm (JST SH headers) · ≈6.3 mm with plug mated |
 | Max height, bottom side | ≤1.5 mm (compliant with H4.2 socket B-side envelope) |
 | Socket coverage zone | first 4.8 mm from card edge kept component-free (both faces) |
@@ -246,8 +267,6 @@ FSPI IOMUX group (up to 80 MHz).
 | Green LED (D3) | side-view, left card edge (silk bar = cathode) | 3.3 V rail present |
 | Red LED (D4) | side-view, left card edge (silk bar = cathode) | firmware status, active-low on IO48 |
 | TP1/TP2 | bottom, silk "EN" / "BOOT" | EN / IO0 (recovery without host sidebands) |
-| TP3/TP4 | bottom, silk "TX" / "RX" | UART0 TX / RX |
-| TP5/TP6 | bottom, silk "3V3" / "GND" | 3.3 V / GND |
 
 The LEDs are side-view parts emitting out of the left card edge — visible
 with the card in the slot regardless of mounting orientation. Test points
