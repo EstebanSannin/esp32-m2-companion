@@ -386,3 +386,14 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   any net routing. Iterated dangling-copper removal also unravelled nets
   whose end no longer met a moved pad — rerouted, but **don't iterate
   dangling cleanup blindly**.
+- 2026-10-10 · GATE V3 · medium · **BLOCK edge_expansion** (self-caught) ·
+  RN2/RN3 were placed rotated 180° wrong: MCU-side pads facing the module's
+  thermal EPAD vias, switch-side pads facing the module's left IO pads, so
+  every IO line wrapped the array. Flipped; all MCU-side IO lines now route.
+  **PROCESS candidate:** "When placing a two-sided array, check which pad
+  column faces which neighbour before routing."
+- 2026-10-10 · GATE V3 · low · **BLOCK edge_expansion** · TMUX1511 footprint
+  switched to TI's RSV0016A land pattern (`tools/gen_fp_rsv.py`, pads 0.15 mm
+  shorter than KiCad's) for escape room; orphaned fan-out from moved parts
+  removed by `tools/v2_drop_orphan_fanout.py` (anchored-to-pad test, not
+  DRC's dangling list, which unravels signal nets).

@@ -158,7 +158,7 @@ design = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='6',name='R3b',func=pin_types.PASSIVE),
             Pin(num='7',name='R2b',func=pin_types.PASSIVE),
             Pin(num='8',name='R1b',func=pin_types.PASSIVE)] }),
-        Part(**{ 'name':'TMUX1511_RSV', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'TMUX1511_RSV'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_DFN_QFN:UQFN-16_1.8x2.6mm_P0.4mm', 'keywords':None, 'description':'4-ch 1:1 switch, powered-off protection, SEL pull-down (TI TMUX1511)', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'TMUX1511_RSV', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'TMUX1511_RSV'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'esp32_m2_companion:TI_RSV0016A_UQFN-16_1.8x2.6mm_P0.4mm', 'keywords':None, 'description':'4-ch 1:1 switch, powered-off protection, SEL pull-down (TI TMUX1511)', 'datasheet':None, 'pins':[
             Pin(num='1',name='SEL1',func=pin_types.INPUT),
             Pin(num='2',name='S1',func=pin_types.PASSIVE),
             Pin(num='3',name='D1',func=pin_types.PASSIVE),

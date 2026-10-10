@@ -149,8 +149,10 @@ def SSM6N56FE(ref=None):
 # TI TMUX1511, RSV UQFN-16: docs/datasheets/tmux1511.pdf Table 4-1
 # (UQFN column): 1 SEL1, 2 S1, 3 D1, 4 SEL2, 5 S2, 6 D2, 7 NC, 8 GND,
 # 9 D3, 10 S3, 11 SEL3, 12 NC, 13 D4, 14 S4, 15 SEL4, 16 VDD.
+# Footprint: TI RSV0016A land pattern (tools/gen_fp_rsv.py; GATE V3) - the
+# KiCad stock UQFN pads are 0.15 mm longer and starved the pin escapes.
 _TMUX1511_T = _template(
-    "TMUX1511_RSV", "U", "Package_DFN_QFN:UQFN-16_1.8x2.6mm_P0.4mm",
+    "TMUX1511_RSV", "U", "esp32_m2_companion:TI_RSV0016A_UQFN-16_1.8x2.6mm_P0.4mm",
     "4-ch 1:1 switch, powered-off protection, SEL pull-down (TI TMUX1511)",
     [(1, "SEL1", _P.INPUT), (2, "S1", _P.PASSIVE), (3, "D1", _P.PASSIVE),
      (4, "SEL2", _P.INPUT), (5, "S2", _P.PASSIVE), (6, "D2", _P.PASSIVE),

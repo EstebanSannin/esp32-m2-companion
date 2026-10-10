@@ -14,6 +14,8 @@ HERE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(HERE / "tools"))
 PCB = HERE / "kicad" / "esp32_m2_companion.kicad_pcb"
 PROTECTED = {"USBH3_D_P", "USBH3_D_N", "USB_D_P", "USB_D_N"}
+# --planes-only: remove only orphaned GND/+3V3 fan-out (safe, never unravels a signal net)
+PLANES_ONLY = "--planes-only" in sys.argv
 
 
 def main():
@@ -22,6 +24,8 @@ def main():
     for v in drc["violations"]:
         if v["type"] in ("track_dangling", "via_dangling"):
             for it in v["items"]:
+                if PLANES_ONLY and not ("[GND]" in it["description"] or "[+3V3]" in it["description"]):
+                    continue
                 if not any(n in it["description"] for n in PROTECTED):
                     pts.append((it["pos"]["x"], it["pos"]["y"], it["description"].split()[0]))
     b = pcbnew.LoadBoard(str(PCB))
