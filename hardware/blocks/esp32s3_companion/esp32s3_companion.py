@@ -25,7 +25,7 @@ _DATASHEET_PINS = {
 
 
 @subcircuit
-def esp32s3_companion(v3v3, gnd, en, io0_boot, usb_d_n, usb_d_p,
+def esp32s3_companion(v3v3, gnd, en, io0, usb_d_n, usb_d_p,
                       led_status_n, header_ios, txd0, rxd0):
     """header_ios: dict {'IO8':net, 'IO9':net, 'IO10':..., 'IO14', 'IO21'}"""
     u = Part("RF_Module", "ESP32-S3-WROOM-1", ref="U2", tag="U_MCU",
@@ -55,7 +55,7 @@ def esp32s3_companion(v3v3, gnd, en, io0_boot, usb_d_n, usb_d_p,
 
     # Control / USB
     u[3] += en          # EN (CHIP_PU)
-    u[27] += io0_boot   # IO0 strapping (boot)
+    u[27] += io0   # IO0 strapping (boot)
     u[13] += usb_d_n    # IO19 USB_D-
     u[14] += usb_d_p    # IO20 USB_D+
 

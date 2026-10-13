@@ -30,7 +30,7 @@ EDGE_FN = {
     "USBH3_D_N": "USB 2.0 D−",
     "PERST_n": "Card reset (EN), active-low, diode-isolated",
     "PCIE_1_GPIO_5": "Boot-mode strap (IO0), active-low, diode-isolated",
-    "W_DISABLE1_n": "Not connected in v1 (exposed edge finger; BOOT leg dropped, ADR 0002)",
+    "W_DISABLE1_n": "Boot-mode strap (IO0) for generic Key-B hosts, active-low, diode-isolated. Held low at power-up = download mode (risk R10)",
 }
 
 
@@ -38,7 +38,7 @@ def _connector_table(part, fn_map):
     rows = []
     for pin in sorted(part.pins, key=lambda p: int(p.num)):
         net = pin.nets[0].name if pin.nets else "—"
-        sig = net.replace("IO0_BOOT", "IO0")
+        sig = net
         rows.append(f"| {pin.num} | {sig} | {fn_map.get(net, '')} |")
     return "\n".join(rows)
 
@@ -232,26 +232,40 @@ FSPI IOMUX group (up to 80 MHz).
 | Parameter | Value |
 |---|---|
 | Card size | M.2 Type 2242: 22.00 × 42.00 mm |
-| PCB | 0.8 mm, 4-layer (SIG/GND/PWR/SIG), ENIG + bevelled gold fingers |
+| PCB | 0.8 mm, 4-layer (SIG/GND/PWR/SIG), ENIG, hard-gold fingers; **no bevel** (JLCPCB cannot bevel < 50 × 50 mm boards; hand-chamfer the leading edge) |
 | Max height, top side | 4.2 mm (JST SH headers) · ≈6.3 mm with plug mated |
 | Max height, bottom side | ≤1.5 mm (compliant with H4.2 socket B-side envelope) |
 | Socket coverage zone | first 4.8 mm from card edge kept component-free (both faces) |
-| Mounting | M.2 screw, Ø3.5 semicircular notch, plated GND pad |
+| Mounting | M.2 screw, Ø3.5 semicircular notch routed in the outline — not plated, no copper |
 | Component sides | SMT both sides (top: module + connectors; bottom: passives) |
 
 ## LEDs & test points
 
 | Item | Location | Function |
 |---|---|---|
-| Green LED (D3) | side-view, left card edge | 3.3 V rail present |
-| Red LED (D4) | side-view, left card edge | firmware status, active-low on IO48 |
-| TP1/TP2 | bottom | EN / IO0 (recovery without host sidebands) |
-| TP3/TP4 | bottom | UART0 TX / RX |
-| TP5/TP6 | bottom | 3.3 V / GND |
+| Green LED (D3) | side-view, left card edge (silk bar = cathode) | 3.3 V rail present |
+| Red LED (D4) | side-view, left card edge (silk bar = cathode) | firmware status, active-low on IO48 |
+| TP1/TP2 | bottom, silk "EN" / "BOOT" | EN / IO0 (recovery without host sidebands) |
+| TP3/TP4 | bottom, silk "TX" / "RX" | UART0 TX / RX |
+| TP5/TP6 | bottom, silk "3V3" / "GND" | 3.3 V / GND |
 
 The LEDs are side-view parts emitting out of the left card edge — visible
 with the card in the slot regardless of mounting orientation. Test points
 are on the bottom side (bench use).
+
+## Unit identification
+
+Each card's serial number is the ESP32-S3 **factory base MAC** (eFuse,
+unique, read-only), the same value from both sides:
+
+| Where | How |
+|---|---|
+| Printed | Data Matrix (ECC 200, not QR) on the module can: `<6-digit prefix><MAC>`, e.g. `132611` + `3C0F027321E4`. Needs a Data Matrix-capable scanner app. |
+| Over USB | `esptool.py --port /dev/ttyACM0 read_mac`; also the USB-Serial-JTAG serial-number string (`/dev/serial/by-id/…`) |
+| In firmware | `esp_efuse_mac_get_default()` (ESP-IDF) / `machine.unique_id()` (MicroPython) |
+
+No separate serial is printed on the PCB. (Prefix/MAC split inferred
+2026-10-06 from one module; confirmed on a single unit at rev-B bring-up.)
 
 ## Host compatibility
 

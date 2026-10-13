@@ -9,9 +9,12 @@ on commercial M.2 cards. Owner-caught at Phase 2 review.
 
 Parts: TOGIALED TJ-S1706SW6T side-view LED (body 1.70 x 0.60 x 1.10 mm):
   D3 green C273616 (power), D4 red C273612 (status, active-low on IO48).
-330R series: green InGaN Vf(20mA) is 2.8-3.4 V, so at 3.3 V it runs at
-low current by design (~1-2 mA, still bright: 600 mcd @ 20 mA rating);
-red gets ~3.5 mA. Check brightness at bring-up.
+Series R (rev B): green InGaN Vf(20mA) is 2.8-3.4 V, leaving only
+~0.3-0.6 V headroom at 3.3 V. v1's 330R ran it ~1.8 mA nominal /
+~0.5 mA worst case (rail 3.06 V) - visibly dim. R3 = 100R (C22775, Basic):
+~5 mA nominal, ~1-7 mA across Vf bin + rail spread (abs max 30 mA), close
+to the red LED's ~4.5 mA on R4 = 330R so the two look similar. Brightness
+spread is set by the Vf bin, not the resistor - headroom is the limit.
 
 Footprint: custom LED_TJ-S1706_SideView (hardware/kicad/footprints.pretty),
 pads 0.80x0.70, 1.80 mm centre-to-centre, per the datasheet land pattern
@@ -19,13 +22,13 @@ pads 0.80x0.70, 1.80 mm centre-to-centre, per the datasheet land pattern
 (1.576 mm c-c) it replaced was too tight for the 1.70 mm body.
 LED polarity CONFIRMED against the datasheet 2026-08-30: pin 1 = K (cathode,
 black-mark end), pin 2 = A (anode) - matches KiCad Device:LED. Emit face
-oriented -x (out the left edge). NOTE: the datasheet 2D views do not
-distinguish the two long faces, so the front/back emit face is marked on
-F.Fab as the intended direction and should be confirmed on a physical
-sample at GATE 3 (low risk: 120 deg beam + edge placement).
+oriented -x (out the left edge) - CONFIRMED on v1 hardware 2026-10-05.
+ASSEMBLY: JLC/LCSC's rotation convention for C273616/C273612 is opposite
+this footprint - CPL rotation = KiCad +180 deg (tools/gen_fab.py JLC_ROT);
+v1 was assembled reversed. Silk bar at pad 1 = cathode (rev B).
 """
 
-from skidl import Part
+from skidl import Net, Part
 
 from blocks.common import R_0603, _bom, _next_tag, subcircuit
 
@@ -40,15 +43,19 @@ def _led_sideview(color, lcsc, mpn, ref):
 @subcircuit
 def leds(v3v3, gnd, led_status_n):
     # Power LED: +3V3 -> R -> LED -> GND
-    r_pwr = R_0603("330R", lcsc="C23138", mpn="0603WAF3300T5E", ref="R3")
+    r_pwr = R_0603("100R", lcsc="C22775", mpn="0603WAF1000T5E", ref="R3")
     led_pwr = _led_sideview("green", "C273616", "TJ-S1706SW6TGLC2G-A5", "D3")
+    led_pwr_a = Net("LED_PWR_A")      # named (rev B: was SKiDL auto "N$1")
     r_pwr[1] += v3v3
-    r_pwr[2] += led_pwr[2]   # anode
+    r_pwr[2] += led_pwr_a
+    led_pwr[2] += led_pwr_a  # anode
     led_pwr[1] += gnd        # cathode
 
     # Status LED: +3V3 -> R -> LED -> IO48 (GPIO low = ON)
     r_st = R_0603("330R", lcsc="C23138", mpn="0603WAF3300T5E", ref="R4")
     led_st = _led_sideview("red", "C273612", "TJ-S1706SW6TGLC2R-A5", "D4")
+    led_status_a = Net("LED_STATUS_A")  # named (rev B: was SKiDL auto "N$2")
     r_st[1] += v3v3
-    r_st[2] += led_st[2]     # anode
+    r_st[2] += led_status_a
+    led_st[2] += led_status_a  # anode
     led_st[1] += led_status_n  # cathode -> GPIO sinks

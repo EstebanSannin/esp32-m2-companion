@@ -1,6 +1,6 @@
 # ADR 0002 — Recovery sideband mapping & Schottky isolation
 
-Date: 2026-08-28 · Status: **accepted** (GATE 1, owner)
+Date: 2026-08-28 · Status: **accepted** (GATE 1, owner) · amended 2026-08-28, 2026-08-30 (v1), 2026-10-06 (Rev B)
 
 ## Decision
 
@@ -50,7 +50,7 @@ satisfy this. Two host-behavior failure modes recorded in docs/risks.md:
 W_DISABLE1# held low at boot forces download mode (R10); a stock Mallow
 image's PCIe driver may leave PERST# asserted (R9).
 
-## Amendment (2026-08-30, owner): pin-8 (W_DISABLE1#) BOOT leg DROPPED in v1
+## Amendment (2026-08-30, owner): pin-8 (W_DISABLE1#) BOOT leg DROPPED in v1 — *superseded by the Rev B amendment below*
 
 The BOOT diode-OR originally took two inputs: M.2 pin 20 (PCIE_1_GPIO_5,
 Mallow) and M.2 pin 8 (W_DISABLE1_n, generic non-Mallow hosts). The pin-8
@@ -74,3 +74,19 @@ exposed but unconnected pad (kept for mechanical/standard-pinout reasons).
 Recovery capability is preserved in full via host GPIO (Mallow) and
 TP1/TP2 flying leads (universal). Recovery procedure: DATASHEET.md +
 (Phase 4) docs/bringup.md.
+
+## Amendment (2026-10-06, owner, rev B): pin-8 (W_DISABLE1#) BOOT leg RESTORED
+
+The owner chose to restore the leg for rev B. The v1 "unroutable" verdict
+(2026-08-30) was a hand-trace verdict. A one-net feasibility probe (grid
+search over all 4 copper layers, real DRC clearances, every other item fixed)
+found a legal corridor once the USB vias were pulled out of the B-key notch:
+B.Cu escape between the USB vias → In1 → B.Cu through the D1/D2 pad gap →
+D2.2. D2 pin 2 = `W_DISABLE1_n` again.
+
+Unchanged by the restore:
+- Mallow: pin 8 is pull-up only, so the leg is inert there; the pin 50 + 20
+  path and TP1/TP2 remain the recovery mechanisms.
+- **R10 is live again:** a host that holds W_DISABLE1# LOW at power-up forces
+  ROM download boot. For such hosts, lift/cut D2 pin 2 (now documented in the
+  block docstring and DATASHEET).

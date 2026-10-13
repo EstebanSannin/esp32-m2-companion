@@ -1,7 +1,11 @@
 (version 1)
-# Card-edge gold fingers legitimately touch the board edge; suppress the
-# edge-clearance check for everything belonging to J1 only.
+# Card-edge gold fingers legitimately touch the board edge. Waive
+# edge_clearance for J1's finger PADS only - never vias, tracks, zones or
+# footprint graphics. v1 waived all of memberOfFootprint('J1'); since J1
+# also owns the whole Edge.Cuts outline, that silently disabled edge
+# clearance board-wide and hid a USBH3_D_N via milled away in the B-key
+# notch (m2_keyb_edge/LESSONS.md, 2026-10-05).
 (rule "edge_fingers_edge_clearance"
-  (condition "A.memberOfFootprint('J1')")
+  (condition "A.Type == 'Pad' && A.memberOfFootprint('J1') && A.Pad_Type == 'SMD'")
   (severity ignore)
   (constraint edge_clearance))

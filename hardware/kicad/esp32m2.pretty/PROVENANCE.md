@@ -23,7 +23,12 @@ Figure 21 and docs/pinmap.md:
   depth 3.5 mm (spec 3.50±0.15), center 5.6 vs spec 5.625 (within tol) — OK
 - Notch spans positions 12–19 (no pads there) — matches pinmap §1 — OK
 - Outline 22 × 42 mm, corner radii, mounting semicircle Ø3.5 at top-edge
-  center, plated GND pads Ø5.5 (top poly) / Ø6 (B.Cu ring) — OK
+  center — OK. Upstream's plated Ø5.5 pad + B.Cu ring/square (no net)
+  removed in rev B: half-cut plated hole = $38 castellation fee
+  (m2_keyb_edge/LESSONS.md).
+- CHANGED vs upstream (rev B): mounting semicircle is an **Edge.Cuts arc**
+  (routed with the outline) — no drill hit, no plating, no copper. File
+  upgraded to the KiCad 9 format (`kicad-cli fp upgrade`).
 - CHANGED vs upstream: pads renamed `P$n` → `n` so pcbnew matches the
   SKiDL netlist pin numbers; module renamed.
 

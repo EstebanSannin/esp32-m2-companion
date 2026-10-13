@@ -54,13 +54,16 @@ so power distribution is the plane, not surface traces.
 ![bottom signal](img/layers/4_bottom_signal.png)
 
 Where most of the routing lives. The gold fingers are at the bottom edge; the
-3×3 dot grid under the module is the EPAD ground-via array (thermal + GND,
-Espressif HDG). Thin traces threading the GND pour are the signal routes.
+dot grid under the module is the EPAD ground-via array (thermal + GND,
+Espressif HDG) — in Rev B these are the module footprint's own 12 plated
+holes (v1 also had a duplicate board via on each; removed). Thin traces threading the GND pour are the signal routes.
 
 ## How this was routed
 
 Hand-routed + locked: the USB differential pair (impedance-critical) and the
-recovery/boot nets; autorouted (freerouting, 80 passes): the header/UART/LED
+recovery/boot nets — in Rev B also the pin-8 `W_DISABLE1_n` BOOT leg (B.Cu →
+In1 → B.Cu through the D1/D2 gap) and the notch corner
+([v1 vs Rev B](img/revb_notch_corner.png)); autorouted (freerouting, 80 passes): the header/UART/LED
 signals; planes poured last. Method and the lessons behind it:
 [`routing-method.md`](routing-method.md). Full source of truth for every
 track/via is the KiCad PCB file — open it in the PCB Editor to explore
