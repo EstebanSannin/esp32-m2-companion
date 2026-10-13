@@ -42,17 +42,31 @@ show for every polarized part (step 3 below).
 Cost reference (PCB only, quote 2026-10-10, settings above): 5 pcs $85.39 · 100 pcs $207.49.
 Parts + assembly: see `docs/v2-gate-v4.md`.
 
-## Order steps
-1. `make fab` → upload the 3 files above (exit 2 is expected before step 4).
-2. In the **assembly placement preview**, open `fab/polarity_checklist.md`.
-3. Check **every row** (18 parts) against the preview, using N/S: N = screw-notch edge, S = gold
-   fingers. The bottom-side preview is mirrored, so E/W is not reliable.
-   - LEDs: the "+" must be on the pad level with the series resistor (R3/R4), the N pad.
-   - New in v2: U3–U6, Q1–Q3, RN1–RN3. **Their ±90° offsets are a guess for the bottom side**:
-     if pin 1 shows in the opposite corner, the sign is wrong.
-   - **Never approve a preview by eye.** If a part is rotated, fix `JLC_ROT` (not the footprint) and
-     regenerate.
-4. Set the verified date for each `JLC_ROT` entry and re-run `make fab` (must exit 0). Re-upload the
-   CPL, re-check the preview once more, then order.
+## Order steps (from the Rev B order, GATE B3, 2026-10-13)
+1. `make fab` → upload the 3 files above. Select **Confirm Parts Placement: Yes** and **Confirm
+   Production File: Yes**. The real checks happen after ordering, and production waits for your
+   confirmation.
+2. The placement preview shown **before** ordering is generated automatically ("for reference
+   only"): JLC's 3D models may sit off their pads and polarity marks can mislead. Note anything odd,
+   but **do not rotate parts in JLC's editor**. The CPL is the source of truth.
+3. **Production files** (email, ~48 h to confirm):
+   - Download JLC's zip and run `make jlc-check JLC=<zip>`. It must report **PASS** (stored upload
+     identical, every drill hole matched).
+   - Look at `hardware/build/jlc_check/diff_*.png`. Expected differences are listed in
+     `tools/check_jlc_production.py`.
+   - v2: check that all **6** copper layers are there.
+   - Check the panel: V-cut on the long sides only, nothing on the finger edge, no castellation.
+4. **Final DFM placement** (engineers, "Confirm" button on the order page): check every row of
+   `fab/polarity_checklist.md` (21 parts) using N/S: N = screw-notch edge, S = gold fingers.
+   - **LEDs D3/D4: check BOTH.** The "+" must be on the pad level with the series resistor (R3/R4),
+     **and** the lens must face the left card edge. v1 got the lens right but polarity wrong; Rev B
+     got polarity right but the lens inward.
+   - If in doubt, ask the engineers to confirm against the physical part on the tape.
+   - New in v2: U3–U6, Q1–Q3, RN1–RN3. **Their ±90° offsets are a guess for the bottom side**: if
+     pin 1 shows in the opposite corner, the sign is wrong.
+   - **Never approve a placement by eye.** If something is wrong, reply to the engineers on the
+     order page.
+5. After confirming, record the confirmed rotations with today's date in `JLC_ROT`
+   (`hardware/tools/gen_fab.py`) so the next `make fab` exits 0.
 
 Do not order before GATE V4 is approved by the owner. See `docs/v2-gate-v4.md`.

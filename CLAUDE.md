@@ -54,6 +54,9 @@ Knowledge management per SPEC §12 (findings log, block LESSONS.md, this file).
   against JLC's placement preview (`fab/polarity_checklist.md`). Never
   approve a fab's LED/diode preview by eye: the "+" must be on the pad wired
   to the series resistor (v1 LEDs were assembled reversed).
+- `make jlc-check JLC=<zip>` = compare JLC's processed production files with
+  `fab/` before confirming them (stored upload identical, every drill hole,
+  per-layer diff images). Must PASS.
 - KiCad-Python: run pcbnew scripts with KiCad's bundled python; exit via
   `tools/kicad_exit.py` (finalization segfaults); never `Remove()` and keep
   using the board in the same process (SWIG returns raw pointers after it).

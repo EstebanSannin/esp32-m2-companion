@@ -39,25 +39,38 @@ NONPOLAR = {"C45783", "C19702", "C14663", "C15849", "C1015", "C25804",
             "C25900", "C26083", "C25741", "C25890", "C852472", "C852832",
             "C14709"}
 
-# LCSC part -> (degrees added to KiCad rotation, verified-against-JLC-
-# preview date for THIS revision or None, basis). Rev-B entries start
-# unverified; fill the date only after checking the JLC preview against
+# LCSC part -> (degrees added to KiCad rotation, date it was confirmed in
+# JLC engineering's FINAL DFM placement for this footprint or None, basis).
+# Fill the date only after checking the final DFM against
 # polarity_checklist.md (never by eye - the v1 LED trap).
 JLC_ROT = {
-    "C273616": (180, None, "TJ-S1706 green: v1 placed at +0 came out 180 deg "
-                "reversed; hand-rotated part confirmed (bringup 2026-10-05)"),
-    "C273612": (180, None, "TJ-S1706 red: same as C273616"),
-    "C12743": (0, None, "BAT54A SOT-23: asymmetric pads, v1 placed correctly"),
-    "C7519": (0, None, "USBLC6-2SC6: v1 orientation NOT proven electrically "
-              "(U1.2 GND floated) - check pin-1 dot"),
-    "C160390": (0, None, "JST SH-4: v1 pinout proven by PU/PD sweep"),
-    "C160394": (0, None, "JST SH-8: v1 pinout proven by PU/PD sweep"),
-    "C2913204": (0, None, "WROOM-1 module: v1 functional"),
+    # Rev-B parts with an UNCHANGED footprint: offsets verified 2026-10-13
+    # against JLC engineering's FINAL DFM placement (GATE B3, v1.0 Rev B). The
+    # offset maps our footprint to JLC's library part, so it carries over to
+    # v2.0 Rev A; the v2 final DFM still re-checks every row. The pre-order
+    # preview is automatic and not authoritative - see fab/README.md.
+    "C12743": (0, "2026-10-13", "BAT54A SOT-23: pin 1 correct in final DFM (Rev B)"),
+    "C7519": (0, "2026-10-13", "USBLC6-2SC6: pin 1 correct in final DFM (Rev B)"),
+    "C160390": (0, "2026-10-13", "JST SH-4 (J3): pin 1 correct in final DFM (Rev B)"),
+    "C160394": (180, "2026-10-13", "JST SH-8 (J4): at +0 JLC's auto preview put "
+                "pin 1 at the opposite end from J3; JLC engineering rotated it "
+                "180 in the final DFM (pin 1 = TXD0 at the same end as J3 pin 1). "
+                "Rev B was ordered at +0 and corrected by JLC"),
+    "C2913204": (0, "2026-10-13", "WROOM-1 module: pin 1 NW, correct in final DFM (Rev B)"),
+    # TJ-S1706 side-view LEDs: footprint pads RENUMBERED in v2 (GATE V3
+    # amendment, 2026-10-13) to match the physical part: with the lens toward
+    # the emit arrow (card edge), the cathode is the pad at +x. Rev B (+180,
+    # old footprint) = correct polarity, lens inward; v1 (+0, old footprint)
+    # = lens toward the edge, polarity reversed. With the renumbered footprint
+    # +0 gives both - derived, NOT yet confirmed by JLC on this footprint.
+    "C273616": (0, None, "TJ-S1706 green: renumbered footprint, +0 = lens to "
+                "the card edge AND anode on the R3 pad; confirm BOTH in the final DFM"),
+    "C273612": (0, None, "TJ-S1706 red: same as C273616 (R4 pad)"),
     # v2.0 Rev A (GATE V4, 2026-10-10). Offsets from comparing each JLC/
     # EasyEDA library footprint with ours (pad coordinates, easyeda.com
     # component API). All on the BOTTOM side: the sign of a +-90 correction
     # flips under the bottom mirror and has no rev-B calibration -> +90 is a
-    # GUESS; the preview decides (pin 1 must be where polarity_checklist.md
+    # GUESS; the final DFM decides (pin 1 must be where polarity_checklist.md
     # says; a wrong sign puts it in the opposite corner).
     "C3662799": (0, None, "TPS259470A RPW: JLC lib = ours (pin 1 top-left, "
                  "every pad within 0.015 mm) - sign-free 0"),
