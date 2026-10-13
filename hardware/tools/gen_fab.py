@@ -41,15 +41,23 @@ NONPOLAR = {"C45783", "C19702", "C14663", "C15849", "C1015", "C25804",
 # unverified; fill the date only after checking the JLC preview against
 # polarity_checklist.md (never by eye - the v1 LED trap).
 JLC_ROT = {
-    "C273616": (180, None, "TJ-S1706 green: v1 placed at +0 came out 180 deg "
-                "reversed; hand-rotated part confirmed (bringup 2026-10-05)"),
-    "C273612": (180, None, "TJ-S1706 red: same as C273616"),
-    "C12743": (0, None, "BAT54A SOT-23: asymmetric pads, v1 placed correctly"),
-    "C7519": (0, None, "USBLC6-2SC6: v1 orientation NOT proven electrically "
-              "(U1.2 GND floated) - check pin-1 dot"),
-    "C160390": (0, None, "JST SH-4: v1 pinout proven by PU/PD sweep"),
-    "C160394": (0, None, "JST SH-8: v1 pinout proven by PU/PD sweep"),
-    "C2913204": (0, None, "WROOM-1 module: v1 functional"),
+    # Verified 2026-10-13 against JLC engineering's FINAL DFM placement
+    # (GATE B3, v1.0 Rev B). The pre-order preview is automatic and not
+    # authoritative - see fab/README.md.
+    "C273616": (180, "2026-10-13", "TJ-S1706 green: +180 gives correct polarity "
+                "(anode on the R3 pad). NOTE: with this footprint the lens then "
+                "faces INWARD - part/footprint mismatch, fix in the next revision "
+                "(review-findings GATE B3)"),
+    "C273612": (180, "2026-10-13", "TJ-S1706 red: same as C273616 (R4 pad)"),
+    "C12743": (0, "2026-10-13", "BAT54A SOT-23: pin 1 correct in final DFM"),
+    "C7519": (0, "2026-10-13", "USBLC6-2SC6: pin 1 correct in final DFM"),
+    "C160390": (0, "2026-10-13", "JST SH-4 (J3): pin 1 correct in final DFM"),
+    "C160394": (180, "2026-10-13", "JST SH-8 (J4): at +0 JLC's auto preview put "
+                "pin 1 at the opposite end from J3; JLC engineering rotated it "
+                "180 in the final DFM (pin 1 = TXD0 at the same end as J3 pin 1). "
+                "Rev B was ordered at +0 and corrected by JLC; v1 J4 pin order "
+                "unverified"),
+    "C2913204": (0, "2026-10-13", "WROOM-1 module: pin 1 NW, correct in final DFM"),
 }
 
 STD_GLOBS = ["*.gtl", "*.g1", "*.g2", "*.gbl", "*.gts", "*.gbs",
