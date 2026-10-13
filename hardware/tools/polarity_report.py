@@ -85,6 +85,18 @@ def main(out):
             rref, rpad = rp[0]
             da = (a.GetPosition() - rpad.GetPosition()).EuclideanNorm()
             dk = (k.GetPosition() - rpad.GetPosition()).EuclideanNorm()
+            # emit arrow (F/B.Fab filled triangle) must point AWAY from the
+            # series resistor: lens out of the card edge (GATE B3 lesson)
+            tri = [g for g in fp.GraphicalItems() if g.GetClass() == "PCB_SHAPE"
+                   and g.GetShape() == pcbnew.SHAPE_T_POLY]
+            if tri:
+                tc = tri[0].GetBoundingBox().GetCenter()
+                if (tc - c).EuclideanNorm() > 0 and \
+                        ((tc.x - c.x) * (rpad.GetPosition().x - c.x) +
+                         (tc.y - c.y) * (rpad.GetPosition().y - c.y)) > 0:
+                    errors.append(f"{ref}: emit arrow points TOWARD {rref} (lens inward)")
+            else:
+                errors.append(f"{ref}: footprint has no emit-direction arrow on Fab")
             if not da < dk:
                 errors.append(f"{ref}: anode pad is NOT the resistor-side pad "
                               f"({mm(da):.2f} mm vs cathode {mm(dk):.2f} mm)")
@@ -101,7 +113,9 @@ def main(out):
                 "check": (f"'+' (anode) on the {direction(mm(ap.x-c.x), mm(ap.y-c.y))[0]} "
                           f"pad = the one level with {rref}.{rpad.GetNumber()} "
                           f"(net {anet}); cathode mark toward "
-                          f"{'S' if ap.y < c.y else 'N'}"),
+                          f"{'S' if ap.y < c.y else 'N'}; AND the lens (emitting face) "
+                          f"faces OUTWARD - away from {rref}, toward the card's long "
+                          f"edge (GATE B3: both must hold at once)"),
             })
         elif ref in PIN1_MEANING:
             p1 = pads.get("1")

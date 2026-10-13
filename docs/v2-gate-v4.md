@@ -1,8 +1,13 @@
 # v2.0 Rev A — GATE V4 package (fab)
 
-Status: **paused 2026-10-10 (owner)** while JLC produces v1.0 Rev B. Resume at step 1 below (the
-JLC placement-preview check), then owner approval and order. Previous gate: `docs/v2-gate-v3.md`
-(approved 2026-10-10)
+Status: **paused 2026-10-10 (owner)** while JLC produces v1.0 Rev B. Updated 2026-10-13 after
+GATE B3:
+- `main` merged in;
+- side-view LED footprint fixed (GATE V3 amendment, `docs/v2-gate-v3.md`);
+- `make jlc-check` extended to 6 layers;
+- the order procedure is now the production-file check + JLC engineers' final DFM (step 1 below).
+
+Previous gate: `docs/v2-gate-v3.md` (approved 2026-10-10; amendment 2026-10-13 awaiting owner review)
 
 SPEC A3 §9: *GATE V4 = fab package (`make fab` exit 0), cost check.*
 
@@ -10,18 +15,23 @@ SPEC A3 §9: *GATE V4 = fab package (`make fab` exit 0), cost check.*
 
 | Item | State |
 |---|---|
-| `make fab` | package written to `fab/`, **exit 2 = ORDER BLOCKED** (by design): 18 polarized parts await the JLC placement-preview check for this revision |
+| `make fab` | package written to `fab/`, **exit 2 = ORDER BLOCKED** (by design): the new/changed polarized parts (D3/D4, U3–U6, Q1–Q3, RN1–RN3) await JLC's final DFM; the unchanged Rev-B footprints carry their 2026-10-13 final-DFM offsets |
 | Gerber zip | **6 copper layers** + masks, silk, paste, outline, PTH/NPTH; `make fab` now asserts the copper count (the rev-B file list held only In1/In2 and would have dropped In3/In4) |
 | BOM / CPL | 25 lines / 50 placed parts, no DNP |
 | `make drc` / `make check` | 0 violations, 0 unconnected / PASS |
 | `fab/README.md` | rewritten for v2 order settings |
 | DATASHEET.md | v2 edge-pin functions, eFuse supply, 6-layer PCB, block diagram, test points |
 
-## 1. Placement-preview check (owner — needs a JLC upload)
+## 1. Placement check (owner — at order time, procedure from the Rev B order)
 
-1. Upload the 3 files in `fab/` to the JLC quote. Use the settings in `fab/README.md`.
-2. In the assembly placement preview, check every row of `fab/polarity_checklist.md` using N/S.
-3. Tell me the result per part. I then set the verified dates in `JLC_ROT` and `make fab` must exit 0.
+The pre-order preview is automatic and for reference only. The real checks happen after ordering
+(steps in `fab/README.md`):
+1. **Production files:** `make jlc-check JLC=<zip>` must PASS. It now covers all 6 copper layers
+   and fails if one is missing.
+2. **Engineers' final DFM:** check every row of `fab/polarity_checklist.md` using N/S.
+   - **D3/D4: lens toward the card edge AND "+" on the R3/R4 pad, both at once.** Ask the engineers
+     to confirm on the physical part.
+3. Then I set the verified dates in `JLC_ROT`, and `make fab` must exit 0.
 
 Rotation offsets come from comparing JLC's own (EasyEDA) library footprint with ours, pad by pad:
 
@@ -31,7 +41,9 @@ Rotation offsets come from comparing JLC's own (EasyEDA) library footprint with 
 | U3–U5 TMUX1511 (RSV) | rotated 90° | +90 | **sign is a guess** (bottom-side mirror) |
 | Q1–Q3 SSM6N56FE (SOT-563) | rotated 90° | +90 | **sign is a guess** |
 | RN1–RN3 4×0402 array | rotated 90°, 180°-symmetric | +90 | pads must land |
-| rev-B parts (D1–D4, U1, U2, J3, J4) | unchanged | as rev B | must be re-checked for this revision |
+| D3/D4 TJ-S1706 side-view LEDs | footprint **renumbered** (GATE V3 amendment) | **0** (was +180) | derived from v1 (+0: lens out) and Rev B (+180: polarity right); **confirm lens + polarity** |
+| D1/D2, U1, U2, J3 | unchanged footprints | as Rev B (0) | verified in Rev B's final DFM 2026-10-13 |
+| J4 JST SH-8 | unchanged footprint | **+180** | verified in Rev B's final DFM 2026-10-13 |
 
 If pin 1 of a U3–U5 or Q1–Q3 part shows up in the opposite corner, the sign is wrong: the offset
 becomes 270.

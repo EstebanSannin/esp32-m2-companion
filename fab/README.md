@@ -57,7 +57,7 @@ Parts + assembly: see `docs/v2-gate-v4.md`.
    - v2: check that all **6** copper layers are there.
    - Check the panel: V-cut on the long sides only, nothing on the finger edge, no castellation.
 4. **Final DFM placement** (engineers, "Confirm" button on the order page): check every row of
-   `fab/polarity_checklist.md` (21 parts) using N/S: N = screw-notch edge, S = gold fingers.
+   `fab/polarity_checklist.md` (18 parts) using N/S: N = screw-notch edge, S = gold fingers.
    - **LEDs D3/D4: check BOTH.** The "+" must be on the pad level with the series resistor (R3/R4),
      **and** the lens must face the left card edge. v1 got the lens right but polarity wrong; Rev B
      got polarity right but the lens inward.

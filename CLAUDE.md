@@ -74,6 +74,11 @@ Knowledge management per SPEC §12 (findings log, block LESSONS.md, this file).
   no signal tracks on them. v2 vias: 0.45/0.3, 0.45/0.2 and 0.35/0.2 (the
   paid JLC "0.2mm/(0.3/0.35mm)" option, owner-approved GATE V3 — order with
   it selected); hole-to-copper 0.2 mm (JLC inner-layer value).
+- Directional parts (side-view LEDs, anything with an emitting/receiving
+  face): the footprint must encode emit direction AND polarity together,
+  verified against the physical part (tape / vendor drawing / JLC engineers)
+  — a CPL rotation cannot fix a mirrored footprint (GATE B3: lens inward on
+  Rev B; fixed in v2 by renumbering the TJ-S1706 pads).
 - Gold fingers: no copper between fingers; enter each finger from its top
   edge only. Every GND finger must reach the GND plane (v2 had 4 floating
   ones hidden behind other nets' vias — DRC "unconnected" on pour islands).

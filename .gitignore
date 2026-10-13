@@ -31,3 +31,7 @@ v2/probe/*.dsn
 v2/probe/*.ses
 v2/probe/*.json
 v2/probe/*.log
+
+# SKiDL side files of the generator scripts (gen_connections etc.)
+hardware/gen_connections.erc
+hardware/gen_connections.log

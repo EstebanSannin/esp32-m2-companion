@@ -20,12 +20,18 @@ Footprint: custom LED_TJ-S1706_SideView (hardware/kicad/footprints.pretty),
 pads 0.80x0.70, 1.80 mm centre-to-centre, per the datasheet land pattern
 (docs/datasheets/togialed_tj-s1706_sideview.pdf). The generic 0603 land
 (1.576 mm c-c) it replaced was too tight for the 1.70 mm body.
-LED polarity CONFIRMED against the datasheet 2026-08-30: pin 1 = K (cathode,
-black-mark end), pin 2 = A (anode) - matches KiCad Device:LED. Emit face
-oriented -x (out the left edge) - CONFIRMED on v1 hardware 2026-10-05.
-ASSEMBLY: JLC/LCSC's rotation convention for C273616/C273612 is opposite
-this footprint - CPL rotation = KiCad +180 deg (tools/gen_fab.py JLC_ROT);
-v1 was assembled reversed. Silk bar at pad 1 = cathode (rev B).
+Pin 1 = K (cathode, black-mark end), pin 2 = A (anode), as KiCad Device:LED.
+v2.0 Rev A FIX (GATE V3 amendment, 2026-10-13): the footprint pads are
+RENUMBERED to match the physical part. JLC engineering (Rev B final DFM,
+physical parts on tape) found that with the lens toward the card edge the
+cathode sits where the rev-B footprint had the anode: v1 (CPL +0) = lens
+out, polarity reversed (dark); Rev B (CPL +180) = polarity right, lens
+inward. The v1 note "rotation restores polarity AND emit direction" was an
+unverified inference. Now: cathode = pad at +x of the footprint when the
+emit arrow (F.Fab, +y) points out of the card edge; R3/R4 rotated 180 so
+their LED-side pad stays level with the new anode pad; CPL +0. Confirm BOTH
+polarity and lens direction in JLC's final DFM (fab/polarity_checklist.md).
+Silk bar = cathode end.
 """
 
 from skidl import Net, Part
@@ -36,7 +42,8 @@ from blocks.common import R_0603, _bom, _next_tag, subcircuit
 def _led_sideview(color, lcsc, mpn, ref):
     p = Part("Device", "LED", value=color, ref=ref, tag=_next_tag("LED"),
              footprint="esp32_m2_companion:LED_TJ-S1706_SideView")
-    p.fields["note"] = "SIDE-VIEW - emitting face toward left card edge"
+    p.fields["note"] = ("SIDE-VIEW - emitting face toward the left card edge; "
+                        "footprint renumbered v2 (lens + polarity together)")
     return _bom(p, lcsc, "Extended", mpn)
 
 

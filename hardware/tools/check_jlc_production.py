@@ -43,7 +43,10 @@ STEM = "esp32_m2_companion"
 PX = 50                      # px per mm
 WARN_MM2 = 40.0              # per-layer difference worth a closer look
 TOL = 0.02                   # mm, hole position / diameter tolerance
+# JLC numbers inner copper l2..l(n-1) top to bottom; v2 is 6 layers
+# (In1..In4 = l2..l5). A layer we ship but JLC lacks is checked below.
 LAYERS = [("F_Cu.gtl", "tl"), ("In1_Cu.g1", "l2"), ("In2_Cu.g2", "l3"),
+          ("In3_Cu.g3", "l4"), ("In4_Cu.g4", "l5"),
           ("B_Cu.gbl", "bl"), ("F_Mask.gts", "ts"), ("B_Mask.gbs", "bs"),
           ("F_Silkscreen.gto", "to"), ("B_Silkscreen.gbo", "bo"),
           ("Edge_Cuts.gm1", "ko")]
@@ -147,9 +150,14 @@ def check_layers(ours, ok, dx, dy):
                        check=True)
         return np.asarray(Image.open(p).convert("L")) < 128
 
+    missing_cu = []
     for mine, theirs in LAYERS:
+        if not (ours / f"{STEM}-{mine}").exists():
+            continue                            # layer not in our design (4 L board)
         if not (ok / theirs).exists():
-            say(f"  {theirs:4} (not in JLC zip)")
+            if "_Cu." in mine:
+                missing_cu.append(theirs)       # a copper layer we ship, JLC dropped
+            say(f"  {theirs:4} (not in JLC zip){' - COPPER LAYER MISSING: FAIL' if '_Cu.' in mine else ''}")
             continue
         a = raster(ours / f"{STEM}-{mine}", 0, 0, f"o_{theirs}")
         b = raster(ok / theirs, dx, dy, f"j_{theirs}")
@@ -162,6 +170,7 @@ def check_layers(ours, ok, dx, dy):
         flag = "WARN - inspect" if max(oo, jo) > WARN_MM2 else ""
         say(f"  {theirs:4} {mine:18} ours-only {oo:7.2f}  JLC-only {jo:7.2f}  {flag}")
     say(f"  diff images: {OUT}/diff_<layer>.png")
+    return not missing_cu
 
 
 def main():
@@ -170,10 +179,10 @@ def main():
     ours, ok, stored = unpack(Path(sys.argv[1]).expanduser())
     a = check_stored(ours, stored)
     b, dx, dy = check_drill(ours, ok)
-    check_layers(ours, ok, dx, dy)
-    say(f"\nRESULT: {'PASS (review the diff images)' if a and b else 'FAIL'}")
+    c = check_layers(ours, ok, dx, dy)
+    say(f"\nRESULT: {'PASS (review the diff images)' if a and b and c else 'FAIL'}")
     (OUT / "report.txt").write_text("\n".join(lines) + "\n")
-    sys.exit(0 if a and b else 1)
+    sys.exit(0 if a and b and c else 1)
 
 
 if __name__ == "__main__":

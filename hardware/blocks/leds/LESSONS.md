@@ -49,3 +49,11 @@
   then swap the footprint pad numbering (resistor to the other pad) or pick a
   matching side-view LED. Rule: for directional parts, verify polarity and
   emit direction TOGETHER against the tape/vendor drawing before layout.
+- 2026-10-13 (v2.0 Rev A, GATE V3 amendment): fixed as the GATE B3 entry
+  asked. The vendor drawing settles polarity (pin 1 = K, black mark) but NOT
+  which long face carries the lens; the physical-part evidence does (v1 +0:
+  lens out / reversed; Rev B +180: polarity right / lens in). Footprint pads
+  renumbered (cathode = +x when the lens faces the emit arrow), R3/R4 rotated
+  180, CPL +0. polarity_report now also asserts the emit arrow points away
+  from the series resistor, and the checklist row asks for lens AND polarity.
+  Still to confirm in JLC's final DFM on the physical part.

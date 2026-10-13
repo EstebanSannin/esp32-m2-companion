@@ -6,8 +6,8 @@ N = toward the screw-notch edge, S = toward the gold fingers. Bottom-side previe
 |---|---|---|---|---|---|
 | D1 | bottom | BAT54A | pin 1 = cathode-1 (BAT54A common-anode SOT-23: pins 1,2 = K, 3 = A); pin 1 at the SW corner, net PERST_n | PERST_n | [ ] |
 | D2 | bottom | BAT54A | pin 1 = cathode-1 (BAT54A common-anode SOT-23: pins 1,2 = K, 3 = A); pin 1 at the SW corner, net PCIE_1_GPIO_5 | PCIE_1_GPIO_5 | [ ] |
-| D3 | bottom | green | '+' (anode) on the N pad = the one level with R3.2 (net LED_PWR_A); cathode mark toward S | LED_PWR_A | [ ] |
-| D4 | bottom | red | '+' (anode) on the N pad = the one level with R4.2 (net LED_STATUS_A); cathode mark toward S | LED_STATUS_A | [ ] |
+| D3 | bottom | green | '+' (anode) on the S pad = the one level with R3.2 (net LED_PWR_A); cathode mark toward N; AND the lens (emitting face) faces OUTWARD - away from R3, toward the card's long edge (GATE B3: both must hold at once) | LED_PWR_A | [ ] |
+| D4 | bottom | red | '+' (anode) on the S pad = the one level with R4.2 (net LED_STATUS_A); cathode mark toward N; AND the lens (emitting face) faces OUTWARD - away from R4, toward the card's long edge (GATE B3: both must hold at once) | LED_STATUS_A | [ ] |
 | J3 | top | Conn_01x04 | pin 1 = GND (Qwiic order GND, 3V3, SDA, SCL); pin 1 at the SW corner, net GND | GND | [ ] |
 | J4 | top | Conn_01x08 | pin 1 = TXD0; pin 1 at the SW corner, net TXD0 | TXD0 | [ ] |
 | Q1 | bottom | SSM6N56FE | pin 1 = S1 (SSM6N56FE ES6; pin-1 mark); pin 1 at the NE corner, net GND | GND | [ ] |

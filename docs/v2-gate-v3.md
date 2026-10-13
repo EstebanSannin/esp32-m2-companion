@@ -92,3 +92,20 @@ SPEC A3 §9: *GATE V3 = placement + routing of all new nets DRC-clean, then layo
 4. **DATASHEET.md:** the v2 edge pins have no "Function" text yet (generator needs v2 descriptions).
 5. 3D models of U3–U5 are a generated body box (no stock model) and U6 uses TI RUN0010A.
    Both are visual only.
+
+## Amendment 2026-10-13 — side-view LEDs (after GATE B3) · awaiting owner review
+
+- **Finding (JLC engineering, Rev B final DFM, physical parts):** the TJ-S1706 lens/electrode
+  arrangement is the mirror image of our footprint. Correct polarity came with the lens inward.
+- **Fix (owner-approved):**
+  - footprint pads renumbered (cathode = pad at +x with the lens toward the emit arrow);
+  - D3/D4 re-placed from the library at the same pose;
+  - R3/R4 rotated 180°;
+  - the three LED nets and their local plane vias re-routed;
+  - CPL offset +180 → **+0**.
+- **Checks:** `make drc` 0 violations / 0 unconnected; `make check` PASS. `polarity_report.py`
+  asserts each LED's emit arrow points away from its resistor; the LED checklist rows ask for lens
+  AND polarity.
+- **Still to confirm:** lens + polarity in JLC's final DFM on the physical part (GATE V4).
+- **Other directional parts in v2:** none. J3/J4 take the Rev B verified offsets (J4 +180).
+

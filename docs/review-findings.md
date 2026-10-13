@@ -503,3 +503,27 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   DNP R5/R6/C8/C9 empty. PCB production files checked with
   `make jlc-check`: PASS (upload identical, 57/57 holes, standard CAM
   adjustments only).
+
+## v2.0 Rev A — GATE V3 amendment after GATE B3 (2026-10-13)
+
+- 2026-10-13 · GATE V3 (amendment) · high · **BLOCK leds** (from GATE B3,
+  JLC engineering) · v2 reused the TJ-S1706 side-view LEDs (D3/D4) on the
+  mirrored `LED_TJ-S1706_SideView` footprint. → Owner-approved fix: footprint
+  pads renumbered to the physical part (cathode = pad at +x with the lens
+  toward the emit arrow), D3/D4 re-placed from the library at the same pose
+  (`tools/v2_replace_fp.py`), R3/R4 rotated 180 so their LED-side pad stays
+  level with the anode, LED nets + local plane vias re-routed, CPL offset
+  +180 → **+0 (unverified: confirm lens AND polarity in JLC's final DFM)**.
+  `make drc` 0/0, `make check` PASS. No other directional (emitting) part in
+  v2; J3/J4 take the Rev B verified offsets (J4 +180).
+- 2026-10-13 · GATE V3 (amendment) · medium · **PROCESS** · `make jlc-check`
+  (from main) knew only 4 copper layers and treated a copper layer missing
+  from JLC's zip as a note, not a failure. → In3/In4 (`l4`/`l5`) added; a
+  missing copper layer now FAILs (tested on a synthetic production set).
+  `polarity_report.py` asserts each side-view LED's emit arrow points away
+  from its series resistor; the LED checklist rows ask for both checks.
+- 2026-10-13 · GATE V3 (amendment) · — · **PROCESS** · Merged `main`
+  (v1.0 Rev B + GATE B3) into `v2`: `JLC_ROT` keeps the Rev-B
+  final-DFM-verified offsets for unchanged footprints (dated 2026-10-13); the
+  order procedure is now production-file check + engineers' final DFM (the
+  pre-order preview is reference only).
