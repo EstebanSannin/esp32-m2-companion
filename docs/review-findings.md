@@ -263,3 +263,34 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   them and passes (graphics, cathode bar, 3D model). All footprints now carry
   a library nickname. **PROCESS candidate:** "Before trusting a parity check,
   confirm every footprint is linked to a library (`lib:name` FPID)."
+
+## GATE B3 — JLC assembly DFM (2026-10-13)
+
+- 2026-10-13 · GATE B3 · **high** · **BLOCK leds** (caught by JLC
+  engineering, physical part) · **The TJ-S1706 side-view LED's lens/electrode
+  relationship is mirrored relative to our footprint.** JLC places these parts
+  "according to the tape direction": with the emitting face toward the board
+  edge, the **cathode** lands on the pad wired to R3/R4. So with this part and
+  this footprint you get *either* correct polarity with the lens facing
+  **inward** (toward R3/R4), *or* the lens facing the edge with reversed
+  polarity (dark = v1). Rotation cannot fix it, and a part cannot be mirrored.
+  **This corrects the v1 conclusion** (bringup.md, leds LESSONS 2026-10-05)
+  that the hand-rotated D4 "restored polarity AND emit direction together":
+  polarity was verified, the emit direction was assumed. → **Owner decision
+  for this batch (option A):** keep correct polarity, LEDs mounted with the
+  lens inward; observe how visible the glow is from the card edge in the
+  slot. Rejected: lens out with reversed polarity (dark), DNP + hand-fit
+  (same limit without a mirrored part), part swap (delay). **Next revision
+  (required):** fix the footprint ↔ part relationship — verify lens vs
+  cathode mark on the TOGIALED drawing, then either swap the footprint pad
+  numbering and move the resistor connection to the other pad, or choose a
+  side-view LED whose lens/polarity matches. **PROCESS candidate:** "For
+  side-view/directional parts, polarity AND emit direction are a single
+  physical constraint; verify both against the vendor tape drawing before
+  layout — a correct-polarity check alone is not enough."
+- 2026-10-13 · GATE B3 · low · **PROJECT** · Rest of the final DFM verified:
+  U2 centred, pin 1 NW; J3/J4 pin 1 at the same end (the pre-order preview's
+  J4 inconsistency was fixed by JLC engineering); D1/D2/U1 pin-1 correct;
+  DNP R5/R6/C8/C9 empty. PCB production files checked with
+  `make jlc-check`: PASS (upload identical, 57/57 holes, standard CAM
+  adjustments only).

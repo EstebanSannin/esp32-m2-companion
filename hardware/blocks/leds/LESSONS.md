@@ -38,3 +38,14 @@
 - 2026-10-06 (rev B labels): the custom footprint had no silk polarity mark
   at all. Added a cathode bar at pad 1 (matches the part's black cathode
   mark). Any custom polarized footprint: silk mark from day one.
+- 2026-10-13 (GATE B3, **corrects the 2026-10-05 entry**): JLC engineering,
+  looking at the physical TJ-S1706 parts, reports that the lens is on the
+  side where — with the lens toward the board edge — the CATHODE sits on our
+  resistor pad. Our footprint therefore pairs "correct polarity" with "lens
+  inward". v1's "rotation restores polarity AND emit direction" was an
+  unverified inference (only polarity/lighting was checked). Rev B is
+  assembled with correct polarity, lens inward (owner decision). **Next
+  revision must fix it:** check lens vs cathode mark on the vendor drawing,
+  then swap the footprint pad numbering (resistor to the other pad) or pick a
+  matching side-view LED. Rule: for directional parts, verify polarity and
+  emit direction TOGETHER against the tape/vendor drawing before layout.

@@ -130,6 +130,10 @@ bake the corrected rotation into the CPL export, re-confirm the emit face, and
 drop R3→~68-100 Ω (green under-drive). Current boards: no software fix (polarity
 is physical); hand-rotating a 0603 side-view LED 180° is possible but not worth
 it on prototypes — everything else on the card works.
+**→ Correction 2026-10-13 (GATE B3):** JLC engineering states that with
+correct polarity this LED's lens faces *inward* (toward R3/R4) on our
+footprint — the "emit direction restored" above was not actually verified.
+See review-findings.md (GATE B3).
 **→ Done in Rev B:** D3/D4 CPL rotation +180° (`gen_fab.py` `JLC_ROT`, order
 blocked until preview-verified), emit face confirmed, R3 = 100 Ω (C22775),
 silk cathode bar added.
