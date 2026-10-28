@@ -18,17 +18,25 @@ U6 (docs/datasheets/tps25947.pdf):
   (~12-15 V/ms) = 0.5-1 A inrush into the ~65 uF card rail, at the current
   limit and above a 200 mA M.2 host soft-start (M.2 Table 39). 2.2 nF:
   SR ~0.7 V/ms typ, <= 1.3 V/ms at max IdVdt (3.82 uA) -> inrush <= ~90 mA;
-  slowest ~0.25 V/ms (~13 ms ramp). Rated >= VIN + 5 V (datasheet Rec. Op.).
+  slowest ~0.24 V/ms (max IdVdt, C15 -10 % .. min, +10 %): 0 -> 3.3 V in ~2-16 ms incl. the
+  turn-on delay. Rated >= VIN + 5 V (datasheet Rec. Op.). X7R accepted (C0G
+  would only narrow the slew spread). C15 sits 0.32 mm from the V-scored long
+  edge (no room inboard of U6): parallel to the edge; a crack fails safe
+  (short = card stays off, open = pre-RC1 fast ramp), seen at bring-up.
   NB: restart after an OVLO trip bypasses dVdt (current-limited start).
-- OVLO: C16 1 nF 50 V filter at the divider tap (RC1 review power-1): the
+- OVLO: C16 100 pF C0G filter at the divider tap (RC1 review power-1): the
   34 kOhm node had no filter and tOVLO is 1.2 us with no deglitch, so hot-plug
-  ringing could trip it. tau 34 us; trip delay on a hard 3.3 -> 5 V step
-  ~4 us (rail rises ~0.1 V behind the current limit, stays < 3.6 V).
+  ringing could trip it. tau 3.4 us (still ~20x attenuation of MHz ringing).
+  NOT larger: RC1 delta review power-rc1-1 - with 1 nF (tau 34 us) an
+  overvoltage RAMP of tens of us lifts +3V3 to ~3.7-3.9 V before the trip
+  (the HFET stays on and the current limit settles in ~400 us); with 100 pF
+  the worst-case ramp model peaks ~3.55 V (< 3.6 V ESP32 abs max).
   OVLO RELEASE is 3.13-3.25 V at IN (VOV(F) x 2.912): on a nominal 3.3 V host
   a trip keeps the card OFF until the slot is power-cycled (documented, not
   auto-recovering).
-- OUT: C17 1 uF at +3V3_EFUSE next to U6 (TI 8.3.1/8.4.1 ">= 1 uF close to
-  OUT"; FB1 put inductance straight on OUT - RC1 review power-4).
+- OUT: C17 1 uF at +3V3_EFUSE, at FB1 pad 1 (~4 mm of track from U6 OUT;
+  no closer spot) - TI 8.3.1/8.4.1 ">= 1 uF close to OUT"; FB1 had put
+  inductance straight on OUT (RC1 review power-4).
 - ITIMER open (fastest OC response); FLT_n and AUXOFF (open-drain outputs)
   unused.
 - Second source: NONE approved. TPS259474L is NOT drop-in (latch-off
@@ -90,10 +98,10 @@ def power_3v3(v3v3_m2, v3v3_efuse, v3v3, gnd, ovlo, en_uvlo, ilm, dvdt):
     c_dvdt = C_0402("2.2nF 50V", lcsc="C1531", mpn="0402B222K500NT", ref="C15")
     c_dvdt[1] += dvdt
     c_dvdt[2] += gnd
-    c_ovlo = C_0402("1nF 50V", lcsc="C1523", mpn="0402B102K500NT", ref="C16")
+    c_ovlo = C_0402("100pF 50V C0G", lcsc="C1546", mpn="0402CG101J500NT", ref="C16")
     c_ovlo[1] += ovlo
     c_ovlo[2] += gnd
-    c_out = C_0402("1uF 25V", lcsc="C52923", mpn="CL05A105KA5NNNC", ref="C17")
+    c_out = C_0402("1uF 25V", lcsc="C52923", mpn="CL05A105KA5NQNC", ref="C17")
     c_out[1] += v3v3_efuse
     c_out[2] += gnd
 

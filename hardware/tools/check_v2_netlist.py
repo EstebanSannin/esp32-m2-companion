@@ -38,15 +38,21 @@ def load():
                         d = {str(x[0]): str(x[1]) for x in item[1:]}
                         nodes.append((d["ref"], d["pin"]))
                 nets[name] = set(nodes)
+    vals = {}
+    for node in data:
+        if isinstance(node, list) and node and node[0] == Symbol("components"):
+            for comp in node[1:]:
+                d = {str(x[0]): x[1] for x in comp[1:] if isinstance(x, list) and len(x) > 1}
+                vals[str(d.get("ref"))] = str(d.get("value"))
     pin2net = {}
     for name, nodes in nets.items():
         for rp in nodes:
             pin2net[rp] = name
-    return nets, pin2net
+    return nets, pin2net, vals
 
 
 def main():
-    nets, pin2net = load()
+    nets, pin2net, vals = load()
     errs = []
 
     def on(ref, pin, net):
@@ -100,6 +106,27 @@ def main():
     on("Q3", 5, "IO38")
     on("Q3", 3, "EXP_OE")
     on("Q3", 4, "GND")
+    # the hold-off default: R35 pull-up keeps IO38 high (bus off) in reset
+    on("R35", 1, "+3V3")
+    on("R35", 2, "IO38")
+
+    def val(ref, want):
+        if not vals.get(ref, "").startswith(want):
+            errs.append(f"{ref}: expected value {want!r}, got {vals.get(ref)!r}")
+
+    # RC1 values (review): W_DISABLE2# pull-up per M.2 100-200k; hold-off
+    # pull-up; EXP_OE RC; eFuse DVDT / OVLO filter (<= 100 pF, power-rc1-1)
+    # / OUT cap
+    val("R35", "100k")
+    val("R29", "100k")
+    val("R26", "10k")
+    val("C13", "1uF")
+    val("C15", "2.2nF")
+    val("C16", "100pF")
+    val("C17", "1uF")
+    on("C15", 1, "EFUSE_DVDT")
+    on("C16", 1, "EFUSE_OVLO")
+    on("C17", 1, "+3V3_EFUSE")
 
     # host cells: Q2 (LED_1#, WAKE), Q3 (W_DISABLE2#)
     on("Q2", 2, "IO42")

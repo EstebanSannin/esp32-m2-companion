@@ -39,7 +39,7 @@ NONPOLAR = {"C45783", "C19702", "C14663", "C15849", "C1015", "C25804",
             "C25900", "C26083", "C25741", "C25890", "C852472", "C852832",
             "C14709",
             # v2.0 RC1: eFuse DVDT / OVLO / OUT capacitors
-            "C1531", "C1523", "C52923"}
+            "C1531", "C1546", "C52923"}
 
 # LCSC part -> (degrees added to KiCad rotation, date it was confirmed in
 # JLC engineering's FINAL DFM placement for this footprint or None, basis).
