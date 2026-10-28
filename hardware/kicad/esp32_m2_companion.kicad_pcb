@@ -1455,6 +1455,7 @@
 		(property "Reference" "R33"
 			(at 2.200001 0 0)
 			(layer "F.SilkS")
+			(hide yes)
 			(uuid "7656be42-c175-4b56-b7d5-5de4ce5a8914")
 			(effects
 				(font
@@ -2929,6 +2930,7 @@
 		(property "Reference" "C12"
 			(at -2.425 1.325002 0)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "4c3d372a-d330-4476-9203-8e9a97be0fff")
 			(effects
 				(font
@@ -3210,6 +3212,7 @@
 		(property "Reference" "R1"
 			(at 2.4 3.085452 0)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "2bad8734-3e1c-43f9-bd93-159078e8a8b6")
 			(effects
 				(font
@@ -3976,7 +3979,7 @@
 		(descr "TOGIALED TJ-S1706 side-view LED, 1.70x0.60x1.10mm, side-emitting. Land pattern per datasheet (pads 0.80x0.70, 1.80mm c-c). v2.0 Rev A (2026-10-13): pads RENUMBERED to match the physical part (JLC engineering, GATE B3): with the lens toward the emit arrow (+y), the CATHODE is the pad at +x. Pin1=cathode (black mark) at +x, Pin2=anode at -x. Silk bar = cathode end. Rev B/v1 had the mirror image (pin 1 at -x): correct polarity came with the lens inward.")
 		(tags "LED side-view TJ-S1706 0603")
 		(property "Reference" "D3"
-			(at -2.811515 0.225 0)
+			(at -2.395 0 90)
 			(layer "B.SilkS")
 			(uuid "5282d56b-0948-4cce-93a2-810b8709c20d")
 			(effects
@@ -4313,6 +4316,7 @@
 		(property "Reference" "R30"
 			(at 0 1.43 270)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "ba99379d-973f-43a7-a3d8-ec8a19a69406")
 			(effects
 				(font
@@ -4876,6 +4880,7 @@
 		(property "Reference" "C2"
 			(at 2.344999 -1.575 0)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "e5ea5500-915c-468d-9acf-491e6a0f033b")
 			(effects
 				(font
@@ -5016,6 +5021,7 @@
 		(property "Reference" "R21"
 			(at 1.4 1.799999 0)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "954cf3a4-2523-42c5-8ea2-2b06e34685ff")
 			(effects
 				(font
@@ -5297,6 +5303,7 @@
 		(property "Reference" "C3"
 			(at 2.425 0 0)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "dfb7a4b9-12f1-4f33-8f9c-534d2e39b969")
 			(effects
 				(font
@@ -5435,9 +5442,8 @@
 		(descr "SOT, 6 Pin (https://www.jedec.org/system/files/docs/MO-293B.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOT TO_SOT_SMD JEDEC-MO-293-UAAD Texas-DRL-6")
 		(property "Reference" "Q2"
-			(at 0 1.65 90)
+			(at -1.845 2.295 0)
 			(layer "B.SilkS")
-			(hide yes)
 			(uuid "f17d9237-129d-42d6-8b27-9ad3f2fb6e37")
 			(effects
 				(font
@@ -5732,6 +5738,7 @@
 		(property "Reference" "D1"
 			(at 2.574999 -2.645 0)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "5a2207b3-0e87-49ef-9f41-c2d918a494d1")
 			(effects
 				(font
@@ -6089,7 +6096,7 @@
 		(descr "SOT, 6 Pin (JEDEC MO-178 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=MO-178), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOT TO_SOT_SMD")
 		(property "Reference" "U1"
-			(at 0 2.661515 0)
+			(at 0 2.645 0)
 			(layer "B.SilkS")
 			(uuid "c3a86418-3734-4b8e-bf1a-0f3dc043b124")
 			(effects
@@ -6426,6 +6433,7 @@
 		(property "Reference" "C11"
 			(at 0.6 -2.199998 90)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "a9591232-0476-4e99-905e-94b017e32b25")
 			(effects
 				(font
@@ -6902,6 +6910,7 @@
 		(property "Reference" "R24"
 			(at -1.6 1.2 0)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "57da89e3-28a1-449c-af1f-5ffaa7276c39")
 			(effects
 				(font
@@ -7444,6 +7453,7 @@
 		(property "Reference" "C10"
 			(at -2.075 0 90)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "515d7937-001b-4e96-9413-260a88c2b9c8")
 			(effects
 				(font
@@ -7584,6 +7594,7 @@
 		(property "Reference" "C7"
 			(at 0 1.691515 90)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "9950b934-3e96-42aa-9027-4f7c1b1a2094")
 			(effects
 				(font
@@ -7722,7 +7733,7 @@
 		(descr "TI RSV0016A UQFN-16 1.8x2.6 mm 0.4 mm pitch; TI land pattern (tmux1511.pdf p.37)")
 		(tags "UQFN RSV0016A TMUX1511")
 		(property "Reference" "U4"
-			(at 0 2.395002 0)
+			(at 0 2.395001 0)
 			(layer "B.SilkS")
 			(uuid "ea04f78a-f618-4896-9300-a065d29e30b9")
 			(effects
@@ -8073,6 +8084,7 @@
 		(property "Reference" "C5"
 			(at 0 1.4 90)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "05d9350f-6ba7-4a38-8e98-7807504215fc")
 			(effects
 				(font
@@ -8213,6 +8225,7 @@
 		(property "Reference" "C16"
 			(at 0 1.405 0)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "1ef8e1e3-7f0b-42e8-bb81-965c69243430")
 			(effects
 				(font
@@ -8353,6 +8366,7 @@
 		(property "Reference" "R35"
 			(at 0 -1.915 0)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "40d7c5d7-0df2-4130-a4fc-b3ee0d8c70c9")
 			(effects
 				(font
@@ -8493,6 +8507,7 @@
 		(property "Reference" "RN1"
 			(at -1.945 1.845 0)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "4747dc0b-67ec-4711-a0eb-30031510b964")
 			(effects
 				(font
@@ -8733,6 +8748,7 @@
 		(property "Reference" "R22"
 			(at 0 -1.415001 0)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "db0b9907-f97a-40bf-a265-976d9569bf24")
 			(effects
 				(font
@@ -8873,6 +8889,7 @@
 		(property "Reference" "R34"
 			(at -2 -0.199999 90)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "208c902f-80e8-4203-be14-dd7ad19de940")
 			(effects
 				(font
@@ -9400,6 +9417,7 @@
 		(property "Reference" "C6"
 			(at 0 -1.691515 90)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "38d12b93-3648-444c-b88a-7019182315da")
 			(effects
 				(font
@@ -9538,9 +9556,8 @@
 		(descr "SOT, 6 Pin (https://www.jedec.org/system/files/docs/MO-293B.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOT TO_SOT_SMD JEDEC-MO-293-UAAD Texas-DRL-6")
 		(property "Reference" "Q3"
-			(at 0 1.65 90)
+			(at 1.845 -1.545 0)
 			(layer "B.SilkS")
-			(hide yes)
 			(uuid "f993082c-ca32-4af6-8f36-b573129f0f9f")
 			(effects
 				(font
@@ -9835,6 +9852,7 @@
 		(property "Reference" "D2"
 			(at -0.8 2.661515 0)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "d5c3cb98-28b7-4161-a2e4-917e6fdcfbbb")
 			(effects
 				(font
@@ -10195,6 +10213,7 @@
 		(property "Reference" "R26"
 			(at -1.2 2 0)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "a03630b3-e070-4265-820a-57796b350b98")
 			(effects
 				(font
@@ -10679,6 +10698,7 @@
 		(property "Reference" "C17"
 			(at 0 1.405 0)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "5e6a7ebc-4263-4cc2-9998-d91f7fa993b5")
 			(effects
 				(font
@@ -10960,6 +10980,7 @@
 		(property "Reference" "R20"
 			(at 1.875001 0 0)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "fbdd5760-1ca7-41e5-b4bb-6dcdc99f1970")
 			(effects
 				(font
@@ -11535,6 +11556,7 @@
 		(property "Reference" "C13"
 			(at -2.925 0 0)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "296bf01e-eee5-429b-bcb8-4107eac42033")
 			(effects
 				(font
@@ -11816,6 +11838,7 @@
 		(property "Reference" "C14"
 			(at -0.2 -1.4 0)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "585bad50-966a-4b90-b4f8-b02d910b659d")
 			(effects
 				(font
@@ -11956,6 +11979,7 @@
 		(property "Reference" "C4"
 			(at 0 -1.691515 90)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "f16a61b9-7e29-459d-b467-7adf2ba650bb")
 			(effects
 				(font

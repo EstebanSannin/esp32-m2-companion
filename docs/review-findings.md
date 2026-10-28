@@ -768,3 +768,25 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   layout change (OVLO trace over solid planes, DC neighbours only);
   DATASHEET "high-Z during reset" qualified (software/WDT reset = firmware
   rule); drawing note counts only placed parts' unverified offsets.
+
+### GATE V4 owner review (2026-10-28)
+
+- 2026-10-28 · GATE V4 owner review · info · **ACCEPTED** · Bus enable =
+  carrier signature AND firmware (IO38 hold-off, R35 pull-up) accepted as
+  designed: firmware may release the bus unconditionally; only a carrier
+  completes the enable. Back-feed, OVLO latch and the ramp residual (R-v2-9)
+  accepted as minor.
+- 2026-10-28 · GATE V4 owner review · info · **ACCEPTED** · Thickness
+  (R-v2-15): owner measured a Rev B at 0.82 mm (3313, nominal 0.80) →
+  ~0.85 mm expected on 2116, inside 0.88. Stackup kept.
+- 2026-10-28 · GATE V4 owner review · info · **ACCEPTED** · C15 0.32 mm
+  from the V-scored edge: no hard spec on edge distance, fails safe; no
+  layout change (moving it means re-placing the U6 corner: no free 0402
+  spot within 6 mm on either side).
+- 2026-10-28 · GATE V4 owner review · minor · **SILK** · 19 parts had no
+  silk reference and 8 labels sat closer to another part (D1, C11, C12, C3,
+  R1, R26, R33) → silk references only for U1, U3–U6, Q1–Q3, D3, D4; all
+  passives and D1/D2 fab-layer only; every reference on the new
+  `docs/img/ref_map_top.png` / `ref_map_bottom.png` (`make render`,
+  `tools/gen_ref_map.py`). U6 and D4 have no legal spot and stay
+  unlabelled. Footprint outlines / pin-1 marks unchanged (library parity).

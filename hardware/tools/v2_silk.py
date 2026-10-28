@@ -13,6 +13,15 @@ text_height).
    silkscreen item on that side, and >= 0.3 mm inside the board outline.
    A label with no legal spot is hidden (the assembly drawing still shows
    every reference) and listed.
+3. Owner decision (2026-10-28, GATE V4 label review): only the parts in
+   KEEP carry a silk reference (ICs, transistors, LEDs); every resistor,
+   capacitor, array, ferrite and D1/D2 is fab-layer only (assembly drawing).
+   Kept labels try the ring around their own part first, must sit within
+   0.6 mm of it and closer to it than to any other labelled part (no
+   misleading labels; unlabelled passives cannot be confused with them).
+   No legal spot exists for U6 and D4 (pad openings / board edge all
+   around): they stay unlabelled. Footprint graphics (body outlines, pin-1 /
+   polarity marks) are untouched: they must match the library (DRC parity).
   $KPY tools/v2_silk.py [--dry]
 """
 import sys
@@ -29,6 +38,7 @@ M_PAD, M_SILK, M_EDGE = 0.1, 0.05, 0.3
 REV_OLD, REV_NEW = "v1.0 Rev B 2026-10", "v2.0 Rev A 2026-10"
 DROP = {"TX", "RX", "3V3", "GND"}
 MOVE = {"EN": "TP1", "BOOT": "TP2"}
+KEEP = {"U1", "U3", "U4", "U5", "U6", "Q1", "Q2", "Q3", "D3", "D4"}
 
 
 def main():
@@ -91,10 +101,29 @@ def main():
             return False
         return not any(hit(bx, s) for o, s in silk[sl] if o != own)
 
+    bodies = {sl: [(fp.GetReference(), box(fp.GetBoundingBox(False, False)))
+                   for fp in b.GetFootprints() if side_layers[sl] == fp.GetLayer()]
+              for sl in side_layers}
+
+    def gap(a, c):
+        dx = max(c[0] - a[2], a[0] - c[2], 0)
+        dy = max(c[1] - a[3], a[1] - c[3], 0)
+        return (dx * dx + dy * dy) ** 0.5
+
+    def unambiguous(item, sl, own):
+        if own not in KEEP:
+            return True
+        bx = box(item.GetBoundingBox())
+        mine = [gap(bx, c) for o, c in bodies[sl] if o == own]
+        # only labelled parts can be confused with each other
+        other = [gap(bx, c) for o, c in bodies[sl] if o != own and o in KEEP]
+        return bool(mine) and mine[0] <= 0.6 and (not other or mine[0] < min(other))
+
     def place(item, sl, own, cx, cy, crt):
-        """try current spot, then rings around crt (x0,y0,x1,y1)."""
+        """rings around crt (x0,y0,x1,y1) first for KEEP parts, else the
+        current spot first; then the grid."""
         cur = item.GetPosition()
-        cands = [(T(cur.x), T(cur.y), item.GetTextAngleDegrees())]
+        cands = [] if own in KEEP else [(T(cur.x), T(cur.y), item.GetTextAngleDegrees())]
         for gap in (0.55, 0.9, 1.3):
             for ang in (0, 90):
                 w = len(item.GetShownText(False)) * H * 0.75 if ang == 0 else H
@@ -108,7 +137,7 @@ def main():
         grid.sort(key=lambda c: (c[0] - cx) ** 2 + (c[1] - cy) ** 2)
         for x, y, ang in cands + grid:
             item.SetPosition(V(x, y)); item.SetTextAngleDegrees(ang)
-            if legal(item, sl, own):
+            if legal(item, sl, own) and unambiguous(item, sl, own):
                 return True
         item.SetPosition(cur)
         return False
@@ -125,6 +154,10 @@ def main():
 
     # ---- 2. reference designators -----------------------------------------
     fps = sorted(b.GetFootprints(), key=lambda f: (f.GetReference()[0], f.GetReference()))
+    for fp in fps:
+        r = fp.Reference()
+        if r.GetLayer() in silk:
+            r.SetVisible(fp.GetReference() in KEEP)
     for fp in fps:
         r = fp.Reference()
         if not r.IsVisible() or r.GetLayer() not in silk:

@@ -47,12 +47,15 @@ jlc-check:
 	@test -n "$(JLC)" || { echo "usage: make jlc-check JLC=<jlc production zip>"; exit 2; }
 	cd $(HW) && uv run --no-project --python 3.12 --with gerbonara==1.6.3 --with numpy --with pillow python tools/check_jlc_production.py $(JLC)
 
-# 3D renders for the README (docs/img/, committed).
+# 3D renders for the README + debug reference maps (docs/img/, committed).
 KCLI := $(HOME)/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli
 render:
 	$(KCLI) pcb render --rotate "-35,20,30" --zoom 0.85 --quality high --width 1600 --height 1200 --output docs/img/board_iso.png $(HW)/kicad/esp32_m2_companion.kicad_pcb
 	$(KCLI) pcb render --side top --quality high --width 1200 --height 1600 --output docs/img/board_top.png $(HW)/kicad/esp32_m2_companion.kicad_pcb
 	$(KCLI) pcb render --side bottom --quality high --width 1200 --height 1600 --output docs/img/board_bottom.png $(HW)/kicad/esp32_m2_companion.kicad_pcb
+	$(KCLI) pcb render --side top --quality high --background opaque --width 1500 --height 2400 --output $(HW)/build/ref_top.png $(HW)/kicad/esp32_m2_companion.kicad_pcb
+	$(KCLI) pcb render --side bottom --quality high --background opaque --width 1500 --height 2400 --output $(HW)/build/ref_bottom.png $(HW)/kicad/esp32_m2_companion.kicad_pcb
+	$(UV) python tools/gen_ref_map.py build/ref_top.png build/ref_bottom.png
 
 # Datasheet figures: labeled top/bottom views + mechanical drawing (docs/img/).
 views:
