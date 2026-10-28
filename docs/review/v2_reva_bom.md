@@ -5,6 +5,9 @@
 | C1,C2 | 2 | 22uF 25V / CL21A226MAQNNNE | C45783 | Basic |  |  |
 | C10,C11,C12,C14,C4,C6 | 6 | 100nF 50V / CC0603KRX7R9BB104 | C14663 | Basic |  |  |
 | C13,C5 | 2 | 1uF 50V / CL10A105KB8NNNC | C15849 | Basic |  |  |
+| C15 | 1 | 2.2nF 50V / 0402B222K500NT | C1531 | Basic |  |  |
+| C16 | 1 | 1nF 50V / 0402B102K500NT | C1523 | Basic |  |  |
+| C17 | 1 | 1uF 25V / CL05A105KA5NNNC | C52923 | Basic |  |  |
 | C3,C7 | 2 | 10uF 10V / CL10A106KP8NNNC | C19702 | Basic |  |  |
 | D1,D2 | 2 | BAT54A / LBAT54ALT1G | C12743 | Extended |  |  |
 | D3 | 1 | green / TJ-S1706SW6TGLC2G-A5 | C273616 | Extended |  |  |
@@ -15,8 +18,8 @@
 | Q1,Q2,Q3 | 3 | SSM6N56FE / SSM6N56FE,LM | C146449 | Extended |  | C86784 (Vishay SI1024X-T1-GE3) |
 | R1,R2,R26,R30 | 4 | 10k / 0603WAF1002T5E | C25804 | Basic |  |  |
 | R20,R21 | 2 | 4k7 / 0402WGF4701TCE | C25900 | Basic |  |  |
-| R22,R23,R29,R33 | 4 | 1M / 0402WGF1004TCE | C26083 | Basic |  |  |
-| R24,R25,R27,R28 | 4 | 100k / 0402WGF1003TCE | C25741 | Basic |  |  |
+| R22,R23,R33 | 3 | 1M / 0402WGF1004TCE | C26083 | Basic |  |  |
+| R24,R25,R27,R28,R29,R35 | 6 | 100k / 0402WGF1003TCE | C25741 | Basic |  |  |
 | R3 | 1 | 100R / 0603WAF1000T5E | C22775 | Basic |  |  |
 | R31 | 1 | 100k 0.1% / RT0402BRD07100KL | C852472 | Extended |  |  |
 | R32 | 1 | 52.3k 0.1% / RT0402BRD0752K3L | C852832 | Extended |  |  |
