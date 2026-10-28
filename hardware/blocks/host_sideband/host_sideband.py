@@ -1,7 +1,9 @@
 """Host-facing M.2 sidebands, active on every host (ADR 0006 §4,
 docs/v2-gate-v1.md §1.3). Voltage-agnostic NMOS cells (SSM6N56FE):
 outputs can only pull low (any host pull-up level), the input is an
-insulated gate (reads 1.2/1.8/3.3 V hosts, no back-feed when unpowered).
+insulated gate (reads 1.2/1.8/3.3 V hosts). Unpowered card: the gates take no
+current, but a host holding W_DISABLE2# high feeds <= ~33 uA through the
+R29 100k pull-up into the card rail (RC1 delta review docs-8).
 
   Q2a: IO42 -> gate (100k pull-down) ; drain -> LED_1_n (pin 10)
   Q2b: IO47 -> gate (100k pull-down) ; drain -> WAKE_ON_WWAN_n (pin 23)

@@ -1,6 +1,7 @@
 """v2.0 Rev A bring-up self-test (MicroPython, stock ESP32_GENERIC_S3).
 
-Prints a PASS / FAIL / SKIP / CHECK report over the USB-Serial-JTAG REPL for
+Prints a PASS / FAIL / SKIP / CHECK report over the USB CDC REPL (stock
+MicroPython enumerates as TinyUSB CDC, 303a:4001) for
 the v2 acceptance criteria (SPEC §13 A3, S-v2-1..4) and the host sidebands.
 Procedure and pass criteria: docs/v2-test-procedure.md. Usage:
 v2/firmware/README.md.
@@ -11,7 +12,14 @@ v2/firmware/README.md.
 Safety rules this script keeps (docs/carrier-interface.md §4.3, §5;
 docs/pinmap.md §6.3):
 - IO38 is driven HIGH (bus held off) as the very first action at import,
-  and again on every exit path, including exceptions and Ctrl-C.
+  and again on every exit path of main(), test_bus() and the released()
+  context manager, including exceptions and Ctrl-C.
+- bus_on() is the one deliberate exception: for manual REPL steps
+  (procedure 8.1, 8.5) it leaves the bus released until bus_off(), a chip
+  reset, or a Ctrl-C / error during its own wait. A MicroPython soft reset
+  (Ctrl-D) and a software/WDT reset do not reset IO38 by themselves: install
+  v2/firmware/boot.py, which drives IO38 high on every boot and soft reset
+  (docs/carrier-interface.md §4.3.1, firmware rule 5).
 - After the bus is released, only EXP_0/EXP_1 (I2C) are touched. EXP_2..11
   are driven only when the operator says the dev-carrier loopback jumpers
   are fitted (loopback=True): that is the "host override (dev use)" the
@@ -41,7 +49,7 @@ try:
 except ImportError:
     esp32 = None
 
-SCRIPT_VERSION = "0.1 (v2.0 Rev A RC1)"
+SCRIPT_VERSION = "0.2 (v2.0 Rev A RC2)"
 
 # ---------------------------------------------------------------------------
 # GPIO table - one place. (GPIO, WROOM-1 module pad, net / M.2 pin, source)
@@ -79,8 +87,10 @@ HEADER_GPIO = (8, 9, 10, 11, 12, 13, 14, 21, 43, 44)  # J3 + J4 (v1 sweep)
 
 EEPROM_ADDR = 0x50  # 24C02 on EXP_0/EXP_1 (carrier-interface.md §4.3)
 
-# Timing (pinmap.md §6.3): EXP_OE rises through R26 10k / C13 1 uF and
-# crosses VIH ~5 ms after release; Q3b pulls it down in microseconds.
+# Timing (pinmap.md §6.3, carrier-interface.md §4.3.1): EXP_OE rises
+# through R26 10k / C13 1 uF and crosses VIH ~4.5 ms after release (about
+# 1-6.5 ms with tolerances); Q3b pulls it down in microseconds. The
+# contract minimum wait is 10 ms; this test uses 60 ms for margin.
 T_RELEASE_MS = 60
 T_HOLD_MS = 5
 
@@ -104,9 +114,35 @@ def bus_off():
 
 def bus_on():
     """Release the firmware hold-off (IO38 low). The bus turns on only if
-    the carrier signature is present too. For manual REPL use."""
-    _hold.value(0)
-    time.sleep_ms(T_RELEASE_MS)
+    the carrier signature is present too.
+
+    For manual REPL steps: the bus deliberately STAYS released after this
+    returns, until bus_off() or a reset (boot.py re-holds it on every boot
+    and soft reset). A Ctrl-C or error during the wait re-holds it. For
+    scripted use prefer `with released(): ...`, which always re-holds."""
+    try:
+        _hold.value(0)
+        time.sleep_ms(T_RELEASE_MS)
+    except BaseException:
+        _hold.value(1)
+        raise
+
+
+class released:
+    """Context manager: bus released inside the block, held off (IO38 high,
+    EXP lines high-Z) on every way out, Ctrl-C and exceptions included.
+
+        with v2_selftest.released():
+            ...  # measure, probe the EEPROM
+    """
+
+    def __enter__(self):
+        bus_on()
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        bus_off()
+        return False
 
 
 bus_off()
@@ -280,8 +316,11 @@ def test_w_disable2(interactive, window_s=10):
 
 
 def test_host_outputs(interactive):
-    """Distinct patterns so a swapped Q2 (180 deg, polarity checklist) shows:
-    LED_1# = 5 slow blinks (1 Hz), WAKE# = 3 short pulses + one 1 s pulse."""
+    """Distinct patterns so a swapped pin 10 / pin 23 path (firmware GPIO
+    table or carrier wiring) shows: LED_1# = 5 slow blinks (1 Hz), WAKE# =
+    3 short pulses + one 1 s pulse. A 180 deg Q2 is electrically equivalent
+    (cross-drained SOT-563: each gate keeps its own drain), so it cannot
+    swap them."""
     led1 = Pin(IO_LED1, Pin.OUT, value=0)
     wake = Pin(IO_WAKE, Pin.OUT, value=0)
     print(">>> LED_1# (pin 10): 5 x 0.5 s low, 1 Hz")
@@ -467,12 +506,14 @@ def dev_image(name=b"m2-dev-carrier test image"):
 
 
 def program_eeprom(img):
-    """Write 256 B in 16-byte pages (M24C02 page size, tW <= 5 ms) and
-    verify. Needs /WC low (dev carrier U4: tied to GND). Bus must be on."""
+    """Write 256 B in 8-byte pages and verify. 8 bytes is the smallest
+    24C02 page (AT24C02; M24C02 has 16), so every 24C02-class part the
+    contract allows works. tW <= 5 ms. Needs /WC low (the dev carrier ties
+    /WC to GND). Bus must be on."""
     i2c = _i2c()
     try:
-        for off in range(0, 256, 16):
-            i2c.writeto_mem(EEPROM_ADDR, off, img[off:off + 16])
+        for off in range(0, 256, 8):
+            i2c.writeto_mem(EEPROM_ADDR, off, img[off:off + 8])
             time.sleep_ms(6)
         back = i2c.readfrom_mem(EEPROM_ADDR, 0, 256)
     finally:
@@ -486,75 +527,77 @@ def test_bus(signature, loopback, loop01, program, window_s, interactive):
     or a conducting loopback), so the verdicts are printed at the end."""
     print("--- expansion bus (signature=%s, loopback=%s, loop01=%s)"
           % (signature, loopback, loop01))
-
-    bus_off()                                   # A: IO38 high
-    a, a_txt = bus_evidence(loopback, loop01)
-    bus_on()                                    # B: IO38 low
-    b, b_txt = bus_evidence(loopback, loop01)
-    if b is None:
-        report("SKIP" if "no fixture" in b_txt else "FAIL",
-               "B released (IO38=0)", b_txt)
-    elif signature is None:
-        report("CHECK", "B released (IO38=0)",
-               b_txt + " -> bus %s" % ("ON" if b else "OFF"))
-    else:
-        report("PASS" if b == signature else "FAIL", "B released (IO38=0)",
-               b_txt + " (want %s)" % ("ON" if signature else "OFF"))
-
-    # EEPROM read (bus released; only EXP_0/1 touched).
-    if b is True and not loop01:
-        if eeprom_present():
-            if program:
-                ok = program_eeprom(dev_image())
-                report("PASS" if ok else "FAIL", "EEPROM program",
-                       "dev image written + verified" if ok else
-                       "verify failed")
-            try:
-                img = _i2c().readfrom_mem(EEPROM_ADDR, 0, 256)
-            finally:
-                _release_i2c_pins()
-            valid = parse_eeprom(img)
-            report("PASS" if valid else "FAIL", "EEPROM header",
-                   "valid M2CI v1" if valid else
-                   "invalid -> carrier 'unknown', lines stay high-Z")
+    try:
+        bus_off()                                   # A: IO38 high
+        a, a_txt = bus_evidence(loopback, loop01)
+        bus_on()                                    # B: IO38 low
+        b, b_txt = bus_evidence(loopback, loop01)
+        if b is None:
+            report("SKIP" if "no fixture" in b_txt else "FAIL",
+                   "B released (IO38=0)", b_txt)
+        elif signature is None:
+            report("CHECK", "B released (IO38=0)",
+                   b_txt + " -> bus %s" % ("ON" if b else "OFF"))
         else:
-            report("SKIP", "EEPROM header", "no ACK at 0x50")
+            report("PASS" if b == signature else "FAIL", "B released (IO38=0)",
+                   b_txt + " (want %s)" % ("ON" if signature else "OFF"))
 
-    # Loopback detail, both directions, plus cross-short check (S-v2-2).
-    if loopback and b is True:
-        bad = []
-        for p, q in LOOP_PAIRS:
-            for drv, rcv in ((p, q), (q, p)):
-                s, shorts = _drive_pair(drv, rcv)
-                if s is not True:
-                    bad.append("EXP_%d->EXP_%d %s" % (drv, rcv, s))
-                if shorts:
-                    bad.append("EXP_%d shorts EXP_%s" % (drv, shorts))
-        report("FAIL" if bad else "PASS", "loopback EXP_2..11",
-               "; ".join(bad) if bad else
-               "10 lines, both directions, no cross-shorts")
-    if loop01 and b is True:
-        report("PASS" if _loop01() is True else "FAIL", "loopback EXP_0/1",
-               "open-drain, both directions")
+        # EEPROM read (bus released; only EXP_0/1 touched).
+        if b is True and not loop01:
+            if eeprom_present():
+                if program:
+                    ok = program_eeprom(dev_image())
+                    report("PASS" if ok else "FAIL", "EEPROM program",
+                           "dev image written + verified" if ok else
+                           "verify failed")
+                try:
+                    img = _i2c().readfrom_mem(EEPROM_ADDR, 0, 256)
+                finally:
+                    _release_i2c_pins()
+                valid = parse_eeprom(img)
+                report("PASS" if valid else "FAIL", "EEPROM header",
+                       "valid M2CI v1" if valid else
+                       "invalid -> carrier 'unknown', lines stay high-Z")
+            else:
+                report("SKIP", "EEPROM header", "no ACK at 0x50")
 
-    # Optional manual window: bus released, operator measures (procedure).
-    if window_s:
-        ask("bus RELEASED for %d s: measure now" % window_s, interactive,
-            window_s)
+        # Loopback detail, both directions, plus cross-short check (S-v2-2).
+        if loopback and b is True:
+            bad = []
+            for p, q in LOOP_PAIRS:
+                for drv, rcv in ((p, q), (q, p)):
+                    s, shorts = _drive_pair(drv, rcv)
+                    if s is not True:
+                        bad.append("EXP_%d->EXP_%d %s" % (drv, rcv, s))
+                    if shorts:
+                        bad.append("EXP_%d shorts EXP_%s" % (drv, shorts))
+            report("FAIL" if bad else "PASS", "loopback EXP_2..11",
+                   "; ".join(bad) if bad else
+                   "10 lines, both directions, no cross-shorts")
+        if loop01 and b is True:
+            report("PASS" if _loop01() is True else "FAIL", "loopback EXP_0/1",
+                   "open-drain, both directions")
 
-    bus_off()                                   # C: IO38 high again
-    c, c_txt = bus_evidence(loopback, loop01)
+        # Optional manual window: bus released, operator measures (procedure).
+        if window_s:
+            ask("bus RELEASED for %d s: measure now" % window_s, interactive,
+                window_s)
 
-    # Verdicts. Off-evidence counts only if the fixture was proven in B.
-    proven = b is True
-    for name, st, txt in (("A hold-off (IO38=1)", a, a_txt),
-                          ("C re-hold (IO38=1)", c, c_txt)):
-        if st is True:
-            report("FAIL", name, txt + " -> bus ON while held")
-        elif proven or st is False:
-            report("PASS", name, txt + " -> bus off")
-        else:
-            report("SKIP", name, txt + " -> fixture never seen, cannot judge")
+        bus_off()                                   # C: IO38 high again
+        c, c_txt = bus_evidence(loopback, loop01)
+
+        # Verdicts. Off-evidence counts only if the fixture was proven in B.
+        proven = b is True
+        for name, st, txt in (("A hold-off (IO38=1)", a, a_txt),
+                              ("C re-hold (IO38=1)", c, c_txt)):
+            if st is True:
+                report("FAIL", name, txt + " -> bus ON while held")
+            elif proven or st is False:
+                report("PASS", name, txt + " -> bus off")
+            else:
+                report("SKIP", name, txt + " -> fixture never seen, cannot judge")
+    finally:
+        bus_off()                               # IO38 high on every way out
 
 
 # ---------------------------------------------------------------------------

@@ -170,8 +170,11 @@ The release-candidate review (`docs/review/v2_rc1_design_review.md`) changed the
 - **§1.3 W_DISABLE2# edge pull-up:** 1 MΩ → **100 kΩ** (R29; M.2 §3.1.11.3 asks 100–200 kΩ).
 - **§1.4 OVLO "re-enable ≈ 3.17 V":** the release is 3.13–3.25 V, below a nominal 3.3 V rail,
   so after a trip the card stays off until the slot is power-cycled (accepted). Added C15
-  2.2 nF DVDT, C16 1 nF OVLO filter, C17 1 µF at OUT (ADR 0007 RC1 amendment).
+  2.2 nF DVDT, C16 OVLO filter (100 pF C0G since RC2; 1 nF in RC1), C17 1 µF at OUT (ADR 0007
+  RC1/RC2 amendments).
 - **§2 firmware rule "After `EXP_OE` reads high":** read as "after releasing IO38 and waiting
-  ≥ 50 ms, probe the EEPROM; no ACK or bad CRC → drive IO38 high again".
+  ≥ 10 ms (contract §4.3.3; the bring-up self-test waits 60 ms), probe the EEPROM; no ACK or
+  bad CRC → drive IO38 high again unless the host overrides" (RC2: was "≥ 50 ms", RC1 delta
+  review docs-2).
 - **§3 BOM, U6 "2nd source TPS259474LRPWR C2864845": withdrawn** — not drop-in (latch-off
   circuit breaker, pins 3/4 = PG/PGTH). U6 has no approved second source.

@@ -59,7 +59,8 @@ Geniatech host schematics) showed three things:
 - **Routing:** needs 2242 with **6 layers** (ADR 0008). The §12 probe
   routed 31/47 new nets DRC-clean before re-placement.
 - **Firmware:**
-  - expansion bus enable readback;
+  - ~~expansion bus enable readback~~ (superseded by the RC1 amendment: the
+    readback is gone; carrier presence = ID-EEPROM ACK);
   - ID EEPROM handling;
   - W_DISABLE2# → rfkill;
   - WAKE_ON_WWAN# IRQ protocol (TBD).
@@ -108,22 +109,44 @@ section changes Decision 2/3 and the firmware consequences.
 
 **Timing:**
 - Release: firmware drives IO38 low → Q3b off in µs → EXP_OE rises with
-  τ = 10 ms and crosses VIH 1.2 V after ~4.6 ms (≤ 5.1 ms with worst SEL
-  leakage). Firmware waits ≥ 50 ms (review expansion-6) before the EEPROM
-  probe.
+  τ = 10 ms and crosses VIH 1.2 V after ~4.5 ms nominal (10 ms ×
+  ln(3.3/2.1)); **about 1–6.5 ms** over C13 ±10 % / X5R, the 3.3 V ±5 % rail
+  and SEL leakage (RC1 delta review bus_enable-3). Firmware waits
+  **≥ 10 ms** before the EEPROM probe (contract §4.3.3 rule 2; the
+  bring-up self-test uses 60 ms). This replaces the earlier "≥ 50 ms"
+  (review expansion-6), whose reason, the EXP_OE readback, no longer
+  exists (RC1 delta review docs-2).
 - Hold-off: firmware drives IO38 high, or any chip reset puts IO38 back to
   input → R35 charges the Q3b gate (100 kΩ × ~55 pF Ciss ≈ 6 µs) → Q3b
   discharges C13 in µs. All switches off within ~10–20 µs.
-- Software/WDT resets: whether a core/system reset returns IO38 to its
-  reset state is not stated in the datasheet. Firmware drives IO38 high as
-  its first init step either way. Confirm at bring-up by scoping EXP_4 and
-  EXP_2 against PERST#/EN (SPEC S-v2-2).
+- These off times (~20 µs after IO38 high, ~0.3 ms after signature
+  removal) are **fixed, to be confirmed by measurement at bring-up**
+  (SPEC S-v2-2).
+- Software/WDT resets **[FW], to be confirmed (S-v2-2)**: on the ESP32-S3,
+  `esp_restart()` (MicroPython `machine.reset()`, the panic handler, the
+  task/interrupt WDT) is a CPU-only reset (`RTC_SW_CPU_RST`) that most
+  likely leaves the GPIO output registers alone, so IO38 may stay driven
+  LOW through ROM, bootloader and app init (RC1 delta review
+  bus_enable-1). Only EN/PERST#, brown-out, RTC-WDT, USB-JTAG chip reset
+  and power loss certainly return IO38 to input. Firmware therefore drives
+  IO38 high **in a shutdown handler before any software restart** and
+  **as early as possible in boot** (2nd-stage bootloader hook, or the first
+  init step; MicroPython bring-up: `v2/firmware/boot.py`). Confirm at
+  bring-up by scoping EXP_4 and EXP_2 against PERST#/EN (SPEC S-v2-2).
+- Light sleep **[FW]**: keep IO38's active configuration (no GPIO
+  sleep-select on IO38, or a GPIO hold), or accept that the bus drops
+  during sleep (fails off; 1–6.5 ms to return after wake). Deep sleep needs
+  a digital GPIO hold (IO38 is not an RTC GPIO).
 
-**Firmware rule (normative for firmware ≥ first v2 release):** keep IO38
-high (bus held off) through init; release it only to probe the ID EEPROM;
-if no ACK or the CRC fails, drive IO38 high again. This also limits the
-host pull-down case of review expansion-1 (a host load < ~500 kΩ to GND on
-CONFIG_2/3 can turn Q1 off) to the probe window.
+**Firmware rule (normative for firmware ≥ first v2 release; fixed in the
+contract §4.3.3 rules 4–5, owner, RC1 delta review):** keep IO38 high (bus
+held off) through init; release it only to probe the ID EEPROM; if no ACK
+or the CRC fails, drive IO38 high again unless the host overrides
+explicitly (dev use, e.g. the dev carrier without EEPROM); drive IO38 high
+before any software restart. This also limits the host pull-down case of
+review expansion-1 (a host load to GND on both CONFIG_2/3 turns Q1 off
+below ~65 kΩ always, 65–435 kΩ depending on part and temperature;
+contract §4.2) to the probe window.
 
 **Decision 4 correction (review mcu_io-3):** Decision 4 says pins 20–28 and
 40–48 are not used always-on. The M.2 GPIO_0..8 pins are 40/42/44/46/48
@@ -136,3 +159,13 @@ strap); a PCM clock there can cause a random download boot. Spec-following
 hosts leave pin 20 alone in port config 2 (CONFIG state 6), where it is
 RFU. Tracked as risk R-v2-11 (`docs/risks.md`); mitigation on an affected
 host: lift D2 pin 1.
+
+## Amendment (RC2, 2026-10-28, owner): back-feed wording (Decision 2)
+
+RC1 delta review docs-8 / bus_enable-4. "Insulated gates mean no
+back-feed into an unpowered card" (Decision 2) holds for the NMOS cells
+themselves, but the card pull-ups do pass current into an unpowered card
+rail: **≤ 3.3 µA per signature pin** (75/1, 1 MΩ) and, since RC1,
+**≤ 33 µA on pin 26** (W_DISABLE2#, R29 100 kΩ); ~40 µA into the rail in
+total, ~75 µA over all pins (contract §5 table, CG7; computed, to be
+measured at bring-up). The rail stays < ~0.4 V under the R26/R30 loads.

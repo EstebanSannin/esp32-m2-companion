@@ -132,3 +132,6 @@ After the release-candidate review (`docs/review/v2_rc1_design_review.md`):
 - **Hardware changes in the package:** C15/C16/C17 at U6, R35 + Q3b bus hold-off (IO38),
   R29 100 kΩ, no pour between gold fingers, extra GND stitching. The cost table in §3 does not
   include the added 0402 parts.
+- **BOM / CPL now 28 lines / 54 placed parts** (State table above: 25 / 50 before C15, C16,
+  C17, R35; RC1 delta review docs-9). RC2 (2026-10-28): C16 is 100 pF C0G (C1546), C17 MPN
+  CL05A105KA5NQNC; the antenna-side fence via was removed (255 vias).

@@ -116,8 +116,12 @@ SPEC A3 §9: *GATE V3 = placement + routing of all new nets DRC-clean, then layo
 
 Power facts above that the release-candidate review (`docs/review/v2_rc1_design_review.md`)
 changed:
-- **eFuse row:** the U6 group now also holds C15 (2.2 nF DVDT), C16 (1 nF on the OVLO tap) and
-  C17 (1 µF on +3V3_EFUSE between U6 OUT and FB1) — review power-1/3/4, ADR 0007 RC1 amendment.
+- **eFuse row:** the U6 group now also holds C15 (2.2 nF DVDT), C16 (OVLO tap filter: 100 pF C0G
+  since RC2, 1 nF in RC1) and C17 (1 µF on +3V3_EFUSE at FB1 pad 1, ~4 mm of track from U6 OUT)
+  — review power-1/3/4, ADR 0007 RC1/RC2 amendments.
+- **R33 (eFuse EN pull-up, 1 MΩ) moved to the TOP side** in RC1 (strip between the module and
+  J4), so it is no longer in the bottom eFuse group of the placement table above (RC1 delta
+  review docs-7; noted 2026-10-28).
 - **Gold fingers:** the GND pour no longer fills the gaps between fingers (review layout-3), and
   GND stitching vias were added (layout-4).
 - **Item 2 (JLC rotations):** the bottom-side rule is now "JLC library rotation + 180°"

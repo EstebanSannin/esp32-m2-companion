@@ -102,7 +102,7 @@ expedite allowed). Multilayer minimum 0.09/0.09 mm; vias are epoxy-filled and ca
 | Rule | Value | Note |
 |---|---|---|
 | Track / clearance | 0.127 / 0.127 mm | power trunk 0.35 mm (≈ 1 A eFuse limit) |
-| Vias | 0.45/0.3, 0.45/0.2, **0.35/0.2** | 0.35-pad vias = JLC option "Min via 0.2mm/(0.3/0.35mm)" (owner-approved; +4-wire Kelvin test, FR4 TG155; ≈ +$0.5/board @100): 90 of 213 vias, every EXP net + crowded module/sideband nets |
+| Vias | 0.45/0.3, 0.45/0.2, **0.35/0.2** | 0.35-pad vias = JLC option "Min via 0.2mm/(0.3/0.35mm)" (owner-approved; +4-wire Kelvin test, FR4 TG155; ≈ +$0.5/board @100): 92 of 255 vias (RC2 count; 50 × 0.45/0.2, 113 × 0.45/0.3), every EXP net + crowded module/sideband nets |
 | Hole to copper | 0.2 mm | JLC "Inner layer via hole to copper clearance 0.2mm" (was 0.25 in v1) |
 | Hole to hole | 0.25 mm | JLC 0.2 |
 | Copper to edge | 0.3 mm | J1 finger pads waived only (`.kicad_dru`) |

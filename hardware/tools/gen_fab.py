@@ -79,15 +79,20 @@ JLC_ROT = {
     #     bottom offset = (JLC library rotation vs our footprint) + 180.
     # Library rotations from the easyeda.com component API (pad coordinates).
     # The RSV / RPW / SOT-563 lands are 180-symmetric: a wrong offset seats
-    # perfectly and swaps pins (U3-U5 GND<->VDD, U6 IN<->OUT), so the final DFM
-    # must check pin 1 (silk dot) of U3-U6 and Q1-Q3 against
-    # polarity_checklist.md; the order remark says "pin 1 per silk dot".
+    # perfectly and swaps pins (U3-U5 GND<->VDD, U6 IN<->OUT, U1 GND<->VBUS),
+    # so the final DFM must check pin 1 (silk dot/triangle) of U1 and U3-U6
+    # against polarity_checklist.md; the order remark says so. Q1-Q3 are
+    # checked too, but 180 is electrically equivalent for them (RC1 delta
+    # review dfm-r3 / mcu_io-4).
     "C3662799": (180, None, "TPS259470A RPW (bottom): library = ours (0) -> "
                  "0+180 = 180; was 0 (GATE V4) = IN/OUT swapped under the model"),
     "C2673275": (270, None, "TMUX1511 RSV (bottom): library = ours +90 -> "
                  "270; was 90 (GATE V4) = pin 1 in the opposite corner"),
     "C146449": (270, None, "SSM6N56FE SOT-563 (bottom): library = ours +90 -> "
-                "270; was 90 (GATE V4) = Q-halves swapped"),
+                "270; was 90 (GATE V4) = 180 off under the model, which is "
+                "electrically equivalent (cross-drained pinout 1 S1/2 G1/3 D2/"
+                "4 S2/5 G2/6 D1: each gate keeps its own drain); only a 90 "
+                "error fails (pads would not land)"),
     "C86784": (270, None, "SI1024X SOT-563, approved 2nd source of C146449: "
                "same library orientation -> 270"),
     "C25498": (90, None, "4D02 array: JLC lib long axis horizontal, KiCad "
@@ -96,10 +101,13 @@ JLC_ROT = {
 }
 
 # inner copper In1..In4 = *.g1..*.g4 (v2 is 6 layers; rev B shipped only
-# g1/g2 - a 6-layer zip from that list would silently lack In3/In4)
+# g1/g2 - a 6-layer zip from that list would silently lack In3/In4).
+# No *.gbrjob: its stackup / finish come from Board Setup defaults ("rev?",
+# finish None, 0.114 mm dielectrics) and contradict the order form
+# (JLC06081H-2116, ENIG); JLC orders from the web form (RC1 delta review
+# dfm-r4).
 STD_GLOBS = ["*.gtl", "*.g1", "*.g2", "*.g3", "*.g4", "*.gbl", "*.gts", "*.gbs",
-             "*.gto", "*.gbo", "*.gtp", "*.gbp", "*.gm1", "*.drl",
-             "*.gbrjob"]
+             "*.gto", "*.gbo", "*.gtp", "*.gbp", "*.gm1", "*.drl"]
 
 
 def run(*args):

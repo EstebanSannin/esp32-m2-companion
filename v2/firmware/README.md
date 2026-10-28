@@ -3,7 +3,9 @@
 `v2_selftest.py` is a one-file MicroPython bring-up test for the **v2.0 Rev A** card. It checks
 the expansion-bus hold-off (IO38), the carrier ID EEPROM, the EXP loopback, the host sidebands
 (LED_1#, WAKE_ON_WWAN#, W_DISABLE2#) and the Rev B basics. It prints a PASS / FAIL / SKIP / CHECK
-report over the USB REPL. It needs no toolchain: stock MicroPython plus `mpremote`.
+report over the USB CDC REPL (stock MicroPython enumerates as TinyUSB CDC, 303a:4001). It needs
+no toolchain: stock MicroPython plus `mpremote`. `boot.py` holds the expansion bus off on every
+boot and soft reset.
 
 It serves the procedure in [`docs/v2-test-procedure.md`](../../docs/v2-test-procedure.md), which
 says which run to do at which step and what counts as a pass. It closes review findings
@@ -53,9 +55,11 @@ answer, enter download mode first: hold BOOT, tap RESET (PERST#), release BOOT.
 
 ## 2. Run
 
-Copy the script once, then call `main()` with the arguments for the setup under test:
+Copy `boot.py` and the script once (procedure step 6.3; do step 6.2 before copying `boot.py`),
+then call `main()` with the arguments for the setup under test:
 
 ```sh
+mpremote connect <port> cp v2/firmware/boot.py :
 mpremote connect <port> cp v2/firmware/v2_selftest.py :
 mpremote connect <port> exec "import v2_selftest; v2_selftest.main(signature=True, loopback=True)"
 ```
@@ -83,15 +87,28 @@ mpremote connect <port> repl
 | `program` | Write the dev test image into a blank 24C02 first (vendor 0xFFFF, EXP_0/1 = I²C, all other lines unused), then read it back. |
 | `window` | Seconds to leave the bus released for manual measurements (e.g. `window=30`). |
 | `interactive` | Wait for the operator. Use only from `mpremote repl`. |
-| `outputs`, `wifi` | `False` skips the LED_1#/WAKE# patterns or the WiFi scan. |
+| `outputs`, `wifi` | `False` skips the LED_1#/WAKE# patterns or the WiFi scan. Use `outputs=False` on real hosts (laptop, adapter, RPi5): the patterns pulse WAKE_ON_WWAN# into the host. |
 
 From the REPL, `v2_selftest.bus_on()` and `v2_selftest.bus_off()` release and hold the bus by
-hand. Importing the module already drives IO38 high.
+hand. Importing the module already drives IO38 high. `bus_on()` deliberately leaves the bus
+released until `bus_off()` or a reset (a Ctrl-C during its own wait re-holds it). For anything
+scripted, use the context manager, which always re-holds:
 
-**Safety:** the script drives IO38 high at import and on every exit path, Ctrl-C included, and
-floats every EXP line. A card that isn't running the script keeps the bus off (R35 holds IO38
-high through reset and boot). The J3/J4 pull sweep reconfigures IO43/IO44 (UART0), which is
-harmless on the USB REPL.
+```python
+>>> import v2_selftest as t
+>>> with t.released():
+...     t.eeprom_present()
+```
+
+**Safety:**
+- The script drives IO38 high at import and on every exit path of `main()`, `test_bus()` and
+  `released()`, Ctrl-C and exceptions included, and floats every EXP line.
+- `boot.py` drives IO38 high on every boot and every MicroPython soft reset (Ctrl-D).
+- A chip reset (EN/PERST#, brown-out, power-up) returns IO38 to input and R35 holds the bus off
+  by itself. A software or watchdog reset (`machine.reset()`, `WDT`, panic) is a CPU-only reset
+  on the ESP32-S3 and most likely keeps IO38 driven: until `boot.py` runs, a released bus may
+  stay on (contract §4.3.1, **[FW], to be confirmed** at procedure 8.5).
+- The J3/J4 pull sweep reconfigures IO43/IO44 (UART0), which is harmless on the USB REPL.
 
 ## 3. Expected output
 
@@ -100,10 +117,10 @@ loopback=True` (values vary):
 
 ```
 ================================================================
-v2.0 Rev A self-test  0.1 (v2.0 Rev A RC1)
+v2.0 Rev A self-test  0.2 (v2.0 Rev A RC2)
 ================================================================
 [PASS ] chip                   Generic ESP32S3 module with ESP32S3
-        micropython 1.29.0, script 0.1 (v2.0 Rev A RC1)
+        micropython 1.29.0, script 0.2 (v2.0 Rev A RC2)
         unit serial (base MAC) <mac>
         cpu 160 MHz, reset cause 1
         die temperature 45 C

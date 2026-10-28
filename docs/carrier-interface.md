@@ -7,12 +7,13 @@ repo's `CLAUDE.md` with
 (after v2 merges: `…/esp32-m2-companion/docs/carrier-interface.md`).
 This file is self-contained: a carrier needs nothing else to design against it.
 
-Version: **v2.0 Rev A, RC1 (release candidate 1, 2026-10-28)**. GATE V1 pinmap
-2026-10-07, GATE V3 layout 2026-10-10, RC1 design review 2026-10-28
-(changes in §7); fab not ordered yet. Decisions: ADR 0006 (edge interface),
+Version: **v2.0 Rev A, RC2 (release candidate 2, 2026-10-28)**. GATE V1 pinmap
+2026-10-07, GATE V3 layout 2026-10-10, RC1 design review and RC1 delta
+review 2026-10-28 (changes in §7); fab not ordered yet. Decisions: ADR 0006 (edge interface),
 ADR 0007 (input OVP), ADR 0008 (form factor). Background, research and
 rejected alternatives: `v2/edge-expansion-brainstorm.md`,
-`v2/research/m2_pins_research.md`, `docs/review/v2_rc1_design_review.md`.
+`v2/research/m2_pins_research.md`, `docs/review/v2_rc1_design_review.md`,
+`docs/review/v2_rc1_delta_review.md`.
 
 Status legend: **fixed** = owner-approved; *proposed* = not yet approved, may
 change. Carriers may rely on **fixed** items only. **[FW]** = firmware
@@ -43,7 +44,8 @@ a carrier **cannot** tell a v2 card from a modem by CONFIG_0/1 (see §5 rule 4).
     2242 / 2252 / 2260 on carriers.
 - **Fixed:** the card has components on **both sides**.
   - Top: WROOM module (antenna at the far end from the fingers) + 2 JST SH
-    connectors.
+    connectors + one 0402 resistor (R33, eFuse EN pull-up, between the
+    module and J4; on the top side since RC1).
   - Bottom: passives, SOT-23/SOT-23-6, side-view LEDs, test points; v2 adds
     UQFN/VQFN (TMUX1511 ×3, eFuse), SOT-563 ×3 and 4×0402 resistor arrays.
   - **Bottom-side height: design carriers for ≤ 1.6 mm** including solder
@@ -53,7 +55,7 @@ a carrier **cannot** tell a v2 card from a modem by CONFIG_0/1 (see §5 rule 4).
     figure; sockets with at least the card-bottom clearance of the Amphenol
     MDT420B01001 (tested with Rev B) fit.
   - Bottom-side parts start **5.2 mm** from the finger edge (M.2 bottom-side
-    component zone); two parts sit exactly at that limit.
+    component zone); three parts (U1, C14, C16) sit exactly at that limit.
   - Choose the socket stack height so the bottom parts clear the carrier,
     and keep carrier components out of the card's footprint.
   - Measure heights from `docs/3d/esp32_m2_companion.step` (on branch `v2`:
@@ -85,7 +87,8 @@ a carrier **cannot** tell a v2 card from a modem by CONFIG_0/1 (see §5 rule 4).
   - Card load: ~0.5 A peak on WiFi TX bursts.
   - v2 eFuse (TPS259470A) current limit **0.85 / 1.01 / 1.15 A**
     (min/typ/max). The card plus anything on its J3 Qwiic +3V3 output must
-    stay below 0.85 A; *proposed*: J3 +3V3 output budget **≤ 150 mA**.
+    stay below 0.85 A. **Fixed:** J3 (Qwiic) +3V3 output budget
+    **≤ 150 mA**.
   - **Design the carrier supply for ≥ 1.2 A** (covers the 1.15 A
     current-limited start after an overvoltage trip, below, and faults).
   - Drop from fingers to module at 0.5 A is ~65–70 mV including socket
@@ -93,17 +96,21 @@ a carrier **cannot** tell a v2 card from a modem by CONFIG_0/1 (see §5 rule 4).
 - **Fixed: input capacitance and inrush (CG4).**
   - Directly on the slot rail: **100 nF** only.
   - Behind the eFuse: **~65 µF** nominal, charged under dV/dt control:
-    slew ~0.7 V/ms typ (≤ 1.3 V/ms), **inrush ≤ ~90 mA**; the card rail is up
-    ~5 ms typ, ≤ ~13 ms after the slot rail. Hosts that soft-start the slot at
-    200 mA (allowed by M.2) are fine.
+    slew ~0.7 V/ms typ (≤ 1.3 V/ms), **inrush ≤ ~90 mA**; the card rail goes
+    0 → 3.3 V ~5 ms typ, **~2–16 ms** (incl. the eFuse turn-on delay) after
+    the slot rail. Hosts that soft-start the slot at 200 mA (allowed by M.2)
+    are fine.
   - Exception: a restart after an overvoltage trip skips dV/dt and starts
     current-limited (up to 1.15 A for < 0.5 ms).
 - **Fixed:** **never more than 3.6 V.**
   - Rev-B cards have no protection: the ESP32-S3 absolute maximum is 3.6 V.
-  - v2 cards: overvoltage trip at **3.44–3.57 V** (filtered, τ ≈ 34 µs: µs
-    ringing does not trip it, a sustained step trips in ~4 µs). The card
-    switches off without damage up to ~18 V (ADR 0007). Even so, the 3.6 V
-    limit applies to every carrier (test-fixture exception: §5 rule 8).
+  - v2 cards: overvoltage trip at **3.44–3.57 V** (filtered, τ ≈ 3.4 µs:
+    MHz ringing is attenuated ~20×). A hard step trips after a few µs plus
+    the eFuse's 1.2 µs; the worst case is a ramp of tens of µs, which the
+    worst-case model keeps at ≤ ~3.55 V on the card rail (ADR 0007 RC2).
+    The card switches off without damage up to ~18 V (ADR 0007). Even so,
+    the 3.6 V limit applies to every carrier (test-fixture exception: §5
+    rule 8).
   - **A tripped v2 card stays off** until the input falls below
     **3.13–3.25 V**. On a nominal 3.3 V supply that does not happen by
     itself: the slot supply must be switched off and on. It is not
@@ -196,22 +203,37 @@ design against the capability column, never the GPIO column.
   pulled up through 10 kΩ / 1 µF (τ = 10 ms) and pulled low by either the
   signature FETs or the firmware hold FET.
 - **Hold:** the hold FET's gate is ESP32 `IO38` with a 100 kΩ pull-up. While
-  the ESP32 is powering up, in reset or in ROM boot, IO38 is an input, the
-  hold is on and all 12 lines are disconnected (high-Z on the edge side).
+  the ESP32 is powering up, in a chip reset (EN/PERST#, brown-out) or in
+  the ROM boot after one, IO38 is an input, the hold is on and all 12 lines are disconnected (high-Z on the edge side).
   The ESP32 power-up GPIO glitches therefore never reach the carrier.
 - **Release:** firmware drives IO38 low. If the signature is present, the
-  switches conduct **1.5–5.1 ms** later (select input crosses 0.45 V at
-  1.5 ms and 1.2 V at 4.5 ms, 5.1 ms worst case). The same delay applies when
-  the signature appears after the release.
-- **Off:** within **~20 µs** of firmware driving IO38 high or back to input,
-  and of **any ESP32 reset** (PERST#-driven EN, watchdog, brown-out, software
-  reset), because IO38 returns to input. Within **~0.3 ms** of either
+  switches conduct **about 1–6.5 ms** later (nominal: select input crosses
+  0.45 V at 1.5 ms and 1.2 V at 4.5 ms; the range covers C13 ±10 % / X5R,
+  the 3.3 V ±5 % rail and the select-input leakage). The same delay applies
+  when the signature appears after the release.
+- **Off** (fixed, to be confirmed by measurement at bring-up, SPEC S-v2-2):
+  within **~20 µs** of firmware driving IO38 high or back to input, and of
+  every **chip reset** that returns IO38 to input: PERST#-driven EN,
+  brown-out, RTC watchdog, power loss. Within **~0.3 ms** of either
   signature pin leaving 0 V. Immediately when the card loses power.
+- **[FW], to be confirmed (S-v2-2): software and watchdog resets.** On the
+  ESP32-S3 `esp_restart()`, MicroPython `machine.reset()`, the panic
+  handler and the task/interrupt watchdog reset the CPUs only; GPIO
+  outputs most likely keep their state, so IO38 may stay driven LOW and the
+  bus stay on through the restart. Firmware therefore drives IO38 high in a
+  shutdown handler before any software restart, and again as early as
+  possible in boot (2nd-stage bootloader hook or first init step). Until
+  bring-up measures it, carriers must not rely on the bus dropping on a
+  software or watchdog reset.
 - The card does not read `EXP_OE` back: firmware learns that a carrier is
   present only by releasing the hold and finding the ID EEPROM (§4.3.3). A
   carrier without an EEPROM looks the same as no carrier.
 - **[FW]** In ESP32 deep sleep the bus stays on only if firmware holds IO38
   low (IO38 is not an RTC GPIO: digital GPIO hold needed).
+- **[FW]** In light sleep, firmware either keeps IO38's active configuration
+  (no GPIO sleep-select on IO38, or a GPIO hold) or accepts that the bus
+  drops during sleep and needs 1–6.5 ms after wake. Either way it fails
+  off (R35 holds the bus off if IO38 floats).
 
 #### 4.3.2 EXP electrical spec (fixed, RC1)
 
@@ -226,7 +248,7 @@ design against the capability column, never the GPIO column.
 | Current per line | ≤ 5 mA recommended; contention with a card output is limited to ~15 mA by the 220 Ω |
 | Signalling rate | ≤ ~10 MHz recommended (card side ~12–15 pF; τ ≈ 5–10 ns with carrier load) |
 | ESD, card side | chip-level only (TMUX1511 HBM ±2 kV, CDM ±750 V) — carrier rule §5.7 |
-| Glitches | none from the card during reset/boot (bus held off, §4.3.1); confirm by scope at bring-up |
+| Glitches | none from the card during power-up, EN/PERST# reset and boot (bus held off, §4.3.1); software/watchdog resets **[FW]** (§4.3.1); confirm by scope at bring-up |
 
 I²C on EXP_0 (SDA) / EXP_1 (SCL):
 
@@ -236,9 +258,10 @@ I²C on EXP_0 (SDA) / EXP_1 (SCL):
 - Budget: card side ~12–15 pF per line. **100 kHz:** carrier side
   ≤ ~235 pF. **400 kHz:** carrier side **≤ 60 pF**. **[FW]** the ID EEPROM is
   read at 100 kHz.
-- Extra carrier pull-ups (e.g. Qwiic/STEMMA breakouts): only to the 3.3 V that
-  feeds the card, never 5 V; combined with the card's 4.7 kΩ **≥ 2 kΩ**
-  (carrier pull-up ≥ 3.9 kΩ), because the card drives low through ~245 Ω.
+- **Fixed:** extra carrier pull-ups (e.g. Qwiic/STEMMA breakouts): only to
+  the 3.3 V that feeds the card, never 5 V; combined with the card's 4.7 kΩ
+  **≥ 2 kΩ** (carrier pull-up **≥ 3.9 kΩ**), because the card drives low
+  through ~245 Ω.
 - Other carrier I²C devices may share the bus but must not use address 0x50.
 
 #### 4.3.3 Carrier ID EEPROM (fixed, GATE V1; wiring fixed RC1)
@@ -246,8 +269,10 @@ I²C on EXP_0 (SDA) / EXP_1 (SCL):
 - **Part:** 24C02-class (256 B) at I²C **0x50**, on EXP_0 (SDA) / EXP_1 (SCL).
   Package free.
 - **Wiring (CG6):** VCC = the same carrier 3.3 V that feeds the card;
-  A2..A0 = GND; WP = GND through a 0 Ω or a jumper (jumper on dev carriers).
-  No pull-ups (card provides them).
+  A2..A0 = GND; WP = GND through a 0 Ω or a jumper (the dev carrier as
+  built ties /WC straight to GND). No pull-ups (card provides them).
+- **[FW]** Page size: the card writes in 8-byte pages, which every 24C02 accepts
+  (M24C02: 16-byte pages; AT24C02: 8-byte pages).
 - Recommended on every production carrier. DNP on the dev carrier.
 
 | Offset | Size | Field |
@@ -285,13 +310,18 @@ Function codes (card point of view; "in" = the carrier drives the line):
 
 1. Before releasing the hold, configure EXP_2..11 as inputs (high-Z) and
    EXP_0/1 as I²C.
-2. Release (IO38 low), wait ≥ 10 ms, probe 0x50 at 100 kHz.
+2. Release (IO38 low), wait **≥ 10 ms** (worst-case turn-on ~6.5 ms,
+   §4.3.1; the bring-up self-test waits 60 ms), probe 0x50 at 100 kHz.
 3. Valid magic **and** CRC → configure the lines per the function map;
    refuse functions a line cannot do (e.g. analog on a non-ADC line).
-4. *Proposed* (RC1): no ACK, bad CRC or unknown format → "unknown carrier":
-   firmware turns the bus off again (IO38 high or input). The host may
-   override explicitly (dev use, e.g. a carrier without EEPROM). This
-   replaces the GATE V1 rule "unknown carrier: inputs only".
+4. **Fixed** (owner, RC1 delta review): no ACK, bad CRC or unknown format →
+   "unknown carrier": firmware turns the bus off again (IO38 high or input).
+   The host may override explicitly (dev use, e.g. a carrier without
+   EEPROM: the dev carrier uses the override). This replaces the GATE V1
+   rule "unknown carrier: inputs only".
+5. Drive IO38 high as early as possible in boot and in a shutdown handler
+   before any software restart (§4.3.1: software and watchdog resets may
+   not return IO38 to input).
 
 ### 4.4 Host-facing pins (v2; also work in any normal M.2 host)
 
@@ -365,8 +395,8 @@ SUSCLK 68, RESET# 67, FULL_CARD_POWER_OFF# 6, DPR 25, 22/24/28, 38,
 11. Silkscreen: label every exposed M.2 signal with **M.2 pin number + net
     name** (e.g. `61 EXP_7`).
 
-**Card unpowered, carrier 3.3 V present** (fixed, CG7; computed from
-datasheet maxima, to be measured on the dev-carrier fixture):
+**Card unpowered, carrier 3.3 V present** (fixed, CG7; totals computed from
+datasheet maxima, to be measured on the dev-carrier fixture at bring-up):
 
 | Pins | What the carrier sees |
 |---|---|
@@ -407,3 +437,14 @@ latch-up path.
   and current budget (§3); CONFIG_2/3 are not NC and host-load limits
   (§4.2); W_DISABLE2# pull-up 1 MΩ → 100 kΩ, sink ratings, wake limit
   (§4.4); CG1–CG8 answered (§6); **[FW]** tags.
+- **2026-10-28, RC2** (RC1 delta review, `docs/review/v2_rc1_delta_review.md`;
+  owner accepted the recommendations): OVLO filter 100 pF C0G, τ ≈ 3.4 µs
+  (§3: the 1 nF / τ 34 µs filter let an overvoltage ramp reach ~3.7–3.9 V);
+  card rail ramp ~2–16 ms (§3); R33 on the top side (§2); three parts at the
+  5.2 mm bottom limit (§2); turn-on 1–6.5 ms, off times to be confirmed at
+  bring-up, software/WDT resets **[FW]** (§4.3.1); light-sleep rule (§4.3.1);
+  dev-carrier /WC tied to GND, 8-byte EEPROM pages (§4.3.3). Owner decisions
+  now **fixed**: unknown-carrier rule 4 (§4.3.3), I²C pull-up minimum
+  (§4.3.2), J3 +3V3 budget ≤ 150 mA (§3), off times (§4.3.1, to be
+  measured), unpowered back-feed totals (§5, to be measured). New firmware
+  rule 5 (IO38 high early in boot and before a software restart).

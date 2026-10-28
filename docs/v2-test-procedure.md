@@ -24,9 +24,9 @@ AND firmware**, with IO38 as the active-low release (`docs/pinmap.md` §6.3).
 |---|---|---|---|
 | S-v2-1 | EXP bus off, ≤ 2 µA per EXP pin at 0 / 1.8 / 3.3 V, on Mallow, a laptop WWAN slot, an M.2→USB adapter, and the dev carrier with signature open / 1.8 V / 3.3 V; also unpowered | 7, 10 | **Dev carrier: yes.** Mallow: only on the pins it exposes. Laptop and USB adapter: **proxy only** (§10) |
 | S-v2-2 | Bus on with the signature grounded; every EXP line proven both ways by a firmware self-test | 8 | Yes, with the J3 loopback jumpers. The EEPROM path needs a hand-fitted 24C02 on one dev carrier (U4 is DNP) |
-| S-v2-3 | OVP trips at 3.44–3.57 V, survives 5 V, recovers below ~3.17 V | 4 | Yes. Needs a bench limit of ≥ 1.2 A for the recovery step |
+| S-v2-3 | OVP trips at 3.44–3.57 V, survives 5 V; stays off at 3.30 V, returns at 3.13–3.25 V, restarts after a power cycle | 4 | Yes. Needs a bench limit of ≥ 1.2 A for the restart step (owner-accepted). The ramp step 4.5b needs a programmable-slew source |
 | S-v2-4 | All v1 criteria (SPEC §10) still pass | 11 | Yes, except item 4 (needs a Qwiic sensor) and item 6 (RPi5, best effort) |
-| G9 / mcu_io-7 | LED_1#, WAKE#, W_DISABLE2# on every host; 1.8 V levels; no back-feed | 7.3, 9, 10 | W_DISABLE2# at 1.8 / 1.2 V: yes. LED_1#/WAKE# with a 1.8 V pull-up: **not on the dev carrier** (§9.3) |
+| G9 / mcu_io-7 | LED_1#, WAKE#, W_DISABLE2# on every host; 1.8 V levels; back-feed only through the card pull-ups (≤ 33 µA pin 26, contract §5) | 7.3, 9, 10 | W_DISABLE2# at 1.8 / 1.2 V: yes. LED_1#/WAKE# with a 1.8 V pull-up: **not on the dev carrier** (§9.3) |
 
 ## 0. Equipment
 
@@ -35,6 +35,7 @@ AND firmware**, with IO38 as the active-low release (`docs/pinmap.md` §6.3).
 | Dev carrier (`m2-dev-carrier`) that has passed its own steps 1–4 | 3–9 | |
 | DMM: V, Ω, **µA range with ≤ 0.1 µA resolution** | all | the µA range is for S-v2-1 |
 | Bench supply 0–6 V, current limit, **≥ 1.2 A** | 3, 4, 9.3 | the dev-carrier list says ≥ 1 A; the OVLO restart needs up to 1.15 A |
+| Programmable-slew source 3.3 → 5 V in 50–100 µs, ≥ 1.2 A (function generator + power amplifier, or a bench supply with a slew setting) | 4.5b | optional; the worst-case OVP shape (RC1 delta review power-rc1-1) |
 | Scope, 2 channels | 3, 4, 8.5 | needed for the inrush and reset-glitch steps; the OVP static window works without it |
 | 0.1 Ω shunt resistor (optional) | 3 | inrush current on the scope |
 | 2 × 100 kΩ resistors with Dupont leads | 7, 8 | bus-state indicator on J3 |
@@ -92,12 +93,13 @@ preview next to it. N = screw-notch edge, S = finger edge.
 |---|---|---|---|---|
 | 1.1 | U3, U4, U5 (TMUX1511, UQFN-16): pin-1 dot against the silk dot | pin 1 = SEL1 (EXP_OE): U3 at the **SE** corner, U4 and U5 at the **NE** corner | [ ] | S-v2-1/2 |
 | 1.2 | U6 (TPS259470A, VQFN-10) | pin 1 (EN/UVLO, L-shaped corner pad) at the **NE** corner | [ ] | S-v2-3 |
-| 1.3 | Q1, Q2, Q3 (SSM6N56FE, SOT-563) | pin-1 mark at the **NE** corner on all three. On Q2, 180° swaps LED_1# and WAKE# (step 9.1 catches it too) | [ ] | S-v2-1, G9 |
+| 1.3 | Q1, Q2, Q3 (SSM6N56FE, SOT-563) | pin-1 mark (triangle) at the **NE** corner on all three. A 180° turn is **electrically equivalent** (cross-drained pinout 1 S1 / 2 G1 / 3 D2 / 4 S2 / 5 G2 / 6 D1: each gate keeps its own drain), so record it but don't reject the board for it; only a 90° error fails (pads would not land) | [ ] | S-v2-1, G9 |
 | 1.4 | D3 (green), D4 (red), side-view | "+" (anode) on the **S** pad, level with R3.2 / R4.2; cathode bar toward **N**; lens facing **outward**, away from R3/R4 toward the long card edge. **Both must hold** (GATE B3) | [ ] | S-v2-4 |
-| 1.5 | D1, D2 (BAT54A), U1 (USBLC6) | pin 1 at the **SW** corner | [ ] | S-v2-4 |
+| 1.5 | D1, D2 (BAT54A), U1 (USBLC6) | pin 1 at the **SW** corner. U1's land is 180°-symmetric: turned 180° it puts GND (pin 2) on +3V3 and VBUS (pin 5) on GND — **stop** before power-up if U1 pin 1 is not SW | [ ] | S-v2-4 |
 | 1.6 | 0.4 mm-pitch parts U3–U6, RN1–RN3 | no bridges along the package edges (0.1 mm mask dams, review dfm-3); no tombstoned 0402s | [ ] | — |
 | 1.7 | Gold fingers | no solder or flux on them; leading edge **hand-chamfered** before first insertion (SPEC A1) | [ ] | — |
-| 1.8 | U2 module, J3/J4 JST connectors | module flat, castellations wetted; JST shell legs soldered | [ ] | S-v2-4 |
+| 1.8 | U2 module, J3/J4 JST connectors, R33 (top side since RC1, between the module and J4) | module flat, castellations wetted; JST shell legs soldered; R33 present | [ ] | S-v2-4 |
+| 1.9 | C15 (DVDT 2.2 nF, bottom, 0.32 mm from the V-scored long edge — accepted deviation) | no crack or chipped end after depanelling (loupe); 3.2 confirms it electrically | [ ] | K1 |
 
 ## 2. Unpowered resistance checks (card out of any slot)
 
@@ -128,8 +130,8 @@ Setup:
 | # | Action | Expected | Pass | Covers |
 |---|---|---|---|---|
 | 3.1 | Bench output on, JP1 still OFF | J5 hdr 3 < 0.3 V; bench current ≈ 0 | [ ] | — |
-| 3.2 | Output off. Fit **JP1 = BENCH**. Trigger the scope on CH2 rising, then switch the output on | CH1 ramps **monotonically** from 0 to 3.3 V in **2.5–13 ms** (typ ≈ 5 ms; C15 2.2 nF, SR 0.25–1.3 V/ms). No step, no sag back below 2.4 V (UVP chatter, review power-3) | [ ] | K1 |
-| 3.3 | Inrush current (shunt or bench readout) | rail-charging current **≤ 0.15 A** (≈ 45 mA typ, ≤ 90 mA worst for ~65 µF), then the ESP32 boot current. The bench never goes into CC at 0.5 A | [ ] | K1 |
+| 3.2 | Output off. Fit **JP1 = BENCH**. Trigger the scope on CH2 rising, then switch the output on | CH1 ramps **monotonically** from 0 to 3.3 V within **~2–16 ms** of the trigger, turn-on delay included (typ ≈ 5 ms; C15 2.2 nF ±10 %, SR 0.24–1.4 V/ms over the IdVdt spread). No step, no sag back below 2.4 V (UVP chatter, review power-3). A ramp ≪ 2 ms (~12–15 V/ms) means C15 is open or cracked | [ ] | K1 |
+| 3.3 | Inrush current: slope of CH1 × ~65 µF (card rail), during the ramp | rail-charging current **≤ 0.15 A** (≈ 45 mA typ, ≤ 90 mA worst), then the ESP32 boot current. The bench never goes into CC at 0.5 A. A shunt in the bench lead **also sees the dev carrier's C9 22 µF + C10 100 nF** on +3V3_CARD, charged at the bench's own slew before the card's dV/dt control (e.g. ~145 mA for 3.3 V in 0.5 ms): ignore that first edge, record both readings | [ ] | K1 |
 | 3.4 | Steady state | D3 green on; card `+3V3` (J3 pin 2) = input − ≤ 50 mV: **3.25–3.30 V**; idle current **30–90 mA** (record) | [ ] | S-v2-4 |
 | 3.5 | Touch test after 1 min | U6, FB1 and the module not warm | [ ] | — |
 
@@ -143,16 +145,17 @@ Setup as at the end of §3 (JP1 = BENCH, card running).
 - Monitor the **card rail** on J3 pin 2 (DMM or scope).
 - **Raise the bench limit to 1.2 A for this section:** after an OVLO trip the eFuse restarts in
   current limit (0.85–1.15 A) and bypasses dVdt (TPS25947 §7.3.3). This departs from the
-  dev-carrier R8 rule (≤ 0.5 A), and only for this step.
+  dev-carrier R8 rule (≤ 0.5 A), and only for this step (owner-accepted, RC1 delta review).
 - **Never above 5.5 V** in this procedure. The design survives ~18 V, but S-v2-3 asks for 5 V.
 
 | # | Action | Expected | Pass | Covers |
 |---|---|---|---|---|
 | 4.1 | From 3.30 V, raise the input in **10 mV** steps, 2 s per step, watching J3 pin 2 | rail collapses to < 0.3 V at **V_trip = 3.44–3.57 V** (record). D3 off, USB disconnects. If nothing trips at 3.60 V: **stop, FAIL** | [ ] | S-v2-3 |
 | 4.2 | Go back down to **3.30 V** | card **stays off** (release is 3.13–3.25 V). This is expected: on a 3.3 V host, a trip needs a slot power cycle (ADR 0007, `power_3v3.py`) | [ ] | S-v2-3 |
-| 4.3 | Keep lowering in 10 mV steps | rail returns at **V_release = 3.13–3.25 V** (record; SPEC "~3.17 V"). Restart is current-limited: a brief bench current up to ~1.15 A is normal | [ ] | S-v2-3 |
+| 4.3 | Keep lowering in 10 mV steps | rail returns at **V_release = 3.13–3.25 V** (record; SPEC S-v2-3). Restart is current-limited: a brief bench current up to ~1.15 A is normal | [ ] | S-v2-3 |
 | 4.4 | Back to 3.30 V | card runs, enumerates again (§5) | [ ] | S-v2-3 |
-| 4.5 | **5 V survival.** Card running at 3.30 V. Scope CH1 on J3 pin 2, single trigger. Step the supply to **5.00 V** (preset + output switch, or the fastest knob turn), hold 10 s | card rail peak **≤ 3.6 V** (record; design ≈ +0.1 V over 3.3 V, then off). Rail then < 0.3 V. Nothing warm | [ ] | S-v2-3, G11 |
+| 4.5 | **5 V survival.** Card running at 3.30 V. Scope CH1 on J3 pin 2, single trigger. Step the supply to **5.00 V** (preset + output switch, or the fastest knob turn), hold 10 s | card rail peak **≤ 3.6 V** (record; design: trip a few µs plus tOVLO 1.2 µs after the input crosses 3.44–3.57 V, then off). Rail then < 0.3 V. Nothing warm | [ ] | S-v2-3, G11 |
+| 4.5b | **Ramp (worst case, optional equipment).** Card running at 3.30 V. Programmable-slew source: ramp 3.3 → 5 V in **50 µs**, then **100 µs**; scope CH1 at the module (J3 pin 2) and CH2 on the input. Power-cycle between runs (4.6) | card rail peak **≤ 3.6 V** each run (record; worst-case model ~3.55 V with C16 100 pF, ADR 0007 RC2) | [ ] | S-v2-3, G11 |
 | 4.6 | Output off (0 V), then 3.30 V on | card boots, enumerates; §7 self-test still PASS | [ ] | S-v2-3 |
 
 Set the limit back to 0.5 A. Output off, **JP1 = REG** for the rest unless a step says BENCH.
@@ -171,13 +174,13 @@ Setup: JP1 = REG, USB-C to the PC.
 ## 6. Flash MicroPython
 
 Follow `v2/firmware/README.md` §1 (stock ESP32_GENERIC_S3, default variant, **not**
-SPIRAM_OCT). Then copy the script:
-`mpremote connect <port> cp v2/firmware/v2_selftest.py :`.
+SPIRAM_OCT). Do 6.2 first, then copy `boot.py` and the script (6.3).
 
 | # | Action | Expected | Pass | Covers |
 |---|---|---|---|---|
 | 6.1 | Flash and reset | re-enumerates as MicroPython (TinyUSB CDC, **303a:4001**); REPL banner shows ESP32S3 | [ ] | S-v2-4 (§10.2) |
-| 6.2 | Bus indicator fitted (J3 hdr 1, 100 kΩ), JP2/JP3 on **GND**, MicroPython idle (script not run) | J3 hdr 1 **< 0.05 V**: the bus stays held off with the signature present and no firmware release (R35 → Q3b) | [ ] | RC1 hold-off |
+| 6.2 | **Before copying `boot.py`:** bus indicator fitted (J3 hdr 1, 100 kΩ), JP2/JP3 on **GND**, stock MicroPython idle (it never touches IO38) | J3 hdr 1 **< 0.05 V**: the bus stays held off with the signature present and no firmware release (R35 → Q3b, hardware only) | [ ] | RC1 hold-off |
+| 6.3 | Copy the bring-up files: `mpremote connect <port> cp v2/firmware/boot.py :` and `cp v2/firmware/v2_selftest.py :`, then reset | `boot.py` drives IO38 high on every boot and soft reset; J3 hdr 1 still < 0.05 V | [ ] | bus_enable-1 |
 
 ## 7. Self-test without a carrier signature: bus must stay off (S-v2-1)
 
@@ -197,6 +200,8 @@ and hdr 3. The firmware is **releasing** the bus during the window, so this is t
 | 7.1c | 3V3 / 3V3 (10 k → 3.3 V) | same | [ ] |
 | 7.1d | GND / open (one pin shorted) | same: one grounded pin opens nothing | [ ] |
 | 7.1e | open / GND | same | [ ] |
+| 7.1f | open / open, plus **100 kΩ from J4 hdr 11 and from J4 hdr 13 to GND** (hand resistors; host pull-down case, risk R-v2-18). Run `main(signature=None, loopback=True, window=20)` | **record** B (the bus may turn on when released: below ~435 kΩ the host load can look like a carrier). C **PASS** and J3 hdr 1 < 0.05 V after the script exits (firmware re-hold, contract rule 4) | [ ] |
+| 7.1g | same with **20 kΩ** to GND on both | B: bus **ON** expected (below ~65 kΩ); C **PASS**, hdr 1 < 0.05 V after exit | [ ] |
 
 Run §8.2 (signature grounded) once before trusting 7.1. The "0/5 pairs conduct" result only
 means "off" after the same jumpers have been seen conducting.
@@ -219,17 +224,17 @@ Shortcut for boards #2+: tie all 12 J3 signal pins together with a female header
 then measure once per source voltage. Pass: total ≤ 2 µA. That bounds every single pin as long as
 the off-state leakages flow the same way, which they do in practice. If the total is > 2 µA, measure pin by pin.
 
-### 7.3 Card unpowered (S-v2-1 "also unpowered", G9 no back-feed)
+### 7.3 Card unpowered (S-v2-1 "also unpowered", G9 back-feed through the card pull-ups only)
 
 Setup: **JP1 OFF** (card unpowered), carrier on USB (sources alive), JP2/JP3 = 3V3, JP5 open.
 
 | # | Action | Expected | Pass | Covers |
 |---|---|---|---|---|
 | 7.3a | Each EXP pin at 0 / 1.8 / 3.3 V (or the 12-pin shortcut) | **≤ 2 µA** | [ ] | S-v2-1 |
-| 7.3b | Card rail J3 pin 2 with everything applied | **< 0.3 V** (record) | [ ] | G9 |
+| 7.3b | Card rail J3 pin 2 with everything applied | **record**; expect ≤ 0.5 V (R26/R30 load the ~40 µA of pull-up current) | [ ] | G9 |
 | 7.3c | D5 (LED_1#) | off: Q2a has no drive, no path | [ ] | G9 |
 | 7.3d | J4 hdr 17 (WAKE#) | ≈ 3.3 V (carrier 10 k): no pull-down from an unpowered card | [ ] | G9 |
-| 7.3e | µA meter J5 hdr 1 (3.3 V) → J4 hdr 19 (W_DISABLE2#); then from J5 hdr 5 (1.8 V) | **≈ 33 µA at 3.3 V, ≈ 18 µA at 1.8 V**: the RC1 R29 100 kΩ pull-up feeds the card rail. Record it, and record the rail on J3 pin 2 while applied (expect < 0.3 V) | [ ] | G9 (info) |
+| 7.3e | µA meter J5 hdr 1 (3.3 V) → J4 hdr 19 (W_DISABLE2#); then from J5 hdr 5 (1.8 V) | **≈ 33 µA at 3.3 V, ≈ 18 µA at 1.8 V**: the RC1 R29 100 kΩ pull-up feeds the card rail. Record it, and record the rail on J3 pin 2 while applied (expect ≤ 0.5 V) | [ ] | G9 (info) |
 | 7.3f | µA meter J5 hdr 1 → J4 hdr 11 (CONFIG_2), JP2 open | **≈ 3.3 µA** (R22 1 MΩ) | [ ] | info |
 
 ## 8. With the dev carrier signature: release, hold, EEPROM, loopback (S-v2-2)
@@ -240,10 +245,10 @@ Setup: JP1 = REG, **JP2/JP3 = GND**, bus indicator on J3 hdr 1.
 
 | # | Action | Expected | Pass | Covers |
 |---|---|---|---|---|
-| 8.1a | Power up, MicroPython idle (same as 6.2) | J3 hdr 1 **< 0.05 V**; EXP_OE at C13 **< 0.1 V** (optional probe) | [ ] | RC1 |
-| 8.1b | REPL: `import v2_selftest; v2_selftest.bus_on()` | J3 hdr 1 **3.0–3.3 V**; EXP_OE ≈ 3.3 V | [ ] | S-v2-2 |
+| 8.1a | Power up, MicroPython idle (`boot.py` holds IO38 high; 6.2 proved the R35 path) | J3 hdr 1 **< 0.05 V**; EXP_OE at C13 **< 0.1 V** (optional probe) | [ ] | RC1 |
+| 8.1b | REPL: `import v2_selftest; v2_selftest.bus_on()` | J3 hdr 1 **3.0–3.3 V**; EXP_OE ≈ 3.3 V. `bus_on()` deliberately leaves the bus released until `bus_off()`, a reset or a Ctrl-C during its wait | [ ] | S-v2-2 |
 | 8.1c | `v2_selftest.bus_off()` | J3 hdr 1 **< 0.05 V** | [ ] | S-v2-2 |
-| 8.1d | Scope on J3 hdr 1: `bus_on()`, then `bus_off()` | turns on **1.5–5.1 ms** after release (R26/C13 RC; carrier-interface §4.3.1); turns off in **< 0.1 ms** (contract: ~20 µs) | [ ] | RC1 |
+| 8.1d | Scope on J3 hdr 1: `bus_on()`, then `bus_off()` | turns on **~1–6.5 ms** after release (R26/C13 RC incl. tolerances; carrier-interface §4.3.1); turns off in **< 0.1 ms** (contract: ~20 µs, to be confirmed here). Record both times | [ ] | RC1, S-v2-2 |
 
 ### 8.2 Loopback, every EXP line both ways
 
@@ -265,7 +270,7 @@ Run (b) for the SCL direction even if (a) is available: an EEPROM never drives S
 |---|---|---|---|---|
 | 8.3a | Blank part: `main(signature=True, loopback=True, program=True)` | `EEPROM program` **PASS** (written + verified) | [ ] | S-v2-2 |
 | 8.3b | `main(signature=True, loopback=True)` | A **PASS** (no ACK while held), B **PASS** (ACK at 0x50), header printed: magic `M2CI`, format 1, vendor 0xffff, rev 'A', CRC stored = calc, `EEPROM header` **PASS**, C **PASS** (ACK gone) | [ ] | S-v2-2, contract §4.3 |
-| 8.3c | Optional: corrupt one byte (REPL `writeto_mem`), rerun | `EEPROM header` FAIL, "carrier 'unknown'" (firmware rule) | [ ] | contract §4.3 |
+| 8.3c | Optional: corrupt one byte, rerun. The self-test leaves the bus held, so release it first: `import v2_selftest as t; from machine import Pin, SoftI2C; t.bus_on(); i2c = SoftI2C(scl=Pin(41), sda=Pin(39), freq=100000); i2c.writeto_mem(0x50, 0x2C, b'X'); t.bus_off()`, then `t.main(signature=True, loopback=True)` | `EEPROM header` FAIL, "carrier 'unknown'" (firmware rule 4). Restore with `program=True` | [ ] | contract §4.3 |
 
 ### 8.4 Partial signature with the firmware releasing
 
@@ -277,13 +282,20 @@ Setup: indicator on J3 hdr 1. Scope CH1 on J3 hdr 1, CH2 on **J3 hdr 9 (EXP_4 = 
 the 60 µs power-up high glitch) with a 100 kΩ to GND. Before each reset, release the bus with
 `v2_selftest.bus_on()` and check that hdr 1 reads ≈ 3.15 V.
 
+Run 8.5b–8.5d **twice**: first with `boot.py` removed (`mpremote connect <port> rm :boot.py`) to
+record the raw chip behaviour that S-v2-2 asks about, then with `boot.py` copied back to confirm
+the firmware mitigation. Software and watchdog resets are CPU-only resets on the ESP32-S3: IO38
+most likely stays driven LOW through them (RC1 delta review bus_enable-1), so their expected
+result is **record**, not pass/fail, until measured.
+
 | # | Reset | Expected | Pass |
 |---|---|---|---|
 | 8.5a | Press **SW1 RESET** (PERST# → EN) | hdr 1 falls to 0 V **at reset** and stays < 0.05 V through boot; hdr 9 shows **no pulse > 0.5 V** | [ ] |
-| 8.5b | REPL `import machine; machine.reset()` | same | [ ] |
-| 8.5c | REPL `from machine import WDT; WDT(timeout=2000)`, then leave it idle | reset after ~2 s; same | [ ] |
-| 8.5d | REPL Ctrl-D (MicroPython **soft** reset: no chip reset) | **record**. A soft reset may leave IO38 low and the bus on; then any firmware must drive IO38 high as its first init step | [ ] |
+| 8.5b | REPL `import machine; machine.reset()` | **record**: does hdr 1 fall at reset, at `boot.py`, or not at all (no `boot.py`)? With `boot.py`: hdr 1 < 0.05 V from `boot.py` on; hdr 9 no pulse > 0.5 V while hdr 1 is low | [ ] |
+| 8.5c | REPL `from machine import WDT; WDT(timeout=2000)`, then leave it idle | reset after ~2 s; **record** as 8.5b | [ ] |
+| 8.5d | REPL Ctrl-D (MicroPython **soft** reset: no chip reset) | **record**. Without `boot.py` the bus most likely stays on; with `boot.py` it drops when `boot.py` runs | [ ] |
 | 8.5e | Power cycle (JP1 off/on) | hdr 1 and hdr 9 stay < 0.05 V from power-up through boot | [ ] |
+| 8.5f | **EXP_2 low glitches** (SPEC S-v2-2): CH2 on **J3 hdr 5 (EXP_2 = IO1)** with a **100 kΩ pull-up to J5 hdr 1 (+3V3)** instead of the hdr 9 pull-down; trigger CH1 on **J4 hdr 1 (PERST#)** falling (or EN at TP1). Repeat 8.5a and 8.5e | hdr 5 stays **≥ 2.8 V** (no dip: the IO1–17 power-up glitches are low-going and only show against a pull-up) | [ ] |
 
 Record 8.5 in `hardware/blocks/edge_expansion/LESSONS.md`.
 
@@ -297,7 +309,7 @@ Setup: JP1 = REG, JP6 fitted (D6 = WAKE). Use the interactive REPL for y/n answe
 | # | Action | Expected | Pass | Covers |
 |---|---|---|---|---|
 | 9.1a | Self-test LED_1# pattern | **D5** blinks **5× at 1 Hz** (slow, even) | [ ] | G9 |
-| 9.1b | Self-test WAKE# pattern | **D6** shows **3 short + 1 long** pulse. If D5/D6 show the other's pattern, Q2 is rotated 180° (polarity checklist) | [ ] | G9 |
+| 9.1b | Self-test WAKE# pattern | **D6** shows **3 short + 1 long** pulse. If D5/D6 show the other's pattern, suspect the firmware GPIO table or the dev-carrier wiring, not Q2: a 180° Q2 is electrically equivalent | [ ] | G9 |
 | 9.1c | Scope J4 hdr 15 and hdr 17 during the patterns | low level **≤ 0.1 V**; hdr 17 high ≈ 3.3 V (10 k) | [ ] | G9 |
 | 9.1d | Card in reset (hold SW1) | D5 off, hdr 17 ≈ 3.3 V (gate pull-downs R27/R28 keep Q2 off) | [ ] | G9 |
 
@@ -307,7 +319,7 @@ Setup: JP1 = REG, JP6 fitted (D6 = WAKE). Use the interactive REPL for y/n answe
 |---|---|---|---|---|
 | 9.2a | JP5 open (pin 26 at the card 100 kΩ pull-up) | IO40 = **0** (radio allowed) | [ ] | G9 |
 | 9.2b | JP5 fitted (pin 26 to GND) | IO40 = **1** (radio kill). Self-test `radio kill honoured` (run with `wifi=True`) | [ ] | G9, contract §4.4 |
-| 9.2c | JP5 open. Wire J4 hdr 19 → **J5 hdr 5 (+1V8_REF)**: 1.8 V push-pull host | IO40 = **0**; hdr 19 reads 1.80–1.85 V (15 µA from R29 into the 1V8 divider) | [ ] | mcu_io-7 |
+| 9.2c | JP5 open. Wire J4 hdr 19 → **J5 hdr 5 (+1V8_REF)**: 1.8 V push-pull host. Read J5 hdr 5 before wiring, then hdr 19 wired | IO40 = **0**; hdr 19 = V(J5 hdr 5, unloaded) **+ 10–25 mV** (15 µA from R29 into the ~1.1 kΩ 1V8 divider). Record both readings | [ ] | mcu_io-7 |
 | 9.2d | Wire J4 hdr 19 → J5 hdr 1 (+3V3) | IO40 = 0 | [ ] | G9 |
 | 9.2e | **1.2 V host** (HSIC level), optional: bench supply 1.20 V, limit 10 mA, through 1 kΩ to J4 hdr 19 (JP1 = REG, bench otherwise unused) | IO40 = **0** expected (Q3a VGS(th) ≤ 1.0 V); record the hdr 19 voltage. A 1 here is a finding, not a stop | [ ] | mcu_io-7 |
 
@@ -323,8 +335,10 @@ decision.
 
 ## 10. Hosts listed in S-v2-1
 
-Run on each host: enumeration, `main(signature=False, wifi=True)` (no fixture, so A/B/C SKIP),
-and the bus proxy listed for that host.
+Run on each host: enumeration, `main(signature=False, wifi=True, outputs=False)` (no fixture, so
+A/B/C SKIP), and the bus proxy listed for that host. `outputs=False` keeps the script from pulsing
+WAKE_ON_WWAN# (pin 23) and LED_1# into a real host; use `outputs=True` only where the wake/LED
+behaviour is the thing under test (10.1f).
 
 - **EXP_OE proxy:** card bottom accessible. Run `main(signature=False, window=60)` and probe C13
   pad 1 in the window. Pass: **< 0.1 V** (Q1 on: host signature absent) while the firmware
@@ -342,12 +356,12 @@ Mallow wiring (`docs/pinmap.md` §1):
 | # | Action | Expected | Pass | Covers |
 |---|---|---|---|---|
 | 10.1a | Insert, boot Torizon, `dmesg` | Espressif CDC device (303a:4001 with MicroPython) | [ ] | S-v2-4 (§10.1) |
-| 10.1b | Self-test via the host's `mpremote` | all non-SKIP items PASS | [ ] | S-v2-4 |
+| 10.1b | Self-test via the host's `mpremote` | **no FAIL** (SKIP and CHECK items are expected; tick the CHECK items by hand) | [ ] | S-v2-4 |
 | 10.1c | Leakage at X16 pin 24 (EXP_4), card running with `window=600`: µA meter to Mallow GND and to Mallow 3.3 V; 1.8 V from an external source with a shared GND | **≤ 2 µA** | [ ] | S-v2-1 |
 | 10.1d | Same at the Mallow SIM-holder contacts for UIM_RESET/CLK/DATA/PWR, if fitted and reachable | ≤ 2 µA | [ ] | S-v2-1 |
 | 10.1e | EXP_OE proxy, if the card bottom is reachable | < 0.1 V | [ ] | S-v2-1 |
 | 10.1f | Sidebands: jumper X16.15 / X16.13 / X16.14 to free SoM GPIOs. **Check the X16 level in the Mallow datasheet first.** Read pins 10/23 with `gpioget` during the patterns; drive pin 26 with `gpioset …=0`, then release | 10/23 follow the patterns; IO40 = 1 while pin 26 is low, 0 when released | [ ] | G9 |
-| 10.1g | Same with the card unpowered (slot off), if Mallow can switch the slot | no back-feed: J3 pin 2 < 0.3 V | [ ] | G9 |
+| 10.1g | Same with the card unpowered (slot off), if Mallow can switch the slot | only the µA-level pull-up current of contract §5: J3 pin 2 ≤ 0.5 V (record) | [ ] | G9 |
 
 EXP_5..11 have no Mallow connection, so nothing can leak into Mallow there. Their leakage is
 covered by 7.2 on the dev carrier.
@@ -363,7 +377,7 @@ covered by 7.2 on the dev carrier.
 | # | Action | Expected | Pass | Covers |
 |---|---|---|---|---|
 | 10.2a | Boot with the card in the slot | BIOS accepts the card (state 6; R-v2-3 whitelist risk); the OS sees the CDC device if the slot routes USB 2.0 | [ ] | R-v2-3 |
-| 10.2b | `main(signature=False)` | no FAIL. The laptop's sideband pull-ups make 10/23/26 behave per 9.x | [ ] | G9 |
+| 10.2b | `main(signature=False, outputs=False)` | no FAIL. The laptop's sideband pull-ups make 10/23/26 behave per 9.x | [ ] | G9 |
 | 10.2c | EXP_OE proxy (card bottom faces the mainboard: usually not reachable) | < 0.1 V | [ ] | S-v2-1 proxy |
 | 10.2d | Any host misbehaviour (fans, rfkill, refusing to boot) | none | [ ] | — |
 
@@ -375,7 +389,7 @@ an adapter.
 | # | Action | Expected | Pass | Covers |
 |---|---|---|---|---|
 | 10.3a | Adapter output voltage at the card (J3 pin 2 and, if reachable, the VCC fingers) | 3.135–3.465 V. Above 3.44 V the card may OVLO-trip: record it as a real-world S-v2-3 case | [ ] | S-v2-3 |
-| 10.3b | Enumeration, self-test `signature=False` | PASS | [ ] | S-v2-4 |
+| 10.3b | Enumeration, self-test `signature=False, outputs=False` | no FAIL | [ ] | S-v2-4 |
 | 10.3c | CONFIG_2 / CONFIG_3 at R22 / R23 pad 2 | record. Any value > 1.0 V on either pin keeps the bus off | [ ] | S-v2-1 proxy |
 | 10.3d | EXP_OE proxy (adapter boards are open, so the card bottom is usually reachable) | **< 0.1 V** in the release window | [ ] | S-v2-1 proxy |
 
@@ -427,13 +441,13 @@ Card serial = base MAC: keep it on the local sheet only. In the repo, use board 
 
 | Symptom | Likely cause | First action |
 |---|---|---|
-| A or C FAIL (bus on while IO38 high) | Q3 rotated, R35 missing, IO38 not reaching Q3b | 1.3; probe IO38 (should be 3.3 V) and EXP_OE |
-| B FAIL with signature grounded | Q1 rotated or CONFIG_2/3 not at 0 V; TMUX SEL not at EXP_OE | measure R22/R23 pad 2 and C13; 1.1 |
+| A or C FAIL (bus on while IO38 high) | R35 missing, Q3 solder joint (pins 3/4/5), IO38 not reaching Q3b (a 180° Q3 is harmless) | probe IO38 (should be 3.3 V) and EXP_OE; loupe on Q3 |
+| B FAIL with signature grounded | Q1 solder joint, or CONFIG_2/3 not at 0 V; TMUX SEL not at EXP_OE | measure R22/R23 pad 2 and C13; 1.1 |
 | B ON with signature absent | Q1 / R22–R25 fault, or a host-side load pulling CONFIG low (review expansion-1) | measure CONFIG_2/3 at R22/R23 |
 | One loopback pair fails | RN or TMUX channel solder joint | loupe on that channel (pinmap §6.2) |
 | Cross-short reported | bridge between adjacent fingers, RN pads or TMUX pins | 2.9; loupe |
-| IO40 inverted or stuck | Q3 rotated (Q3a/Q3b swapped), R30 missing | 1.3; 2.6 |
-| D5/D6 patterns swapped | Q2 rotated 180° | 1.3 |
+| IO40 inverted or stuck | R30 or R29 missing/wrong, Q3 solder joints (a 180° Q3 is electrically equivalent) | 2.6; probe IO40 and pin 26; loupe on Q3 |
+| D5/D6 patterns swapped | firmware GPIO table (IO42/IO47) or dev-carrier wiring — not Q2 orientation | check `IO_LED1`/`IO_WAKE` in `v2_selftest.py` against pinmap §6.2 |
 | No trip by 3.60 V, or a trip outside the window | R31/R32 wrong value or tolerance; C16 missing | measure the OVLO tap: trip at 1.183–1.223 V |
 | Ramp too fast / bench in CC at power-up | C15 missing or wrong value | measure U6 pin 7 to GND |
 | Octal-PSRAM boot loop | wrong MicroPython variant | reflash the default ESP32_GENERIC_S3 |

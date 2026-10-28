@@ -11,7 +11,8 @@ EXP_OE is high ONLY when both sense pins are at 0 V (our carrier grounds
 them). Host pull-ups (1.8 V or 3.3 V) or a floating pin (card 1M pull-up)
 turn a FET on -> EXP_OE low -> all switches off. Card unpowered: 3V3 = 0,
 TMUX SEL internal 6M pull-downs -> off; host voltage only reaches insulated
-FET gates (no back-feed).
+FET gates; only the 1M CONFIG pull-ups conduct (<= ~3.3 uA per pin into the
+unpowered rail - RC1 delta review expansion-8/docs-8).
 
 RC1 (review contract_test-1): EXP_OE is also pulled low by Q3b in
 host_sideband (gate = IO38, R35 100k pull-up) until firmware drives IO38

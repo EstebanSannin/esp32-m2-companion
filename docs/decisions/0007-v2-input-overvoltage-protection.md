@@ -62,17 +62,32 @@ contract_test-7). Authoritative values: `hardware/blocks/power_3v3/power_3v3.py`
   DVDT open the slew was ~12–15 V/ms, i.e. 0.5–1 A of inrush into the
   ~65 µF card rail: at the current limit, and above the 200 mA slot
   soft-start that M.2 allows hosts (M.2 Rev 1.0 Table 39). With 2.2 nF:
-  ~0.7 V/ms typical, ≤ 1.3 V/ms at max IdVdt → inrush ≤ ~90 mA; the
-  slowest part ramps in up to ~13 ms. The ESP32 EN RC (10 kΩ / 1 µF) still
-  releases after the rail is up. Rated ≥ VIN + 5 V (datasheet Rec. Op.).
-- **OVLO filter: C16 1 nF 50 V** at the divider tap (review power-1). The
-  34 kΩ node had no capacitor and tOVLO is 1.2 µs with no deglitch, so
-  hot-plug ringing or the fast-trip input spike could trip it. τ ≈ 34 µs;
-  on a hard 3.3 → 5 V step the trip delay is ~4 µs and the rail rises only
-  ~0.1 V behind the current limit (stays < 3.6 V). Not above ~2.2 nF.
-- **OUT capacitor: C17 1 µF 25 V** on +3V3_EFUSE next to U6 (review
-  power-4; TI §8.3.1/§8.4.1 "≥ 1 µF close to OUT"). FB1 had put inductance
-  straight on the OUT pin.
+  ~0.7 V/ms typical, ≤ 1.3 V/ms at max IdVdt → inrush ≤ ~90 mA; over the
+  full IdVdt spread and C15 ±10 % the rail goes 0 → 3.3 V in **~2–16 ms
+  including the turn-on delay** (RC1 delta review power-rc1-2; "up to
+  ~13 ms" before). The ESP32 EN RC (10 kΩ / 1 µF) still releases after the
+  rail is up. Rated ≥ VIN + 5 V (datasheet Rec. Op.). X7R accepted (C0G
+  would only narrow the slew spread). C15 sits 0.32 mm from the V-scored
+  long edge (no room inboard of U6): accepted deviation — the 0402 runs
+  parallel to the edge, a crack fails safe (short = card stays off, open =
+  pre-RC1 fast ramp), and bring-up step 3.2 sees it.
+- **OVLO filter: C16 100 pF 50 V C0G** (C1546, 0402CG101J500NT) at the
+  divider tap (review power-1; value per RC2, below). The 34 kΩ node had no
+  capacitor and tOVLO is 1.2 µs with no deglitch, so hot-plug ringing or
+  the fast-trip input spike could trip it. τ ≈ 3.4 µs (still ~20× attenuation
+  of MHz ringing). On a hard step the trip delay is a few µs plus tOVLO
+  1.2 µs. **The worst case is a ramp**, not a
+  step: until OVLO trips the HFET is fully on, OUT follows IN, and the
+  current limit only settles in ~400 µs (tLIM), so the filter lag adds to
+  the trip voltage. With 100 pF the worst-case ramp model keeps +3V3 at
+  **≤ ~3.55 V** (< 3.6 V ESP32 abs max); see RC2 below.
+- **OUT capacitor: C17 1 µF 25 V** (CL05A105KA5NQNC, C52923) on +3V3_EFUSE
+  **at FB1 pad 1, ~4 mm of track from U6 OUT** (no closer spot on the
+  bottom side; review power-4; TI §8.3.1/§8.4.1 "≥ 1 µF close to OUT").
+  FB1 had put inductance straight on the OUT pin. The extra ~3 nH matters
+  only on fast-trip / hot-plug edges (RC1 delta review power-rc1-3 /
+  layout-5: accepted). X5R 0402 keeps ~0.7–0.8 µF at 3.3 V; 54 µF of bulk
+  sit just behind FB1 (power-rc1-4: accepted).
 - **OVLO recovery = slot power-cycle (accepted).** Trip 3.44–3.57 V;
   release 3.13–3.25 V at IN (VOV(F) 1.076–1.116 V × 2.912). At a nominal
   3.30 V the OVLO pin sits at 1.133 V, above the maximum VOV(F), so after
@@ -99,3 +114,22 @@ contract_test-7). Authoritative values: `hardware/blocks/power_3v3/power_3v3.py`
   not the 150 mΩ bead named in Context. Drop at 0.5 A including socket
   contacts and copper: ~65–70 mV, i.e. ~3.065 V at the module from a
   3.135 V host (review power-5).
+
+## Amendment (RC2, 2026-10-28, owner): OVLO filter 100 pF C0G
+
+Owner decision after the RC1 delta review ("accept your recommendations";
+`docs/review/v2_rc1_delta_review.md` power-rc1-1, major). Hardware commit
+"v2 RC2: OVLO filter 100 pF C0G".
+
+- **C16 1 nF X7R → 100 pF C0G** (C1546, 0402CG101J500NT, Basic). With 1 nF
+  (τ 34 µs) an overvoltage **ramp** of tens of µs (a carrier or regulator
+  fault) lifted +3V3 to ~3.7–3.9 V before the trip: the HFET stays on and
+  the current limit settles in ~400 µs, so the filter lag (ramp rate × τ)
+  adds to the 3.561 V maximum trip. The "~4 µs trip, stays < 3.6 V" claim of
+  the RC1 amendment held only for a hard step on a typical part. With
+  100 pF (τ 3.4 µs) the worst-case ramp model peaks at ~3.55 V; a hard step
+  trips after a few µs plus tOVLO 1.2 µs.
+- The review's X7R remark on C16 (power-rc1-4) is moot: the part is C0G.
+- Bring-up: step 4.5 of `docs/v2-test-procedure.md` now also asks for a
+  50–100 µs ramp from 3.3 V to 5 V, scoping +3V3 at the module.
+- Values: `hardware/blocks/power_3v3/power_3v3.py` (authoritative).

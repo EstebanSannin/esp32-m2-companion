@@ -253,8 +253,12 @@ review. Never proceed past a gate without explicit approval.
         - hardware carrier signature: CONFIG_2 (75) and CONFIG_3 (1) both
           at 0 V (Q1);
         - firmware consent: IO38 driven LOW (Q3b hold-off, R35 100 kΩ
-          pull-up). IO38 is high through every ESP32 reset and ROM boot, so
-          the ESP32 power-up GPIO glitches never reach a carrier.
+          pull-up). IO38 is high through power-up, every chip reset
+          (EN/PERST#, brown-out) and ROM boot, so the ESP32 power-up GPIO
+          glitches never reach a carrier. Software/watchdog resets are
+          CPU-only on the ESP32-S3: firmware re-holds IO38 (contract
+          §4.3.1 [FW], to be confirmed at S-v2-2; RC1 delta review
+          bus_enable-1).
       - Firmware alone can never enable the bus on a host without the
         signature (Q1 wins); the signature alone never enables it while the
         ESP32 is in reset or has not released IO38.
@@ -263,8 +267,10 @@ review. Never proceed past a gate without explicit approval.
         presence is read as the ID-EEPROM ACK after release (RC1).
     - **G9.** Host-facing standard sidebands, active on every host:
       LED_1# (10) and WAKE_ON_WWAN# (23) as open-drain, W_DISABLE2# (26)
-      as an input (radio kill). Voltage-agnostic, with no back-feed into an
-      unpowered card.
+      as an input (radio kill). Voltage-agnostic; no back-feed through the
+      NMOS cells. The card pull-ups pass ≤ 33 µA (pin 26, 100 kΩ) and
+      ≤ 3.3 µA (pins 75/1, 1 MΩ) into an unpowered card rail
+      (`docs/carrier-interface.md` §5; RC1 delta review docs-8).
     - **G10.** Declare CONFIG **state 6** (21 + 69 to GND), replacing v1's
       state 15.
     - **G11.** Input overvoltage protection.
@@ -276,9 +282,13 @@ review. Never proceed past a gate without explicit approval.
         card **off until the slot is power-cycled** (rail to 0 V). Accepted
         by the owner and documented. The restart after an OVLO trip bypasses
         the dV/dt soft-start and is current-limited (≤ 1.15 A).
-      - OVLO node filtered (C16 1 nF, τ ≈ 34 µs) against hot-plug ringing;
-        cold-start inrush soft-started by C15 2.2 nF (≤ ~90 mA, ramp up to
-        ~13 ms; M.2 hosts may soft-start the slot at 200 mA) (RC1).
+      - OVLO node filtered (C16 100 pF C0G, τ ≈ 3.4 µs; RC2 2026-10-28,
+        was 1 nF) against hot-plug ringing. Hard step: trip after a few µs
+        plus tOVLO 1.2 µs; the worst case is an overvoltage ramp, which the
+        worst-case model keeps at +3V3 ≤ ~3.55 V (RC1 delta review
+        power-rc1-1). Cold-start inrush soft-started by C15 2.2 nF
+        (≤ ~90 mA, 0 → 3.3 V in ~2–16 ms incl. the turn-on delay; M.2 hosts
+        may soft-start the slot at 200 mA) (RC1).
       - Normal operation from 3.135 V.
   - **§3 non-goals, changed:**
     - "No level shifting beyond 3.3 V IO" becomes: the card tolerates any
@@ -326,7 +336,10 @@ review. Never proceed past a gate without explicit approval.
       self-test (loopback pairs on the dev carrier J_EXP). Bus **off** with
       the signature grounded and IO38 high. EXP_4 and EXP_2 scoped against
       PERST# / EN: no power-up or reset glitch reaches the edge *(RC1:
-      contract_test-1, expansion-5)*.
+      contract_test-1, expansion-5)*. Also confirms the bus-off times
+      (~20 µs after IO38 high, ~0.3 ms after signature removal) and whether
+      a software / watchdog reset (CPU-only reset on ESP32-S3) leaves IO38
+      driven *(RC1 delta review bus_enable-1)*.
     - S-v2-3. OVP trips within 3.44–3.57 V on a bench supply and the card
       survives 5 V. After a trip, with the rail back at 3.30 V, the card
       **stays off** (documented behaviour); it restarts after the rail is

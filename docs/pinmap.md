@@ -302,13 +302,17 @@ expansion-5; ADR 0006 RC1 amendment):
   IO38 is no longer connected to EXP_OE.
 - IO38 high, or IO38 undriven (power-up, EN/PERST# reset, ROM boot: IE-only, no pull per [S3]
   Table 2-1, no glitch per Table 2-2) → Q3b on → EXP_OE low → all 12 TMUX1511 channels off.
-  Firmware drives IO38 high as its first init step, which also covers software/WDT resets
-  (whether those reset the pin is to be confirmed at bring-up, SPEC S-v2-2).
+  Software/WDT resets are CPU-only resets on the ESP32-S3 and most likely leave IO38 driven
+  (**[FW], to be confirmed at bring-up, SPEC S-v2-2**; RC1 delta review bus_enable-1), so
+  firmware drives IO38 high in a shutdown handler before any software restart and as its
+  first init step (MicroPython bring-up: `v2/firmware/boot.py`).
 - Firmware drives IO38 **LOW** to release. The bus then turns on only if the carrier signature is
-  also present (Q1 off): **bus ON = carrier AND firmware**. EXP_OE crosses VIH 1.2 V ~4.6 ms
-  (≤ 5.1 ms) after release; wait ≥ 50 ms before probing the ID EEPROM.
+  also present (Q1 off): **bus ON = carrier AND firmware**. EXP_OE crosses VIH 1.2 V ~4.5 ms
+  after release (about 1–6.5 ms over C13 / rail tolerance and SEL leakage); wait **≥ 10 ms**
+  before probing the ID EEPROM (contract §4.3.3; the bring-up self-test uses 60 ms).
 - Driving IO38 push-pull high is safe (gate load only). No EXP_OE readback any more: carrier
-  presence = ID-EEPROM ACK at 0x50. If there is no ACK or the CRC fails, drive IO38 high again.
+  presence = ID-EEPROM ACK at 0x50. If there is no ACK or the CRC fails, drive IO38 high again
+  (unless the host overrides, e.g. the dev carrier without EEPROM).
 - Consequence for §6.1: the IO18 high glitch and the IO1–17 low glitches stay behind open switches
   on every power-up and EN/PERST# reset, not only at cold power-up.
 

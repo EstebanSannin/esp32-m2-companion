@@ -10,6 +10,7 @@ connector shows its pad numbers; LEDs get explicit '+' (anode) / 'K'.
 Page 2: outline with key dimensions, hole table (PTH / NPTH), fab notes.
 """
 
+import ast
 import sys
 from html import escape
 from pathlib import Path
@@ -22,7 +23,16 @@ HERE = Path(__file__).resolve().parent.parent
 PCB = HERE / "kicad" / "esp32_m2_companion.kicad_pcb"
 ERR = pcbnew.FromMM(0.005)
 SCALE = 3.2
-POLAR = {"D1", "D2", "D3", "D4", "U1", "U2", "J3", "J4"}
+# Every part whose pin 1 the final DFM checks (fab/polarity_checklist.md):
+# the 180-symmetric v2 lands (U3-U6, Q1-Q3, RN1-RN3) need pad numbers most
+# (RC1 review dfm-2, delta review dfm-r1).
+POLAR = {"D1", "D2", "D3", "D4", "U1", "U2", "J3", "J4",
+         "U3", "U4", "U5", "U6", "Q1", "Q2", "Q3", "RN1", "RN2", "RN3"}
+# Order settings the board file cannot carry (fab/README.md, ADR 0008). The
+# layer count is checked against the board below.
+STACKUP = (6, "6 layers SIG/GND/SIG/SIG/PWR/SIG, 0.80 mm, JLC06081H-2116")
+VIA_FINISH = "Vias: Epoxy Filled & Capped (via-in-pad) - NOT tented"
+GEN_FAB = HERE / "tools" / "gen_fab.py"
 
 
 def mm(v):
@@ -136,6 +146,43 @@ class View:
         return "\n".join(self.out)
 
 
+def jlc_rot():
+    """JLC_ROT from gen_fab.py, read as data (no import: gen_fab needs the
+    uv venv, this runs under KiCad's python)."""
+    tree = ast.parse(GEN_FAB.read_text())
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and any(
+                getattr(t, "id", None) == "JLC_ROT" for t in node.targets):
+            return ast.literal_eval(node.value)
+    raise SystemExit("asm_view: JLC_ROT not found in gen_fab.py")
+
+
+def board_facts(b):
+    """Counts the fab notes quote, derived from the board (never typed)."""
+    fps = list(b.GetFootprints())
+    dnp = sorted(f.GetReference() for f in fps if f.IsDNP())
+    # J1 is the gold-finger edge "connector": copper, not a placed part
+    placed = [f for f in fps if not f.IsDNP() and f.GetReference() != "J1"
+              and not f.GetAttributes() & pcbnew.FP_EXCLUDE_FROM_POS_FILES
+              and not f.GetAttributes() & pcbnew.FP_EXCLUDE_FROM_BOM]
+    tps = sorted(f.GetReference() for f in fps if f.GetReference().startswith("TP"))
+    sides = {"top": sorted(f.GetReference() for f in placed if not f.IsFlipped())}
+    vias = {}
+    drills = []
+    for t in b.GetTracks():
+        if t.GetClass() == "PCB_VIA":
+            k = (round(mm(t.GetWidth(pcbnew.F_Cu)), 2), round(mm(t.GetDrillValue()), 2))
+            vias[k] = vias.get(k, 0) + 1
+            drills.append(mm(t.GetDrillValue()))
+    for f in fps:
+        for p in f.Pads():
+            if p.GetDrillSize().x > 0:
+                drills.append(mm(p.GetDrillSize().x))
+    return {"dnp": dnp, "placed": len(placed), "tps": tps, "top": sides["top"],
+            "vias": vias, "min_drill": min(drills) if drills else 0,
+            "layers": b.GetCopperLayerCount()}
+
+
 def page(title, rev, date, body, sheet, notes):
     W, H = 297, 210
     tb = (f'<g font-family="sans-serif">'
@@ -155,6 +202,10 @@ def page(title, rev, date, body, sheet, notes):
 def main():
     out, title, rev, date = Path(sys.argv[1]), sys.argv[2], sys.argv[3], sys.argv[4]
     b = pcbnew.LoadBoard(str(PCB))
+    fx = board_facts(b)
+    if fx["layers"] != STACKUP[0]:
+        raise SystemExit(f"asm_view: board has {fx['layers']} copper layers, "
+                         f"STACKUP says {STACKUP[0]} - update STACKUP")
     top = View(b, False, 18, 18).draw()
     bot = View(b, True, 18 + 22 * SCALE + 14, 18).draw()
     lab = ('<g font-family="sans-serif" font-size="4" font-weight="bold">'
@@ -167,8 +218,12 @@ def main():
              "D1/D2 BAT54A: pin 3 = common anode (card side).",
              "U1 USBLC6: pin 1 = I/O1 (D+ in), silk triangle.",
              "J3 pin 1 = GND (Qwiic); J4 pin 1 = TXD0.",
-             "DNP (red X): R5 R6 (I2C pull-ups), C8 C9 (USB SI).",
-             "TP1-6: bare pads, not placed (silk: function).",
+             "U3-U5 pin 1 = SEL1, U6 pin 1 = EN/UVLO (silk dot);",
+             "  U1/U3-U6 lands are 180-symmetric: check pin 1.",
+             "Q1-Q3 pin 1 = S1 (silk triangle; 180 = equivalent).",
+             "DNP (red X): " + (" ".join(fx["dnp"]) or "none") + ".",
+             (" ".join(fx["tps"]) or "no TPs")
+             + ": bare pads, not placed (silk: function).",
              "Bottom view mirrored like JLC's bottom preview:",
              "N/S (screw / fingers) is invariant, E/W swap.",
              "Verify every polarized part against the JLC",
@@ -225,15 +280,25 @@ def main():
     for i, ((kind, d), n) in enumerate(sorted(holes.items())):
         table.append(f'<text x="150" y="{37 + 5*i}">{kind:8} Ø{d:.2f} mm × {n}</text>')
     table.append("</g>")
-    fab_notes = ["4 layers SIG/GND/PWR/SIG, 0.80 mm, stackup JLC04081H-3313",
+    rot = jlc_rot()
+    unverified = sorted(k for k, v in rot.items() if v[1] is None)
+    via_txt = ", ".join(f"{n} x {d:.2f}/{h:.2f}"
+                        for (d, h), n in sorted(fx["vias"].items(), reverse=True))
+    fab_notes = [STACKUP[1] + f" (board: {fx['layers']} Cu)",
                  "ENIG; hard-gold fingers; NO bevel (board < 50 mm):",
                  "  hand-chamfer the leading edge before first insertion",
                  "Mounting notch: routed in the outline - no drill,",
                  "  no plating: do NOT select castellated holes",
-                 "Min track/space 0.127 mm (5 mil), min drill 0.30 mm",
-                 "Vias tented both sides",
-                 "Assembly: both sides; 22 placed parts; DNP R5 R6 C8 C9",
-                 "CPL: D3/D4 +180° vs KiCad (JLC_ROT) - VERIFY PREVIEW"]
+                 f"Min track/space 0.127 mm (5 mil), min drill {fx['min_drill']:.2f} mm",
+                 f"Vias ({sum(fx['vias'].values())}): {via_txt}",
+                 "  (pad/drill mm; 0.35/0.2 = JLC 0.2mm/(0.3/0.35mm) option)",
+                 VIA_FINISH,
+                 f"Assembly: both sides; {fx['placed']} placed parts; "
+                 f"DNP {' '.join(fx['dnp']) or 'none'}",
+                 "  top: " + " ".join(fx["top"]),
+                 "CPL rotations: gen_fab.py JLC_ROT (bottom = library +180);",
+                 f"  {len(unverified)} offsets not yet verified in JLC's final DFM",
+                 "  - VERIFY with fab/polarity_checklist.md"]
     (out / "fab.svg").write_text(page(
         "ESP32-M2-COMPANION — fabrication", rev, date,
         "\n".join(v.out) + dims + "".join(table), "Sheet 2/2 · fab drawing", fab_notes))

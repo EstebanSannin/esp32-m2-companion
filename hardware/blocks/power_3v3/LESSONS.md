@@ -22,8 +22,8 @@
   100k/52.3k the release (3.13–3.25 V) is below 3.3 V, so any trip keeps
   the card off until the slot is power-cycled. Accepted and documented —
   but say "latched until power-cycle", never "auto-recovers". Put an RC on
-  a high-impedance OVLO tap (1 nF here, τ 34 µs): the comparator has no
-  deglitch (tOVLO 1.2 µs).
+  a high-impedance OVLO tap (100 pF C0G here, τ ≈ 3.4 µs since RC2; RC1 had
+  1 nF): the comparator has no deglitch (tOVLO 1.2 µs).
 - 2026-10-28 (v2 RC1 review power-3/K1): never leave an eFuse DVDT pin open
   in front of tens of µF: the default slew drew 0.5–1 A, at the current
   limit and above a 200 mA M.2 slot soft-start. Size CdVdt over the full
@@ -36,3 +36,15 @@
   TPS259474L is a latch-off circuit breaker with PG/PGTH on pins 3/4.
 - Note: the 2026-08-28 budget above uses the Rev-B 150 mΩ bead; v2 FB1 is
   ≤ 50 mΩ (current budget: ADR 0007 RC1 amendment, risks R-v2-4).
+- 2026-10-28 (v2 RC1 delta review power-rc1-1): size an OVLO filter for an
+  overvoltage RAMP, not only a hard step. Until OVLO trips the HFET is fully
+  on and OUT follows IN (the current limit settles in ~400 µs, tLIM), so the
+  filter lag (≈ ramp rate × τ) adds straight to the rail peak. 1 nF (τ 34 µs)
+  let a tens-of-µs ramp lift +3V3 to ~3.7–3.9 V; 100 pF (τ 3.4 µs) keeps the
+  worst-case model at ~3.55 V. With 0.1 % resistors the no-filter margin is
+  only ~40 mV (3.561 V max trip vs 3.6 V), so any τ above a few µs eats it.
+- 2026-10-28 (v2 RC1 delta review power-rc1-2/-3): quote a soft-start ramp
+  over the full IdVdt spread AND the CdVdt tolerance plus the turn-on delay
+  (2.2 nF: 0 → 3.3 V in ~2–16 ms), or the bring-up window fails good parts.
+  Describe a decoupling cap by its measured track length to the pin (C17:
+  at FB1 pad 1, ~4 mm from U6 OUT), never "next to" by default.

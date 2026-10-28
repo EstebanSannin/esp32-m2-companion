@@ -14,7 +14,8 @@ Writes <out_dir>/polarity.json and <out_dir>/polarity_checklist.md.
 Board directions (invariant under the bottom-side mirror in JLC's viewer):
   N = toward the top / screw-notch edge (smaller y)
   S = toward the M.2 gold fingers (larger y)
-  E/W are given too, but the bottom-side preview MIRRORS them.
+  E/W are TOP-VIEW directions (KiCad +x = E, also for bottom parts seen
+  through the board); the bottom-side preview MIRRORS them.
 """
 
 import json
@@ -27,11 +28,22 @@ import pcbnew
 HERE = Path(__file__).resolve().parent.parent
 PCB = HERE / "kicad" / "esp32_m2_companion.kicad_pcb"
 
+# SOT-563 cross-drained pair (1 S1 / 2 G1 / 3 D2 / 4 S2 / 5 G2 / 6 D1): 180
+# maps pin k to pad k+3, so each gate keeps its own drain (RC1 review
+# mcu_io-4, delta review dfm-r3 / docs-1).
+Q_NOTE = ("pin 1 = S1 (SSM6N56FE ES6; pin-1 mark, silk triangle) - 180 off is "
+          "electrically equivalent (cross-drained: each gate keeps its own "
+          "drain; pad 4 is GND too, so the GND cue cannot tell); only a 90 "
+          "error fails (pads would not land) - record, do not hold the order "
+          "on 180")
+
 # ref prefix / footprint -> what pin 1 means
 PIN1_MEANING = {
     "D1": "pin 1 = cathode-1 (BAT54A common-anode SOT-23: pins 1,2 = K, 3 = A)",
     "D2": "pin 1 = cathode-1 (BAT54A common-anode SOT-23: pins 1,2 = K, 3 = A)",
-    "U1": "pin 1 = I/O1 (USBLC6-2SC6; package pin-1 mark)",
+    "U1": "pin 1 = I/O1 (USBLC6-2SC6; package pin-1 mark). Land is "
+          "180-symmetric: 180 off puts GND (pin 2) on +3V3 and VBUS (pin 5) "
+          "on GND = dead card - must be right",
     "J3": "pin 1 = GND (Qwiic order GND, 3V3, SDA, SCL)",
     "J4": "pin 1 = TXD0",
     "U2": "module pin 1 = GND (antenna end toward N)",
@@ -40,9 +52,9 @@ PIN1_MEANING = {
     "U4": "pin 1 = SEL1 (TMUX1511 RSV; package pin-1 dot)",
     "U5": "pin 1 = SEL1 (TMUX1511 RSV; package pin-1 dot)",
     "U6": "pin 1 = EN/UVLO (TPS259470A RPW; L-shaped corner pad, pin-1 dot)",
-    "Q1": "pin 1 = S1 (SSM6N56FE ES6; pin-1 mark)",
-    "Q2": "pin 1 = S1 (SSM6N56FE ES6; pin-1 mark) - 180 off swaps LED_1#/WAKE#",
-    "Q3": "pin 1 = S1 (SSM6N56FE ES6; pin-1 mark)",
+    "Q1": Q_NOTE,
+    "Q2": Q_NOTE,
+    "Q3": Q_NOTE,
     "RN1": "array: only the 90 deg matters (pads must land; 4 x 220R)",
     "RN2": "array: only the 90 deg matters (pads must land; 4 x 220R)",
     "RN3": "array: only the 90 deg matters (pads must land; 4 x 220R)",
@@ -136,8 +148,11 @@ def main(out):
     with open(out / "polarity_checklist.md", "w") as f:
         f.write("# Polarity / pin-1 checklist (generated - verify each row "
                 "against the JLC placement preview BEFORE ordering)\n\n"
-                "N = toward the screw-notch edge, S = toward the gold fingers. "
-                "Bottom-side previews are mirrored: trust N/S, not E/W.\n\n"
+                "Corners are N/S plus TOP-VIEW E/W: N = toward the screw-notch "
+                "edge, S = toward the gold fingers, E/W as seen from the top "
+                "side (bottom parts seen through the board). JLC's bottom-side "
+                "preview is seen from below, so E/W appear swapped there: "
+                "N/S never change, E/W flip on bottom parts.\n\n"
                 "| Ref | Side | Value | Must see in preview | Net | Preview OK? |\n"
                 "|---|---|---|---|---|---|\n")
         for r in rows:
