@@ -1,5 +1,7 @@
 # Bring-up log — v1.0 board
 
+v2.0 Rev A cards: step-by-step bring-up and acceptance in [`v2-test-procedure.md`](v2-test-procedure.md) (self-test firmware: `v2/firmware/`).
+
 Board: v1.0 as-built (JLCPCB, 5 pcs assembled). Unit under test = the
 hand-repaired sample (D− jumpered finger-pin-9 → U1 pin 3; see
 `hardware/blocks/m2_keyb_edge/LESSONS.md` for why the notch milling severed it).
@@ -63,7 +65,7 @@ aborts at startup → boot loop:
 `E octal_psram: PSRAM chip is not connected, or wrong PSRAM line mode`.
 The board is fine (MicroPython already proved the quad PSRAM works). Rebuilt the
 exact v0.1.2 tag with the one-line change `CONFIG_SPIRAM_MODE_OCT` →
-`CONFIG_SPIRAM_MODE_QUAD` (built on the m920x host via the project's
+`CONFIG_SPIRAM_MODE_QUAD` (built on a Linux build host via the project's
 `espressif/idf:release-v5.4` Docker pipeline, no-secrets/clean tree), merged to a
 `0x0` image, flashed.
 
@@ -83,7 +85,7 @@ the populated part.)
 
 ## 2026-10-05 — LED fault isolated: open LED, drive circuit proven good
 
-Second (new, virgin) board on the beerus bench. Both LEDs (D3 green, D4 red)
+Second (new, virgin) board on a second bench. Both LEDs (D3 green, D4 red)
 dark, clearly visible and genuinely off — same as the first unit. Ruled out, in
 order: reversed polarity (design puts anode toward the M.2 edge, matches the
 owner's diode-mode "+"), missing parts (R3/R4/D3/D4 all in the CPL), emit
@@ -151,7 +153,7 @@ change needed.
 
 Owner decision 2026-10-06: the unit serial = ESP32-S3 base MAC, printed as the
 module's Data Matrix (format `<6-digit prefix><MAC>`, e.g. a v1 module read
-`132611` + `3C0F027321E4`). Inferred from one module whose MAC could not be
+`<prefix>` + `<12-hex MAC>`). Inferred from one module whose MAC could not be
 read (v1 board without the D− jumper). **Confirm once on a single unit:**
 
 1. Scan the module Data Matrix (Data Matrix-capable app; phone camera QR

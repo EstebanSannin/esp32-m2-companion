@@ -138,7 +138,7 @@ ESP-IDF (latest stable) project in `firmware/`:
 
 ## 8. Toolchain & environment
 
-- Work happens on the owner's server (`m920x`), account already provisioned.
+- Work happens on the owner's build server, account already provisioned.
   Claude may install tools (apt/pip) as needed — keep an
   `docs/environment.md` log of everything installed.
 - **KiCad 9** + `kicad-cli` for headless ERC/DRC/exports.
@@ -247,10 +247,20 @@ review. Never proceed past a gate without explicit approval.
   - **New goals:**
     - **G8.** Carrier expansion bus: 12 lines (EXP_0..11 on M.2 pins 30, 32,
       34, 36, 40, 59–65), 3.3 V, bidirectional.
-      - Enabled **only in hardware**, and only when CONFIG_2 (75) and
-        CONFIG_3 (1) are both at 0 V.
+      - **Bus ON = carrier AND firmware** (RC1 2026-10-28, review
+        contract_test-1; replaces "enabled only in hardware … independent of
+        firmware"). Two series conditions, either one keeps it off:
+        - hardware carrier signature: CONFIG_2 (75) and CONFIG_3 (1) both
+          at 0 V (Q1);
+        - firmware consent: IO38 driven LOW (Q3b hold-off, R35 100 kΩ
+          pull-up). IO38 is high through every ESP32 reset and ROM boot, so
+          the ESP32 power-up GPIO glitches never reach a carrier.
+      - Firmware alone can never enable the bus on a host without the
+        signature (Q1 wins); the signature alone never enables it while the
+        ESP32 is in reset or has not released IO38.
       - High-Z (≤ 2 µA, 0–3.6 V) when disabled or unpowered.
-      - Independent of firmware.
+      - IO38 is an output (hold-off), no longer an EXP_OE readback; carrier
+        presence is read as the ID-EEPROM ACK after release (RC1).
     - **G9.** Host-facing standard sidebands, active on every host:
       LED_1# (10) and WAKE_ON_WWAN# (23) as open-drain, W_DISABLE2# (26)
       as an input (radio kill). Voltage-agnostic, with no back-feed into an
@@ -259,8 +269,16 @@ review. Never proceed past a gate without explicit approval.
       state 15.
     - **G11.** Input overvoltage protection.
       - Card stays off, undamaged, for supply > ~3.49 V (trip window
-        3.44–3.57 V, ADR 0007 GATE V1 amendment) up to ~18 V (OVLO pin abs max; GATE V2 correction); auto-recovers
-        below ~3.17 V.
+        3.44–3.57 V, ADR 0007 GATE V1 amendment) up to ~18 V (OVLO pin abs max; GATE V2 correction).
+      - **Recovery (RC1 2026-10-28, review power-1; replaces "auto-recovers
+        below ~3.17 V"):** the OVLO release is 3.13–3.25 V at the slot rail
+        (VOV(F) × 2.912). On a nominal 3.3 V host a trip therefore keeps the
+        card **off until the slot is power-cycled** (rail to 0 V). Accepted
+        by the owner and documented. The restart after an OVLO trip bypasses
+        the dV/dt soft-start and is current-limited (≤ 1.15 A).
+      - OVLO node filtered (C16 1 nF, τ ≈ 34 µs) against hot-plug ringing;
+        cold-start inrush soft-started by C15 2.2 nF (≤ ~90 mA, ramp up to
+        ~13 ms; M.2 hosts may soft-start the slot at 200 mA) (RC1).
       - Normal operation from 3.135 V.
   - **§3 non-goals, changed:**
     - "No level shifting beyond 3.3 V IO" becomes: the card tolerates any
@@ -294,21 +312,45 @@ review. Never proceed past a gate without explicit approval.
     - **GATE V4:** fab package (`make fab` exit 0), cost check.
   - **§10 success criteria added for v2:**
     - S-v2-1. Expansion bus measured **off** (≤ 2 µA per EXP pin at 0 /
-      1.8 / 3.3 V) on Mallow, a laptop WWAN slot, an M.2→USB adapter, and
-      the dev carrier with its signature jumpers set to open / 1.8 V / 3.3 V
-      pull-up. Also with the card unpowered.
-    - S-v2-2. Bus **on** with the signature grounded on the dev carrier;
-      every EXP line proven both ways by a firmware self-test.
-    - S-v2-3. OVP trips within 3.44–3.57 V on a bench supply, the card
-      survives 5 V, and it recovers below ~3.17 V.
+      1.8 / 3.3 V) where the EXP pins are accessible: the dev carrier with
+      its signature jumpers set to open / 1.8 V / 3.3 V pull-up, Mallow
+      (X16), and with the card unpowered. Firmware releases the hold-off
+      (IO38 low) for this test, so it proves the hardware signature gate
+      alone. On closed hosts (laptop WWAN slot with the cover off, M.2→USB
+      adapter) the proxy is EXP_OE measured low at C13 with IO38 released,
+      plus CONFIG_2/3 measured. *(RC1 2026-10-28, review contract_test-5:
+      enclosed laptop bays do not fit (R11) and an adapter exposes no EXP
+      pins; the former IO38 readback proxy no longer exists.)*
+    - S-v2-2. Bus **on** with the signature grounded on the dev carrier
+      **and** IO38 driven low; every EXP line proven both ways by a firmware
+      self-test (loopback pairs on the dev carrier J_EXP). Bus **off** with
+      the signature grounded and IO38 high. EXP_4 and EXP_2 scoped against
+      PERST# / EN: no power-up or reset glitch reaches the edge *(RC1:
+      contract_test-1, expansion-5)*.
+    - S-v2-3. OVP trips within 3.44–3.57 V on a bench supply and the card
+      survives 5 V. After a trip, with the rail back at 3.30 V, the card
+      **stays off** (documented behaviour); it restarts after the rail is
+      taken to 0 V and back (slot power-cycle). Bench current limit
+      ≥ 1.2 A for the restart step (current-limited start, bypasses dV/dt).
+      *(RC1 2026-10-28, review power-1 / contract_test-5; replaces "recovers
+      below ~3.17 V".)*
     - S-v2-4. All v1 success criteria (§10) still pass.
   - **§11 risks added:**
     - R-v2-1: 2242/6L routability (fallback 2252/4L, ADR 0008).
     - R-v2-2: newer paywalled M.2 revisions may redefine pins used by EXP.
     - R-v2-3: hosts that whitelist by CONFIG (e.g. Dell BIOS) may treat
       state 6 differently from state 15.
-    - R-v2-4: only ~40 mV of supply margin on a 3.135 V host.
+    - R-v2-4: only ~40 mV of supply margin on a 3.135 V host (RC1: ~65 mV
+      at 0.5 A with socket contacts and copper counted, review power-5).
     - R-v2-5: all new silicon is JLC Extended (≈ +$3.5/board @100 incl. 6L).
+  - **RC1 changes (2026-10-28, owner: "go with your recommendations, approve
+    the change list")** after the release-candidate review
+    (`docs/review/v2_rc1_design_review.md`): G8 bus enable = carrier AND
+    firmware (Q3b/IO38 hold-off); G11 OVLO filter, dV/dt soft-start, eFuse
+    OUT capacitor, recovery = slot power-cycle; W_DISABLE2# card pull-up
+    100 kΩ (M.2 §3.1.11.3: 100–200 kΩ); no approved eFuse second source;
+    S-v2-1..3 rewritten. Details: ADR 0006 / ADR 0007 RC1 amendments,
+    `docs/review-findings.md`.
 
 ---
 

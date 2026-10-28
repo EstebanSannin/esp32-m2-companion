@@ -109,3 +109,18 @@ SPEC A3 §9: *GATE V3 = placement + routing of all new nets DRC-clean, then layo
 - **Still to confirm:** lens + polarity in JLC's final DFM on the physical part (GATE V4).
 - **Other directional parts in v2:** none. J3/J4 take the Rev B verified offsets (J4 +180).
 
+
+---
+
+## RC1 status note (2026-10-28, owner-approved; appended — the approved text above is kept as reviewed)
+
+Power facts above that the release-candidate review (`docs/review/v2_rc1_design_review.md`)
+changed:
+- **eFuse row:** the U6 group now also holds C15 (2.2 nF DVDT), C16 (1 nF on the OVLO tap) and
+  C17 (1 µF on +3V3_EFUSE between U6 OUT and FB1) — review power-1/3/4, ADR 0007 RC1 amendment.
+- **Gold fingers:** the GND pour no longer fills the gaps between fingers (review layout-3), and
+  GND stitching vias were added (layout-4).
+- **Item 2 (JLC rotations):** the bottom-side rule is now "JLC library rotation + 180°"
+  (review dfm-1). CPL: U3 0, U4/U5 90, Q1–Q3 90, U6 0, U1 270 (`gen_fab.py` `JLC_ROT`).
+- OVLO after a trip: the card stays off on a nominal 3.3 V host until the slot is power-cycled
+  (release 3.13–3.25 V); U6 has no approved second source.

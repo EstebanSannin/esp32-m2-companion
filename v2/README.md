@@ -24,6 +24,7 @@ decisions.
 | `research/ovp_and_prices.md` | Input OVP options + v2 part prices (ADR 0007) |
 | `research/m2_pins_research.md` | What every Key-B pin means across spec revisions, modems and real hosts (Dell, Waveshare, Osmocom, Mallow…) |
 | `research/parts_research.md`, `research/dual_nmos_research.md` | LCSC/JLC part selection with datasheet-verified specs; PDFs in `research/datasheets/` |
+| `firmware/` | MicroPython bring-up self-test for v2.0 Rev A cards, used by `docs/v2-test-procedure.md` |
 | `probe/` | Routing feasibility probe on 2242 (4 L / 6 L): `strip.py` → `probe.py --no-route` → `gridprobe.py`, judged by KiCad DRC |
 
 Re-run the probe (KiCad bundled python, from repo root):

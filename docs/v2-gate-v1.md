@@ -158,3 +158,20 @@ Firmware refuses functions a line can't do (e.g. analog on a non-ADC line).
 
 On approval: `docs/carrier-interface.md` items move from *proposed* to *fixed*. Then GATE V2
 (schematic).
+
+---
+
+## RC1 status note (2026-10-28, owner-approved; appended — the approved text above is kept as reviewed)
+
+The release-candidate review (`docs/review/v2_rc1_design_review.md`) changed these GATE V1 items:
+- **§1.1 `IO38 (readback)`:** IO38 no longer reads EXP_OE. It drives Q3b (drain = EXP_OE, R35
+  100 kΩ pull-up): IO38 high/undriven = bus held off, **LOW = release**. Bus ON = carrier AND
+  firmware (ADR 0006 RC1 amendment, `docs/pinmap.md` §6.3).
+- **§1.3 W_DISABLE2# edge pull-up:** 1 MΩ → **100 kΩ** (R29; M.2 §3.1.11.3 asks 100–200 kΩ).
+- **§1.4 OVLO "re-enable ≈ 3.17 V":** the release is 3.13–3.25 V, below a nominal 3.3 V rail,
+  so after a trip the card stays off until the slot is power-cycled (accepted). Added C15
+  2.2 nF DVDT, C16 1 nF OVLO filter, C17 1 µF at OUT (ADR 0007 RC1 amendment).
+- **§2 firmware rule "After `EXP_OE` reads high":** read as "after releasing IO38 and waiting
+  ≥ 50 ms, probe the EEPROM; no ACK or bad CRC → drive IO38 high again".
+- **§3 BOM, U6 "2nd source TPS259474LRPWR C2864845": withdrawn** — not drop-in (latch-off
+  circuit breaker, pins 3/4 = PG/PGTH). U6 has no approved second source.

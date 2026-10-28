@@ -12,9 +12,9 @@ TOP_CALLOUTS = [
 BOT_CALLOUTS = [
     ("U6", "eFuse + over-voltage cut-off on the M.2 3.3 V input (TPS259470A)"),
     ("FB1", "3.3 V filter bead after the eFuse"),
-    ("U3", "Edge-expansion switches U3-U5 (TMUX1511): EXP_0..11 high-Z until a carrier is detected"),
+    ("U3", "Edge-expansion switches U3-U5 (TMUX1511): EXP_0..11 high-Z until a carrier is detected AND firmware releases the bus"),
     ("Q1", "Carrier detect (CONFIG_2/3 both low -> EXP_OE)"),
-    ("Q2", "Host sideband cells Q2/Q3 (LED_1#, WAKE_ON_WWAN#, W_DISABLE2#)"),
+    ("Q2", "Host sideband cells Q2/Q3a (LED_1#, WAKE_ON_WWAN#, W_DISABLE2#) + Q3b bus hold-off (IO38)"),
     ("RN1", "Series resistor arrays RN1-RN3 (MCU side of the switches)"),
     ("U1", "USBLC6-2 USB ESD protection"),
     ("D1", "Recovery diodes (EN <- pin 50; IO0 <- pins 20 + 8)"),

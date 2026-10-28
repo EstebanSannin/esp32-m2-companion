@@ -1,8 +1,8 @@
 # Environment log
 
 Machine: Stefano's Mac (Darwin 25.5.0, zsh) — note: SPEC §8 mentions server
-`m920x`; this session actually runs on macOS. Flag if tooling must live on
-m920x instead.
+`<build-host>`; this session actually runs on macOS. Flag if tooling must live on
+the build host instead.
 
 | Date | Tool / package | How | Why |
 |---|---|---|---|

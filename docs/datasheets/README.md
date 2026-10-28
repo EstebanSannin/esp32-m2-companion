@@ -42,3 +42,9 @@ All pin assignments in `docs/pinmap.md` trace to these files. Fetched
 | `tps25947.pdf` | https://www.ti.com/lit/ds/symlink/tps25947.pdf | SLVSFC9C (rev. May 2026) | U6 TPS259470A: Table 5-1 pinout, §6.1/6.3 EN/OVLO limits (note 2: ≥ 350 kΩ pull-up), VOV(R)/VOV(F), RILM range |
 | `tmux1511.pdf` | https://www.ti.com/lit/ds/symlink/tmux1511.pdf | SCDS390B | U3–U5: Table 4-1 UQFN pinout, §5.5 SEL VIH/VIL/IIH/RPD, IPOFF, tON(VDD) |
 | `ssm6n56fe.pdf` | https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/1806150923_TOSHIBA-SSM6N56FE-LM_C146449.pdf (LCSC mirror of Toshiba Rev 1.0) | Rev 1.0 | Q1–Q3: §3 pin assignment, VGS(th), RDS(on), IGSS |
+
+## Added for v2.0 Rev A RC1 (2026-10-28)
+
+| File | Source URL | Version | Used for |
+|---|---|---|---|
+| `si1024x.pdf` | https://www.vishay.com/docs/71170/si1024x.pdf | Doc. 71170, S11-0854 Rev. E (02-May-11) | Vishay SI1024X-T1-GE3, approved 2nd source for Q1–Q3: SOT-563 pinout (p. 1), abs max VDS/VGS, Vth, IGSS, RDS(on), gate ESD — compared in `hardware/blocks/host_sideband/datasheets.md` |

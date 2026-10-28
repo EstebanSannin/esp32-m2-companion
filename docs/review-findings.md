@@ -548,3 +548,77 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
     W_DISABLE2# pull-up (1 MΩ vs spec 100–200 kΩ), gold-finger pour between
     fingers, GND stitching, second sources (TPS259474L not drop-in), contract
     §5 vs EXP bus, no v2 firmware / test procedure yet.
+
+## v2.0 Rev A — RC1 changes (2026-10-28)
+
+- 2026-10-28 · RC1 · — · **PROJECT** · **Owner decision** on the
+  release-candidate review (`docs/review/v2_rc1_design_review.md`): "go with
+  your recommendations, approve the change list". Changes below, by finding.
+- 2026-10-28 · RC1 · blocker · **PROCESS** (dfm-1, dfm-4) · Bottom-side CPL
+  rotation rule = JLC library rotation + 180° (JLC mirrors bottom parts about
+  the vertical axis, KiCad about the horizontal one; the only model that
+  reproduces v1/Rev B history). `JLC_ROT`: U6 180, U3–U5 270, Q1–Q3 270
+  (also C86784), U1 270 → CPL U3 0, U4/U5 90, Q1–Q3 90, U6 0, U1 270. U1's
+  Rev B "verified" offset recorded as JLC's correction, not a calibration.
+  The final DFM still checks pin 1 per silk dot; `make fab` stays ORDER
+  BLOCKED until `fab/polarity_checklist.md` is dated. Green mask and a
+  pin-1 order remark added to the fab package.
+- 2026-10-28 · RC1 · major · **BLOCK host_sideband / edge_expansion**
+  (contract_test-1, expansion-2, expansion-5, contract_test-6) · Bus ON =
+  carrier AND firmware: spare Q3b now pulls EXP_OE low, gate = IO38 with
+  R35 100 kΩ pull-up; IO38 no longer on EXP_OE. The bus is held off through
+  power-up, every EN/PERST# reset and ROM boot; firmware drives IO38 low to
+  release. EXP_OE readback lost (EEPROM ACK replaces it). SPEC A3 G8,
+  ADR 0006 RC1 amendment, `docs/pinmap.md` §6.3 (also fixes the dangling
+  "§6.3 RC" reference), LESSONS in both blocks.
+- 2026-10-28 · RC1 · major · **BLOCK power_3v3** (power-1) · C16 1 nF 50 V
+  on the OVLO tap (τ ≈ 34 µs). OVLO release 3.13–3.25 V → on a nominal
+  3.3 V host a trip keeps the card off until the slot is power-cycled:
+  **accepted** and documented (SPEC G11, S-v2-3, ADR 0007 RC1 amendment).
+- 2026-10-28 · RC1 · minor · **BLOCK power_3v3** (power-3 / K1) · C15
+  2.2 nF 50 V on DVDT: ~0.7 V/ms typ, ≤ 1.3 V/ms, inrush ≤ ~90 mA, ramp up to
+  ~13 ms. Restart after OVLO bypasses dV/dt (current-limited ≤ 1.15 A),
+  documented.
+- 2026-10-28 · RC1 · minor · **BLOCK power_3v3** (power-4) · C17 1 µF 25 V
+  on +3V3_EFUSE next to U6 OUT.
+- 2026-10-28 · RC1 · minor · **BLOCK power_3v3** (power-2, contract_test-7)
+  · TPS259474L withdrawn as U6 second source (latch-off circuit breaker,
+  PG/PGTH on pins 3/4); U6 has no approved second source — keep spare
+  TPS259470ARPWR. ADR 0007 RC1 amendment, `docs/v2-gate-v1.md` RC1 note,
+  `common.py`, risk R-v2-13.
+- 2026-10-28 · RC1 · minor · **BLOCK host_sideband** (mcu_io-1) · W_DISABLE2#
+  card pull-up R29 1 MΩ → 100 kΩ (M.2 §3.1.11.3: 100–200 kΩ).
+- 2026-10-28 · RC1 · minor · **PROJECT** (layout-3, layout-4) · No GND pour
+  between the gold fingers; GND stitching via fence added.
+- 2026-10-28 · RC1 · minor · **PROJECT** (mcu_io-5, dfm-5) · SI1024X-T1-GE3
+  datasheet filed (`docs/datasheets/si1024x.pdf`, Vishay Doc. 71170 Rev. E);
+  pinout 1 S1 / 2 G1 / 3 D2 / 4 S2 / 5 G2 / 6 D1 identical to SSM6N56FE;
+  VDS 20 V, VGS ±6 V, Vth 0.45–0.9 V @ 250 µA, IGSS ±1 µA max @ ±4.5 V,
+  gate ESD 2 kV HBM — verified in `hardware/blocks/host_sideband/datasheets.md`.
+  `JLC_ROT` row C86784 added; a swap goes into the BOM source + `make fab`.
+- 2026-10-28 · RC1 · minor · **PROJECT** (contract_test-1, contract_test-5,
+  power-1) · SPEC A3 G8, G11, S-v2-1..3 rewritten (bus ON = carrier AND
+  firmware; OVLO recovery = slot power-cycle; S-v2-1 measured per host
+  where EXP pins are accessible, proxy on closed hosts; bench ≥ 1.2 A for the
+  OVLO restart; glitch scope in S-v2-2).
+- 2026-10-28 · RC1 · minor · **PROJECT** (contract_test-10, mcu_io-3,
+  contract_test-7, contract_test-11, layout-5) · `docs/risks.md`: R-v2-8..19
+  added (inrush, OVLO, EXP glitches, BOOT leg on pin 20, R29, single-source
+  silicon, S3R2 EOL / SSM6N56FE lifecycle, board thickness, D3/D4 CPL, no
+  firmware, CONFIG host pull-downs, laptop test); R10/R11 carried forward;
+  R-v2-7, R-v2-8, R-v2-9 (filter), R-v2-10, R-v2-12, R-v2-19 closed by RC1.
+  ADR 0006 RC1 amendment names pin 20 as the deliberate exception to
+  Decision 4.
+- 2026-10-28 · RC1 · minor · **PROJECT** (power-6) · Stale power docs fixed:
+  `power_3v3/datasheets.md` (FB1 = BLM18PG121SN1D ≤ 50 mΩ, TPS25947
+  references), `power_3v3/LESSONS.md` (RC1 lessons; the 150 mΩ budget marked
+  as Rev B), ADR 0007 ("auto-recovers ~3.23 V, not latched" and "~1 A"
+  corrected), dated RC1 notes appended to `docs/v2-gate-v1.md`,
+  `v2-gate-v3.md`, `v2-gate-v4.md` (new offsets, second-source decision).
+- 2026-10-28 · RC1 · minor · **PROJECT** (contract_test-9) ·
+  `gen_datasheet.py`: v2 features (EXP bus, host sidebands, OVP), block
+  diagram with the sidebands and the IO38 hold-off, eFuse limit / trip /
+  power-cycle recovery / inrush, bottom height ≤ 1.6 mm incl. solder,
+  R5/R6 text removed, host notes (state 6, pins 8/20), laptop wording,
+  finished thickness; `view_defs.py` callouts. DATASHEET.md regenerated;
+  regenerate again from the clean, ordered commit (revision stamp).

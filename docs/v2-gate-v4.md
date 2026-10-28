@@ -109,3 +109,26 @@ V1 research (`v2/research/dual_nmos_research.md`):
 - Tag `v2.0-revA` on the exact commit whose fab files were ordered (CLAUDE.md naming rule).
 - Bring-up and acceptance tests are SPEC S-v2-1…4 (bus off on every host, bus on with the carrier
   signature, OVP trip window, all v1 criteria).
+
+---
+
+## RC1 status note (2026-10-28, owner-approved; appended — the approved text above is kept as reviewed)
+
+After the release-candidate review (`docs/review/v2_rc1_design_review.md`):
+- **§1 rotation offsets superseded.** The "+90 / sign is a guess" offsets above were very likely
+  180° wrong on the bottom side (blocker dfm-1). New rule: bottom offset = JLC library rotation
+  + 180° (the only model that reproduces the v1/Rev B history). `JLC_ROT`: C3662799 (U6) 180,
+  C2673275 (U3–U5) 270, C146449 / C86784 (Q1–Q3) 270, C7519 (U1) 270 → CPL rotations U3 0,
+  U4/U5 90, Q1–Q3 90, U6 0, U1 270. The RSV/RPW/SOT-563 lands are 180°-symmetric, so the
+  final DFM must check pin 1 per silk dot (`fab/polarity_checklist.md`); `make fab` stays
+  ORDER BLOCKED until then.
+- **Second sources.**
+  - U6: **no approved second source.** TPS259474L (listed at GATE V1) is withdrawn: latch-off
+    circuit breaker, pins 3/4 = PG/PGTH (ADR 0007 RC1 amendment). Keep spare TPS259470ARPWR.
+  - Q1–Q3: SI1024X-T1-GE3 (C86784) stays approved. Its Vishay datasheet is now filed
+    (`docs/datasheets/si1024x.pdf`, Rev. E) and the SOT-563 pinout and limits are verified in
+    `hardware/blocks/host_sideband/datasheets.md`. `JLC_ROT` has a C86784 row, so a swap goes
+    into the BOM source and `make fab` is re-run — not by hand in JLC's BOM step (review dfm-5).
+- **Hardware changes in the package:** C15/C16/C17 at U6, R35 + Q3b bus hold-off (IO38),
+  R29 100 kΩ, no pour between gold fingers, extra GND stitching. The cost table in §3 does not
+  include the added 0402 parts.

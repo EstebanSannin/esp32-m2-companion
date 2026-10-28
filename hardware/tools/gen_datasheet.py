@@ -27,7 +27,8 @@ J4_FN = {"TXD0": "UART0 TX (ROM console)", "RXD0": "UART0 RX",
 _EXP_IO = ["IO39", "IO41", "IO1", "IO2", "IO18", "IO4", "IO5", "IO6", "IO7",
            "IO15", "IO16", "IO17"]
 NET_FN = {f"EXP_{i}": (f"Expansion bit {i} → {io} through a TMUX1511; high-Z unless a "
-                       f"carrier grounds CONFIG_2 + CONFIG_3"
+                       f"carrier grounds CONFIG_2 + CONFIG_3 AND firmware releases "
+                       f"the bus (IO38 low)"
                        + (" (I²C SDA, ID-EEPROM bus, 4.7 kΩ pull-up on-card)" if i == 0 else
                           " (I²C SCL, ID-EEPROM bus, 4.7 kΩ pull-up on-card)" if i == 1 else ""))
           for i, io in enumerate(_EXP_IO)}
@@ -36,7 +37,7 @@ NET_FN.update({
     "CONFIG_3": "Carrier signature sense (1 MΩ pull-up); low together with CONFIG_2 enables the EXP bus",
     "LED_1_n": "WWAN LED#, open-drain, driven by IO42 (NMOS)",
     "WAKE_ON_WWAN_n": "WAKE#, open-drain, driven by IO47 (NMOS)",
-    "W_DISABLE2_n": "W_DISABLE2# input from the host → IO40 (NMOS, inverted)",
+    "W_DISABLE2_n": "W_DISABLE2# input from the host → IO40 (NMOS, inverted; 100 kΩ card pull-up)",
 })
 EDGE_FN = {
     "VCC_3V3": "3.3 V supply in",
@@ -44,7 +45,7 @@ EDGE_FN = {
     "USBH3_D_P": "USB 2.0 D+",
     "USBH3_D_N": "USB 2.0 D−",
     "PERST_n": "Card reset (EN), active-low, diode-isolated",
-    "PCIE_1_GPIO_5": "Boot-mode strap (IO0), active-low, diode-isolated",
+    "PCIE_1_GPIO_5": "Boot-mode strap (IO0), active-low, diode-isolated. Host must drive it open-drain: a 1.8 V push-pull high leaves the strap undefined (risk R-v2-11)",
     "W_DISABLE1_n": "Boot-mode strap (IO0) for generic Key-B hosts, active-low, diode-isolated. Held low at power-up = download mode (risk R10)",
 }
 
@@ -129,6 +130,15 @@ Toradex Verdin family (Mallow carrier).
   from the host, no buttons, no cables
 - **IO**: Qwiic/STEMMA-QT I2C port (JST SH-4) + UART/SPI/GPIO port
   (JST SH-8), 3.3 V logic
+- **Carrier expansion bus**: 12 EXP lines on the M.2 edge (6 ADC-capable,
+  2 = I2C for the carrier ID EEPROM) through bus switches. **On only when a
+  carrier grounds CONFIG_2 + CONFIG_3 *and* firmware releases it**; high-Z on
+  every standard host, during reset and when unpowered
+  ([`docs/carrier-interface.md`](docs/carrier-interface.md))
+- **Standard host sidebands**: LED_1# and WAKE_ON_WWAN# (open-drain),
+  W_DISABLE2# radio-kill input — voltage-agnostic NMOS cells, no back-feed
+- **Input protection**: eFuse with over-voltage cut-off (3.44–3.57 V),
+  current limit and soft-start on the slot 3.3 V
 - **Form factor**: M.2 Key-B 2242 (22 × 42 mm, 0.8 mm PCB, 6-layer),
   single 3.3 V supply from the slot
 - **Open source hardware** (CERN-OHL-P v2), schematic-as-code (SKiDL),
@@ -140,7 +150,8 @@ Toradex Verdin family (Mallow carrier).
 flowchart LR
     subgraph HOST["Linux host (M.2 Key-B slot)"]
         USB["USB 2.0 FS"]
-        GPIOs["2x sideband GPIO"]
+        GPIOs["PERST# + BOOT\\n(pins 50, 20, 8)"]
+        SB["LED_1# / WAKE#\\n/ W_DISABLE2#"]
         PWR["3.3 V"]
     end
     subgraph CARD["esp32-m2-companion"]
@@ -148,7 +159,8 @@ flowchart LR
         DIODE["Schottky isolation"]
         FB["eFuse (OVP) + ferrite + bulk"]
         SW["3x TMUX1511\\n(12 EXP lines, off by default)"]
-        DET["carrier detect\\n(CONFIG_2/3)"]
+        DET["carrier detect\\n(CONFIG_2/3)\\nAND firmware hold-off"]
+        NMOS["NMOS sideband cells"]
         MCU["ESP32-S3-WROOM-1\\n(USB-Serial-JTAG)"]
         LED["2x LED"]
         J3["J3 Qwiic I2C"]
@@ -159,6 +171,8 @@ flowchart LR
     PWR --> FB --> MCU
     EXPB["12 EXP pins\\n(carrier boards only)"] <--> SW <--> MCU
     DET -->|EXP_OE| SW
+    MCU -->|IO38 hold-off| DET
+    SB <--> NMOS <--> MCU
     MCU --> LED
     MCU <--> J3
     MCU <--> J4
@@ -168,7 +182,8 @@ flowchart LR
 
 | Parameter | Value | Source |
 |---|---|---|
-| Supply voltage | 3.3 V ±5 % from M.2 edge, through an eFuse (≈ 1 A limit, over-voltage cut-off 3.44–3.57 V, re-enable ≈ 3.17 V, input survives ≈ 18.9 V) | SPEC §6.2, ADR 0007 |
+| Supply voltage | 3.3 V ±5 % from M.2 edge, through an eFuse: current limit 0.85–1.15 A, over-voltage cut-off 3.44–3.57 V, input survives ≈ 18.9 V. **After an over-voltage trip the card stays off until the slot is power-cycled** (release 3.13–3.25 V, below a nominal 3.3 V rail) | SPEC A3 G11, ADR 0007 |
+| Inrush | soft-start ≤ ≈ 90 mA, rail ramp ≈ 2.5–13 ms (restart after an over-voltage trip is current-limited, ≤ 1.15 A) | ADR 0007 RC1 |
 | Supply current | ~95 mA Wi-Fi RX · ~355 mA avg TX @ 20.5 dBm (bursts higher) · design budget 500 mA | WROOM DS Table 6-4 |
 | Host interface | USB 2.0 full-speed (12 Mbps), CDC-ACM via USB-Serial-JTAG | WROOM DS §Pin Definitions |
 | Logic level (IO ports) | 3.3 V (not 5 V tolerant) | ESP32-S3 DS |
@@ -177,12 +192,18 @@ flowchart LR
 | Operating temperature | −40 … +85 °C (module limit) | WROOM DS Table 1-1 |
 | Dimensions | 22 × 42 mm (M.2 2242), 0.8 mm PCB | M.2 EM spec |
 | Height (top) | 4.2 mm max (JST headers; module 3.1 mm) — ≈6.3 mm with SH plug mated | JST eSH catalog |
-| Height (bottom) | ≤1.5 mm — within the 2.54 mm B-side allowance of an H4.2 socket | M.2 EM spec Fig 38 |
+| Height (bottom) | ≤1.6 mm incl. solder (Rev B measured 1.55 mm) — within the 2.54 mm B-side allowance of an H4.2 socket | M.2 EM spec Fig 38 |
 | ESD (USB lines) | IEC 61000-4-2 level 4 (USBLC6-2SC6) | ST/UMW DS |
 
 > **Height note**: the module (3.1 mm) exceeds the M.2 1.5 mm top-side
 > envelope. The card fits open sockets (e.g. Mallow X17, carrier bottom) but
 > **not** enclosed hosts (laptops) — see `docs/risks.md` R11.
+
+> **Generic Key-B hosts**: the card declares CONFIG state 6 (WWAN, port
+> config 2); hosts that whitelist by CONFIG may treat it differently
+> (risk R-v2-3). A host that holds W_DISABLE1# (pin 8) low at power-up, or
+> drives pin 20 push-pull high, forces or upsets the boot strap (risks R10,
+> R-v2-11).
 
 ## M.2 edge interface (used pins)
 
@@ -218,8 +239,9 @@ pin 20 reaches the SoM via the X16.19 jumper. Details: ADR 0002.
 {j3}
 
 Standard Qwiic pinout — off-the-shelf sensor cables plug in directly.
-No I2C pull-ups on-card for J3 (Qwiic peripherals provide their own);
-footprints R5/R6 (10 k) can be fitted if needed.
+No I2C pull-ups on-card for J3 (Qwiic peripherals provide their own;
+v2 has no pull-up footprints). Pin 2 is the card's +3V3 rail: its load
+shares the eFuse current limit with the module.
 
 ### J4 — UART / SPI / GPIO (JST SH-8, BM08B-SRSS-TB)
 
@@ -253,12 +275,12 @@ FSPI IOMUX group (up to 80 MHz).
 | Parameter | Value |
 |---|---|
 | Card size | M.2 Type 2242: 22.00 × 42.00 mm |
-| PCB | 0.8 mm, 6-layer (SIG/GND/SIG/SIG/PWR/SIG, JLC06081H-2116), ENIG, hard-gold fingers; **no bevel** (JLCPCB cannot bevel < 50 × 50 mm boards; hand-chamfer the leading edge) |
+| PCB | 0.8 mm nominal (finished 0.83 ± 0.10 mm, risk R-v2-15), 6-layer (SIG/GND/SIG/SIG/PWR/SIG, JLC06081H-2116), ENIG, hard-gold fingers; **no bevel** (JLCPCB cannot bevel < 50 × 50 mm boards; hand-chamfer the leading edge) |
 | Max height, top side | 4.2 mm (JST SH headers) · ≈6.3 mm with plug mated |
-| Max height, bottom side | ≤1.5 mm (compliant with H4.2 socket B-side envelope) |
+| Max height, bottom side | ≤1.6 mm incl. solder (Rev B measured 1.55 mm; within the H4.2 socket B-side envelope) |
 | Socket coverage zone | first 4.8 mm from card edge kept component-free (both faces) |
 | Mounting | M.2 screw, Ø3.5 semicircular notch routed in the outline — not plated, no copper |
-| Component sides | SMT both sides (top: module + connectors; bottom: passives) |
+| Component sides | SMT both sides (top: module + connectors; bottom: eFuse, bus switches, FETs, USB ESD, diodes, LEDs, passives) |
 
 ## LEDs & test points
 
@@ -279,7 +301,7 @@ unique, read-only), the same value from both sides:
 
 | Where | How |
 |---|---|
-| Printed | Data Matrix (ECC 200, not QR) on the module can: `<6-digit prefix><MAC>`, e.g. `132611` + `3C0F027321E4`. Needs a Data Matrix-capable scanner app. |
+| Printed | Data Matrix (ECC 200, not QR) on the module can: `<6-digit prefix><MAC>`, e.g. `<prefix>` + `<12-hex MAC>`. Needs a Data Matrix-capable scanner app. |
 | Over USB | `esptool.py --port /dev/ttyACM0 read_mac`; also the USB-Serial-JTAG serial-number string (`/dev/serial/by-id/…`) |
 | In firmware | `esp_efuse_mac_get_default()` (ESP-IDF) / `machine.unique_id()` (MicroPython) |
 
@@ -293,7 +315,8 @@ No separate serial is printed on the PCB. (Prefix/MAC split inferred
 | Toradex Verdin + Mallow (X17) | Primary — verified pin mapping, recovery documented |
 | Any M.2 Key-B slot with USB 2.0 | Enumerates and flashes; recovery needs 2 host GPIOs (or TPs) |
 | RPi 5 + Waveshare Key-B HAT | Nice-to-have (ADR 0004) — USB works, 2242 standoff & sidebands unverified |
-| Enclosed hosts (laptops/WWAN bays) | **Not compatible** — height (R11) |
+| Enclosed hosts (laptops/WWAN bays) | **Not compatible** with the bay closed — height (R11). A laptop slot with the cover off is used for bench tests only (SPEC S-v2-1) |
+| Carrier boards (`docs/carrier-interface.md`) | EXP bus available once firmware has read the carrier's ID EEPROM |
 
 ## Design data
 

@@ -258,7 +258,9 @@ J3/J4 (IO8–14, IO21, TXD0/RXD0), status LED IO48, straps IO3/45/46 NC, IO35–
   (footnote 7; stock modules) → IO39 must not drive an always-on host pin.
 - **IO18 has a 60 µs high-level glitch at power-up** (Table 2-2); IO1–17 only low-level glitches
   → IO18 must not drive an always-on host pin. Both are fine on EXP lines: the bus switch is off
-  during power-up (§6.3 RC).
+  during power-up and every reset (§6.3, Q3b hold-off). *(RC1 2026-10-28: the original text
+  pointed to a non-existent "§6.3 RC"; the EXP_OE RC alone did NOT keep the bus off — it crossed
+  VIH ~9 ms before CHIP_PU released, review contract_test-1.)*
 - ADC usable with Wi-Fi on = **ADC1 only = IO1–IO10**; spare ADC1 pins: IO1, 2, 4, 5, 6, 7 (6).
   Touch: IO1–14 (same 6 spare).
 - IO47 (SPICLK_P) is 1.8 V only on R8V/R16V chips; WROOM-1 **N8R2** (and N16R8 fallback) run it
@@ -284,10 +286,32 @@ J3/J4 (IO8–14, IO21, TXD0/RXD0), status LED IO48, straps IO3/45/46 NC, IO35–
 | EXP_11 | 65 | 10 | IO17 | digital (U1TXD default) | " |
 | LED_1# drive (Q2a gate) | 10 | 35 | IO42 | out | no reset pull, no glitch |
 | WAKE_ON_WWAN# drive (Q2b gate) | 23 | 24 | IO47 | out | no reset pull, no glitch; pad near fingers 23/26 |
-| W_DISABLE2# sense (Q3 drain, inverted) | 26 | 33 | IO40 | in | |
-| EXP_OE readback | — | 31 | IO38 | in | diagnostic: firmware sees the hardware gate state |
+| W_DISABLE2# sense (Q3a drain, inverted) | 26 | 33 | IO40 | in | card pull-up on pin 26 **100 kΩ** (R29; RC1, was 1 MΩ) |
+| ~~EXP_OE readback~~ → **EXP bus hold-off (Q3b gate)** (RC1) | — | 31 | IO38 | **out** | high (reset default via R35 100 kΩ) = bus held off; **LOW = release**. See §6.3 |
 
 Summary for carriers: **6 ADC-capable lines (EXP_2, 3, 5, 6, 7, 8)**, EXP_0/1 = fixed I²C bus
 (ID EEPROM + any carrier I²C devices), any two other lines = UART / SPI / PWM via GPIO matrix.
 Pad numbers are WROOM-1 pins [WROOM Table 3-1]; final pad↔finger routing at GATE V3 may swap
 lines **within the same capability class only** (contract keeps EXP↔capability, not EXP↔GPIO).
+
+### 6.3 RC1 changes (2026-10-28, owner-approved; `docs/review/v2_rc1_design_review.md`)
+
+**IO38 = expansion-bus hold-off output, active-LOW release** (review contract_test-1, expansion-2,
+expansion-5; ADR 0006 RC1 amendment):
+- IO38 drives the gate of Q3b (drain = EXP_OE, source = GND), with **R35 100 kΩ pull-up** to +3V3.
+  IO38 is no longer connected to EXP_OE.
+- IO38 high, or IO38 undriven (power-up, EN/PERST# reset, ROM boot: IE-only, no pull per [S3]
+  Table 2-1, no glitch per Table 2-2) → Q3b on → EXP_OE low → all 12 TMUX1511 channels off.
+  Firmware drives IO38 high as its first init step, which also covers software/WDT resets
+  (whether those reset the pin is to be confirmed at bring-up, SPEC S-v2-2).
+- Firmware drives IO38 **LOW** to release. The bus then turns on only if the carrier signature is
+  also present (Q1 off): **bus ON = carrier AND firmware**. EXP_OE crosses VIH 1.2 V ~4.6 ms
+  (≤ 5.1 ms) after release; wait ≥ 50 ms before probing the ID EEPROM.
+- Driving IO38 push-pull high is safe (gate load only). No EXP_OE readback any more: carrier
+  presence = ID-EEPROM ACK at 0x50. If there is no ACK or the CRC fails, drive IO38 high again.
+- Consequence for §6.1: the IO18 high glitch and the IO1–17 low glitches stay behind open switches
+  on every power-up and EN/PERST# reset, not only at cold power-up.
+
+**W_DISABLE2# (pin 26) card pull-up R29 = 100 kΩ** (was 1 MΩ; review mcu_io-1). M.2 EM spec
+§3.1.11.3 asks for 100–200 kΩ on the card. With 1 MΩ a host pull-down of 50–100 kΩ held Q3a off
+and the firmware saw a false radio kill. Into a 1.8 V push-pull host: (3.3 − 1.8) / 100 kΩ = 15 µA.

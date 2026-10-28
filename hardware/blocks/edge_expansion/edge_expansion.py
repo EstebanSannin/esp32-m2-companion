@@ -13,6 +13,11 @@ turn a FET on -> EXP_OE low -> all switches off. Card unpowered: 3V3 = 0,
 TMUX SEL internal 6M pull-downs -> off; host voltage only reaches insulated
 FET gates (no back-feed).
 
+RC1 (review contract_test-1): EXP_OE is also pulled low by Q3b in
+host_sideband (gate = IO38, R35 100k pull-up) until firmware drives IO38
+LOW, so the bus is ON only when carrier signature AND firmware agree; it
+drops again on any ESP32 reset. IO38 no longer senses EXP_OE.
+
 10k (not 100k): 12 SEL inputs leak up to 12 x 2 uA + 12 x (3.3 V / 6 M)
 = ~30 uA worst case (tmux1511.pdf §5.5 IIH, RPD); 100k would sag EXP_OE
 below VIH 1.2 V (GATE V1 finding).

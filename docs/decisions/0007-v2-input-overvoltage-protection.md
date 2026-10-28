@@ -50,3 +50,52 @@ reference tolerance alone (±1.7 %) is wider than that, so no divider satisfies 
   (3.49 V typ) and re-enables below ~3.17 V.
 - A worst-case part may trip on a host sitting at its +5 % limit.
 - This supersedes "100 k / 51 k, 3.47–3.63 V" above. Details: `docs/v2-gate-v1.md` §1.4.
+
+## Amendment (RC1, 2026-10-28, owner): soft-start, OVLO filter, OUT capacitor, latch-until-power-cycle, no second source
+
+Owner decision after the release-candidate review ("go with your
+recommendations, approve the change list"); evidence in
+`docs/review/v2_rc1_design_review.md` (power-1..4, power-6,
+contract_test-7). Authoritative values: `hardware/blocks/power_3v3/power_3v3.py`.
+
+- **DVDT: C15 2.2 nF 50 V** (U6 pin 7 to GND; review power-3 / K1). With
+  DVDT open the slew was ~12–15 V/ms, i.e. 0.5–1 A of inrush into the
+  ~65 µF card rail: at the current limit, and above the 200 mA slot
+  soft-start that M.2 allows hosts (M.2 Rev 1.0 Table 39). With 2.2 nF:
+  ~0.7 V/ms typical, ≤ 1.3 V/ms at max IdVdt → inrush ≤ ~90 mA; the
+  slowest part ramps in up to ~13 ms. The ESP32 EN RC (10 kΩ / 1 µF) still
+  releases after the rail is up. Rated ≥ VIN + 5 V (datasheet Rec. Op.).
+- **OVLO filter: C16 1 nF 50 V** at the divider tap (review power-1). The
+  34 kΩ node had no capacitor and tOVLO is 1.2 µs with no deglitch, so
+  hot-plug ringing or the fast-trip input spike could trip it. τ ≈ 34 µs;
+  on a hard 3.3 → 5 V step the trip delay is ~4 µs and the rail rises only
+  ~0.1 V behind the current limit (stays < 3.6 V). Not above ~2.2 nF.
+- **OUT capacitor: C17 1 µF 25 V** on +3V3_EFUSE next to U6 (review
+  power-4; TI §8.3.1/§8.4.1 "≥ 1 µF close to OUT"). FB1 had put inductance
+  straight on the OUT pin.
+- **OVLO recovery = slot power-cycle (accepted).** Trip 3.44–3.57 V;
+  release 3.13–3.25 V at IN (VOV(F) 1.076–1.116 V × 2.912). At a nominal
+  3.30 V the OVLO pin sits at 1.133 V, above the maximum VOV(F), so after
+  any trip **the card stays off until the slot rail goes to 0 V and back**.
+  This corrects "Auto-recovers at ~3.23 V; not latched" (51 k divider) and
+  "re-enables below ~3.17 V" (GATE V1 amendment) above: those thresholds
+  are right, but on a 3.3 V host they are never reached. The host cannot
+  power-cycle the card alone (EN tied to IN via R33, FULL_CARD_POWER_OFF#
+  NC), and firmware cannot see the event (FLT NC; FLT does not assert on
+  OVLO). Accepted: the filter makes a spurious trip unlikely, and a real
+  overvoltage must keep the card off.
+- **Restart after an OVLO trip bypasses dV/dt** (datasheet §7.3.3: the
+  TPS259470x "start up in a current limited manner"): up to the current
+  limit 0.85 / 1.01 / 1.15 A (min/typ/max, R34 3.3 kΩ; "~1 A" above). C15
+  does not cover it. Bench tests use a ≥ 1.2 A limit for that step.
+- **No approved second source for U6.** "same-footprint TPS259474L
+  C2864845 as second source" above is **withdrawn** (review power-2 /
+  contract_test-7): the 474L is a latch-off circuit breaker (with ITIMER
+  open, any overload above ILIM latches the card off until the slot is
+  power-cycled), and its pins 3/4 are PG/PGTH instead of AUXOFF/FLT. Keep
+  spare TPS259470ARPWR stock instead. Single-source risk: R-v2-13
+  (`docs/risks.md`).
+- **FB1** is Murata BLM18PG121SN1D (C14709, ≤ 50 mΩ DCR) since GATE V2,
+  not the 150 mΩ bead named in Context. Drop at 0.5 A including socket
+  contacts and copper: ~65–70 mV, i.e. ~3.065 V at the module from a
+  3.135 V host (review power-5).

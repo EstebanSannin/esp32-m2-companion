@@ -17,3 +17,22 @@
   IN end; route the sense branches (OVLO divider, EN pull-up) thin.
 - 2026-10-10 (GATE V3): the J1 courtyard (≈ 4.8 mm from the edge) is a hard
   keep-out for parts — C14/R34 sat inside it from the first placement.
+- 2026-10-28 (v2 RC1 review power-1): an eFuse OVLO with hysteresis must be
+  checked against the NOMINAL rail, not only the trip window: with
+  100k/52.3k the release (3.13–3.25 V) is below 3.3 V, so any trip keeps
+  the card off until the slot is power-cycled. Accepted and documented —
+  but say "latched until power-cycle", never "auto-recovers". Put an RC on
+  a high-impedance OVLO tap (1 nF here, τ 34 µs): the comparator has no
+  deglitch (tOVLO 1.2 µs).
+- 2026-10-28 (v2 RC1 review power-3/K1): never leave an eFuse DVDT pin open
+  in front of tens of µF: the default slew drew 0.5–1 A, at the current
+  limit and above a 200 mA M.2 slot soft-start. Size CdVdt over the full
+  IdVdt spread (4.7:1) and rate it ≥ VIN + 5 V. Restart after OVLO
+  bypasses dVdt on the TPS259470x.
+- 2026-10-28 (v2 RC1 review power-4): follow the "≥ 1 µF at OUT" rule even
+  when a ferrite follows: the bead puts inductance straight on OUT.
+- 2026-10-28 (v2 RC1 review power-2): a same-footprint family member is not
+  a second source until its fault behaviour and pin functions match — the
+  TPS259474L is a latch-off circuit breaker with PG/PGTH on pins 3/4.
+- Note: the 2026-08-28 budget above uses the Rev-B 150 mΩ bead; v2 FB1 is
+  ≤ 50 mΩ (current budget: ADR 0007 RC1 amendment, risks R-v2-4).
