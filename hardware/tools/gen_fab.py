@@ -37,7 +37,9 @@ NONPOLAR = {"C45783", "C19702", "C14663", "C15849", "C1015", "C25804",
             "C23138", "C22775", "C21189",
             # v2.0 Rev A: 0402 resistors + FB1 ferrite
             "C25900", "C26083", "C25741", "C25890", "C852472", "C852832",
-            "C14709"}
+            "C14709",
+            # v2.0 RC1: eFuse DVDT / OVLO / OUT capacitors
+            "C1531", "C1523", "C52923"}
 
 # LCSC part -> (degrees added to KiCad rotation, date it was confirmed in
 # JLC engineering's FINAL DFM placement for this footprint or None, basis).
@@ -50,7 +52,11 @@ JLC_ROT = {
     # v2.0 Rev A; the v2 final DFM still re-checks every row. The pre-order
     # preview is automatic and not authoritative - see fab/README.md.
     "C12743": (0, "2026-10-13", "BAT54A SOT-23: pin 1 correct in final DFM (Rev B)"),
-    "C7519": (0, "2026-10-13", "USBLC6-2SC6: pin 1 correct in final DFM (Rev B)"),
+    # U1 USBLC6 (bottom): Rev B went out at 0 and JLC engineering RE-ROTATED
+    # it (at 0 the library rows cannot land on our columns) - the Rev B date
+    # recorded JLC's correction, not a calibration (RC1 review dfm-4).
+    "C7519": (270, None, "USBLC6-2SC6 (bottom): library = ours +90 -> bottom "
+              "rule 90+180 = 270; Rev B was corrected by JLC at 0"),
     "C160390": (0, "2026-10-13", "JST SH-4 (J3): pin 1 correct in final DFM (Rev B)"),
     "C160394": (180, "2026-10-13", "JST SH-8 (J4): at +0 JLC's auto preview put "
                 "pin 1 at the opposite end from J3; JLC engineering rotated it "
@@ -66,20 +72,24 @@ JLC_ROT = {
     "C273616": (0, None, "TJ-S1706 green: renumbered footprint, +0 = lens to "
                 "the card edge AND anode on the R3 pad; confirm BOTH in the final DFM"),
     "C273612": (0, None, "TJ-S1706 red: same as C273616 (R4 pad)"),
-    # v2.0 Rev A (GATE V4, 2026-10-10). Offsets from comparing each JLC/
-    # EasyEDA library footprint with ours (pad coordinates, easyeda.com
-    # component API). All on the BOTTOM side: the sign of a +-90 correction
-    # flips under the bottom mirror and has no rev-B calibration -> +90 is a
-    # GUESS; the final DFM decides (pin 1 must be where polarity_checklist.md
-    # says; a wrong sign puts it in the opposite corner).
-    "C3662799": (0, None, "TPS259470A RPW: JLC lib = ours (pin 1 top-left, "
-                 "every pad within 0.015 mm) - sign-free 0"),
-    "C2673275": (90, None, "TMUX1511 RSV: JLC lib pin 1 bottom-left with the "
-                 "long axis horizontal; ours top-left, long axis vertical = "
-                 "lib rotated 90 deg; sign on the bottom side unverified"),
-    "C146449": (90, None, "SSM6N56FE SOT-563: JLC lib pin 1 bottom-left, rows "
-                "horizontal; KiCad pin 1 top-left, columns vertical = 90 deg; "
-                "sign on the bottom side unverified (180 off swaps Q-halves)"),
+    # v2.0 Rev A, BOTTOM side. Rule (RC1 review dfm-1, the only model that
+    # reproduces D1 at 0, v1 LEDs at +0 = polarity reversed and Rev B LEDs at
+    # +180 = lens inward): JLC mirrors a bottom library part about the
+    # VERTICAL axis while KiCad flips about the horizontal one, so
+    #     bottom offset = (JLC library rotation vs our footprint) + 180.
+    # Library rotations from the easyeda.com component API (pad coordinates).
+    # The RSV / RPW / SOT-563 lands are 180-symmetric: a wrong offset seats
+    # perfectly and swaps pins (U3-U5 GND<->VDD, U6 IN<->OUT), so the final DFM
+    # must check pin 1 (silk dot) of U3-U6 and Q1-Q3 against
+    # polarity_checklist.md; the order remark says "pin 1 per silk dot".
+    "C3662799": (180, None, "TPS259470A RPW (bottom): library = ours (0) -> "
+                 "0+180 = 180; was 0 (GATE V4) = IN/OUT swapped under the model"),
+    "C2673275": (270, None, "TMUX1511 RSV (bottom): library = ours +90 -> "
+                 "270; was 90 (GATE V4) = pin 1 in the opposite corner"),
+    "C146449": (270, None, "SSM6N56FE SOT-563 (bottom): library = ours +90 -> "
+                "270; was 90 (GATE V4) = Q-halves swapped"),
+    "C86784": (270, None, "SI1024X SOT-563, approved 2nd source of C146449: "
+               "same library orientation -> 270"),
     "C25498": (90, None, "4D02 array: JLC lib long axis horizontal, KiCad "
                "vertical; 180-symmetric (4 equal resistors), so only the 90 "
                "matters - pads must land"),
