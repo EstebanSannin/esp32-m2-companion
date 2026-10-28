@@ -81,7 +81,7 @@ design = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='4',name='FLT_n',func=pin_types.NOCONNECT),
             Pin(num='5',name='IN',func=pin_types.PWRIN),
             Pin(num='6',name='OUT',func=pin_types.PWROUT),
-            Pin(num='7',name='DVDT',func=pin_types.NOCONNECT),
+            Pin(num='7',name='DVDT',func=pin_types.PASSIVE),
             Pin(num='8',name='GND',func=pin_types.PWRIN),
             Pin(num='9',name='ILM',func=pin_types.PASSIVE),
             Pin(num='10',name='ITIMER',func=pin_types.NOCONNECT)] }),

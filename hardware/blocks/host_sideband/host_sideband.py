@@ -5,21 +5,26 @@ insulated gate (reads 1.2/1.8/3.3 V hosts, no back-feed when unpowered).
 
   Q2a: IO42 -> gate (100k pull-down) ; drain -> LED_1_n (pin 10)
   Q2b: IO47 -> gate (100k pull-down) ; drain -> WAKE_ON_WWAN_n (pin 23)
-  Q3a: W_DISABLE2_n (pin 26, 1M card pull-up per M.2 spec) -> gate ;
+  Q3a: W_DISABLE2_n (pin 26, 100k card pull-up: M.2 3.1.11.3 asks
+       100-200k; was 1M - RC1 review mcu_io-1) -> gate ;
        drain -> IO40 (10k pull-up)  => IO40 LOW = radio allowed (inverted)
-  Q3b: unused, gate/source to GND, drain open.
+  Q3b: FIRMWARE HOLD-OFF of the expansion bus (RC1 review contract_test-1):
+       drain -> EXP_OE, gate = IO38 with R35 100k pull-up to +3V3. While the
+       ESP32 is in reset / ROM boot IO38 is an input, R35 turns Q3b on and
+       holds EXP_OE low = all TMUX1511 off, so the ESP32 power-up GPIO
+       glitches (DS v2.2 Table 2-2) never reach a carrier. Firmware drives
+       IO38 LOW to release the hold; the bus then turns on only if the
+       carrier signature is also present (Q1). Bus ON = carrier AND firmware.
 Gate pull-downs keep the outputs off while the ESP32-S3 is in reset
 (IO42/IO47: no reset pull, no power-up glitch - datasheet v2.2 T2-1/2-2).
 """
-
-from skidl import Pin
 
 from blocks.common import R_0402, R_0603, SSM6N56FE, subcircuit
 
 
 @subcircuit
 def host_sideband(v3v3, gnd, io42, io47, io40, led_1_n, wake_on_wwan_n,
-                  w_disable2_n):
+                  w_disable2_n, io38, exp_oe):
     q2 = SSM6N56FE(ref="Q2")
     q2["G1"] += io42
     q2["D1"] += led_1_n
@@ -36,12 +41,14 @@ def host_sideband(v3v3, gnd, io42, io47, io40, led_1_n, wake_on_wwan_n,
     q3["G1"] += w_disable2_n
     q3["D1"] += io40
     q3["S1"] += gnd
-    q3["G2"] += gnd          # spare half: held off
+    q3["G2"] += io38         # firmware hold-off of the expansion bus
+    q3["D2"] += exp_oe
     q3["S2"] += gnd
-    q3["D2"].func = Pin.types.NOCONNECT
-    q3["D2"].do_erc = False
+    r_hold = R_0402("100k", lcsc="C25741", mpn="0402WGF1003TCE", ref="R35")
+    r_hold[1] += v3v3
+    r_hold[2] += io38
 
-    r_pu = R_0402("1M", lcsc="C26083", mpn="0402WGF1004TCE", ref="R29")
+    r_pu = R_0402("100k", lcsc="C25741", mpn="0402WGF1003TCE", ref="R29")
     r_pu[1] += v3v3
     r_pu[2] += w_disable2_n
     r_d = R_0603("10k", lcsc="C25804", mpn="0603WAF1002T5E", ref="R30")

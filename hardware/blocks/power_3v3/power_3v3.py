@@ -14,8 +14,26 @@ U6 (docs/datasheets/tps25947.pdf):
   exceed 5 V); EN/UVLO threshold 1.2 V, so the device enables as soon as
   its own VIN UVP releases.
 - ILM 3.3k -> current limit 0.85 / 1.007 / 1.15 A (RILM range 549-6650 R).
-- DVDT, ITIMER open (fastest slew / fastest OC response); FLT_n and AUXOFF
-  (open-drain outputs) unused.
+- DVDT: C15 2.2 nF 50 V (RC1 review power-3/K1). Open DVDT = fastest slew
+  (~12-15 V/ms) = 0.5-1 A inrush into the ~65 uF card rail, at the current
+  limit and above a 200 mA M.2 host soft-start (M.2 Table 39). 2.2 nF:
+  SR ~0.7 V/ms typ, <= 1.3 V/ms at max IdVdt (3.82 uA) -> inrush <= ~90 mA;
+  slowest ~0.25 V/ms (~13 ms ramp). Rated >= VIN + 5 V (datasheet Rec. Op.).
+  NB: restart after an OVLO trip bypasses dVdt (current-limited start).
+- OVLO: C16 1 nF 50 V filter at the divider tap (RC1 review power-1): the
+  34 kOhm node had no filter and tOVLO is 1.2 us with no deglitch, so hot-plug
+  ringing could trip it. tau 34 us; trip delay on a hard 3.3 -> 5 V step
+  ~4 us (rail rises ~0.1 V behind the current limit, stays < 3.6 V).
+  OVLO RELEASE is 3.13-3.25 V at IN (VOV(F) x 2.912): on a nominal 3.3 V host
+  a trip keeps the card OFF until the slot is power-cycled (documented, not
+  auto-recovering).
+- OUT: C17 1 uF at +3V3_EFUSE next to U6 (TI 8.3.1/8.4.1 ">= 1 uF close to
+  OUT"; FB1 put inductance straight on OUT - RC1 review power-4).
+- ITIMER open (fastest OC response); FLT_n and AUXOFF (open-drain outputs)
+  unused.
+- Second source: NONE approved. TPS259474L is NOT drop-in (latch-off
+  circuit breaker; pins 3/4 = PG/PGTH) - RC1 review power-2. Keep spares of
+  TPS259470ARPWR instead.
 - CIN 100 nF at IN.
 
 FB1: Murata BLM18PG121SN1D (C14709, Basic, 0603, 2 A, <= 50 mR) replaces
@@ -27,12 +45,12 @@ Bulk per Espressif HDG: 2 x 22 uF + 10 uF on +3V3.
 
 from skidl import Part, Pin
 
-from blocks.common import (C_0603, C_0805_22U, R_0402, TPS259470A,
+from blocks.common import (C_0402, C_0603, C_0805_22U, R_0402, TPS259470A,
                            subcircuit)
 
 
 @subcircuit
-def power_3v3(v3v3_m2, v3v3_efuse, v3v3, gnd, ovlo, en_uvlo, ilm):
+def power_3v3(v3v3_m2, v3v3_efuse, v3v3, gnd, ovlo, en_uvlo, ilm, dvdt):
     u = TPS259470A(ref="U6")
     u["IN"] += v3v3_m2
     u["OUT"] += v3v3_efuse
@@ -40,7 +58,8 @@ def power_3v3(v3v3_m2, v3v3_efuse, v3v3, gnd, ovlo, en_uvlo, ilm):
     u["OVLO"] += ovlo
     u["EN_UVLO"] += en_uvlo
     u["ILM"] += ilm
-    for name in ("DVDT", "ITIMER", "FLT_n", "AUXOFF"):
+    u["DVDT"] += dvdt
+    for name in ("ITIMER", "FLT_n", "AUXOFF"):
         u[name].func = Pin.types.NOCONNECT
         u[name].do_erc = False
 
@@ -67,6 +86,16 @@ def power_3v3(v3v3_m2, v3v3_efuse, v3v3, gnd, ovlo, en_uvlo, ilm):
                   ref="C14")
     c_in[1] += v3v3_m2
     c_in[2] += gnd
+    # RC1 review: inrush slew, OVLO filter, OUT decoupling (see docstring)
+    c_dvdt = C_0402("2.2nF 50V", lcsc="C1531", mpn="0402B222K500NT", ref="C15")
+    c_dvdt[1] += dvdt
+    c_dvdt[2] += gnd
+    c_ovlo = C_0402("1nF 50V", lcsc="C1523", mpn="0402B102K500NT", ref="C16")
+    c_ovlo[1] += ovlo
+    c_ovlo[2] += gnd
+    c_out = C_0402("1uF 25V", lcsc="C52923", mpn="CL05A105KA5NNNC", ref="C17")
+    c_out[1] += v3v3_efuse
+    c_out[2] += gnd
 
     # Murata BLM18PG121SN1D: 120 R @ 100 MHz, 2 A, DCR <= 50 mR, JLC Basic
     # (v2/research/v2_parts_check.md). Rev-B GZ2012D101TF had 150 mR.

@@ -5,7 +5,8 @@ Explicit designators: skidl 2.3 has no usable hierarchy attribute."""
 BLOCK_REFS = {
     "m2_keyb_edge": {"J1"},
     "power_3v3": {"FB1", "C1", "C2", "C3",
-                  "U6", "R31", "R32", "R33", "R34", "C14"},
+                  "U6", "R31", "R32", "R33", "R34", "C14",
+                  "C15", "C16", "C17"},
     "usb_esd": {"U1", "C4"},
     "sideband_recovery": {"R1", "R2", "C5", "D1", "D2", "TP1", "TP2"},
     "esp32s3_companion": {"U2", "C6", "C7"},
@@ -15,7 +16,7 @@ BLOCK_REFS = {
     "edge_expansion": {"RN1", "RN2", "RN3", "R20", "R21", "U3", "U4",
                        "U5", "C10", "C11", "C12", "R22", "R23", "R24",
                        "R25", "Q1", "R26", "C13"},
-    "host_sideband": {"Q2", "Q3", "R27", "R28", "R29", "R30"},
+    "host_sideband": {"Q2", "Q3", "R27", "R28", "R29", "R30", "R35"},
 }
 
 ORDER = ["m2_keyb_edge", "power_3v3", "usb_esd", "sideband_recovery",

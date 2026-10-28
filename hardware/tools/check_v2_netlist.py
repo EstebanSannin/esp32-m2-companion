@@ -94,7 +94,12 @@ def main():
     on("Q1", 3, "EXP_OE")
     on("Q1", 1, "GND")
     on("Q1", 4, "GND")
-    on("U2", 31, "EXP_OE")      # IO38 readback
+    # IO38 = firmware hold-off: gate of Q3b, whose drain holds EXP_OE low
+    # (RC1 review); IO38 must NOT sit on EXP_OE itself any more
+    on("U2", 31, "IO38")
+    on("Q3", 5, "IO38")
+    on("Q3", 3, "EXP_OE")
+    on("Q3", 4, "GND")
 
     # host cells: Q2 (LED_1#, WAKE), Q3 (W_DISABLE2#)
     on("Q2", 2, "IO42")

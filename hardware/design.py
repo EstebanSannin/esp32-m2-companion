@@ -78,10 +78,11 @@ def build():
     wake_on_wwan_n = Net("WAKE_ON_WWAN_n")
     w_disable2_n = Net("W_DISABLE2_n")
     host_ios = {"IO42": Net("IO42"), "IO47": Net("IO47"),
-                "IO40": Net("IO40"), "IO38": exp_oe}   # IO38 = EXP_OE readback
+                "IO40": Net("IO40"), "IO38": Net("IO38")}  # IO38 = bus hold-off (Q3b gate)
     ovlo = Net("EFUSE_OVLO")
     en_uvlo = Net("EFUSE_EN")
     ilm = Net("EFUSE_ILM")
+    dvdt = Net("EFUSE_DVDT")
 
     # --- M.2 edge fingers (J1) ---
     j1 = m2_keyb_edge_template()(tag="J_M2")
@@ -108,7 +109,7 @@ def build():
     j1[26] += w_disable2_n
 
     # --- Blocks ---
-    power_3v3(v3v3_m2, v3v3_efuse, v3v3, gnd, ovlo, en_uvlo, ilm,
+    power_3v3(v3v3_m2, v3v3_efuse, v3v3, gnd, ovlo, en_uvlo, ilm, dvdt,
               tag="blk_power")
     usb_esd(usbh3_d_p, usbh3_d_n, usb_d_p, usb_d_n, v3v3, gnd, tag="blk_usb")
     sideband_recovery(en, io0, perst_n, pcie_1_gpio_5, w_disable1_n,
@@ -120,7 +121,7 @@ def build():
                    cfg2_g, cfg3_g, exp_oe, tag="blk_expansion")
     host_sideband(v3v3, gnd, host_ios["IO42"], host_ios["IO47"],
                   host_ios["IO40"], led_1_n, wake_on_wwan_n, w_disable2_n,
-                  tag="blk_host")
+                  host_ios["IO38"], exp_oe, tag="blk_host")
     leds(v3v3, gnd, led_status_n, tag="blk_leds")
     io_header(v3v3, gnd, header_ios, txd0, rxd0, tag="blk_header")
 

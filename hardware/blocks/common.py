@@ -190,5 +190,6 @@ _TPS259470A_T = _template(
 def TPS259470A(ref=None):
     p = _TPS259470A_T(ref=ref, tag=_next_tag("U"))
     p.fields["JLC_note"] = ("no Basic eFuse with adjustable OVLO "
-                            "(ADR 0007); 2nd source TPS259474LRPWR C2864845")
+                            "(ADR 0007); no drop-in 2nd source (TPS259474L is "
+                            "latch-off, pins 3/4 PG/PGTH - RC1 review)")
     return _bom(p, "C3662799", "Extended", "TPS259470ARPWR")
