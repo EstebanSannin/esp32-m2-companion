@@ -67,12 +67,18 @@ Parts + assembly: see `docs/v2-gate-v4.md`.
    > rotation alone. Q1, Q2, Q3: pin 1 per the silkscreen triangle (180 degrees is electrically
    > equivalent for these; the pads must land). D3/D4 side-view LEDs: lens facing the nearest long
    > side edge, away from R3/R4 (not toward the gold fingers); "+" (anode) on the pad toward the gold fingers - the one wired to R3 pad 2 / R4 pad 2; cathode mark toward the screw notch.
+   > Serial number: the solid 2x10 mm silkscreen rectangle on the bottom side (under
+   > "samnium.tech") is only the position marker for the serial number; please replace it with
+   > the number, do not print the solid block.
 3. **Production files** (email, ~48 h to confirm):
    - Download JLC's zip and run `make jlc-check JLC=<zip>`. It must report **PASS** (stored upload
      identical, every drill hole matched).
    - Look at `hardware/build/jlc_check/diff_*.png`. Expected differences are listed in
      `tools/check_jlc_production.py`.
    - v2: check that all **6** copper layers are there.
+   - **Serial field:** the number must be on the `qrb` layer inside the 2 × 10 mm field, and the
+     solid white block must be **gone** from the back silkscreen (`bo`) - it is only a position
+     marker. If the block is still there, ask JLC to remove it before confirming.
    - Check the panel: V-cut on the long sides only, nothing on the finger edge, no castellation.
 4. **Final DFM placement** (engineers, "Confirm" button on the order page): check every row of
    `fab/polarity_checklist.md` (18 parts) using N/S: N = screw-notch edge, S = gold fingers.
