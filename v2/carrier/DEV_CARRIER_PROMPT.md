@@ -3,8 +3,8 @@
 ---
 
 Context: I'm designing a **development carrier board** for my ESP32-S3 M.2
-Key-B companion card (repo `/Users/stefano.viola/code/esp32-m2-companion`,
-v2 work in the worktree `/Users/stefano.viola/code/esp32-m2-companion-v2`).
+Key-B companion card (repo `<workspace>/esp32-m2-companion`,
+v2 work in the worktree `<workspace>/esp32-m2-companion-v2`).
 I'm an experienced embedded engineer; talk to me as a peer, be concise, ask
 when something is ambiguous instead of guessing.
 
@@ -27,34 +27,34 @@ Nothing on the carrier may harm a Rev-B card.
 
 ## Read first (read-only — never edit files in the companion repos)
 
-- `/Users/stefano.viola/code/esp32-m2-companion/CLAUDE.md` and `SPEC.md` —
+- `<workspace>/esp32-m2-companion/CLAUDE.md` and `SPEC.md` —
   my workflow (SPEC as contract, GATEs, findings log, LESSONS per block,
   naming rules). Reuse the same methodology and tooling here.
-- `/Users/stefano.viola/code/esp32-m2-companion/docs/pinmap.md` — Rev-B M.2
+- `<workspace>/esp32-m2-companion/docs/pinmap.md` — Rev-B M.2
   pinout (§1) and the BOOT/EN sideband scheme (§3).
-- `/Users/stefano.viola/code/esp32-m2-companion/docs/routing-method.md` and
+- `<workspace>/esp32-m2-companion/docs/routing-method.md` and
   `hardware/blocks/*/LESSONS.md` — layout lessons (most of them are
   board-independent).
-- `/Users/stefano.viola/code/esp32-m2-companion-v2/v2/edge-expansion-brainstorm.md`
+- `<workspace>/esp32-m2-companion-v2/v2/edge-expansion-brainstorm.md`
   — the v2 edge-bus design. Must-read sections:
   - §5–§6: signature logic and carrier design rules
   - §11: research results
   - §14: decisions
   - `v2/research/m2_pins_research.md` for what every Key-B pin means on
     real hosts.
-- `/Users/stefano.viola/code/esp32-m2-companion-v2/docs/decisions/0006-*.md`,
+- `<workspace>/esp32-m2-companion-v2/docs/decisions/0006-*.md`,
   `0007-*.md`, `0008-*.md` — the v2 decisions behind the contract.
 - Toradex Mallow datasheet (`docs/datasheets/` in the companion repo) as a
   reference host design for the M.2 Key-B socket.
 
 ## Pin contract — authoritative source
 
-**`/Users/stefano.viola/code/esp32-m2-companion-v2/docs/carrier-interface.md`**
+**`<workspace>/esp32-m2-companion-v2/docs/carrier-interface.md`**
 is the contract (card revisions, mechanics, power, every edge pin, the
 carrier-signature logic, the EXP_0..11 mapping, carrier design rules).
 
 - Put this line in this repo's `CLAUDE.md` so every session loads it:
-  `@/Users/stefano.viola/code/esp32-m2-companion-v2/docs/carrier-interface.md`
+  `@<workspace>/esp32-m2-companion-v2/docs/carrier-interface.md`
   (after v2 merges, the path becomes `…/esp32-m2-companion/docs/carrier-interface.md`).
 - Rely only on items marked **fixed**.
 - Items marked *proposed* (EXP → ESP GPIO table, ID EEPROM format) may

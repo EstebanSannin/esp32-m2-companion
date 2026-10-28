@@ -32,6 +32,7 @@ v2/probe/*.ses
 v2/probe/*.json
 v2/probe/*.log
 
-# SKiDL side files of the generator scripts (gen_connections etc.)
-hardware/gen_connections.erc
-hardware/gen_connections.log
+# SKiDL side files (*.log / *.erc) of design.py and the generator scripts:
+# generated on every run and they embed local absolute paths
+hardware/*.log
+hardware/*.erc

@@ -7,7 +7,7 @@ hand-repaired sample (D− jumpered finger-pin-9 → U1 pin 3; see
 Host: Verdin iMX8MP on Mallow carrier (Torizon), card in the M.2 slot.
 Firmware: MicroPython ESP32_GENERIC_S3 v1.29.0 flashed at 0x0.
 Method: host-USB REPL over `mpremote` (`/dev/ttyACM0`), SSH-driven from dev Mac.
-Chip unique_id / base MAC: `3c:0f:02:73:21:f8`.
+Chip unique_id / base MAC: `<mac>` (unit-specific; printed as the module Data Matrix).
 
 ## 2026-09-11 — software self-test (no external hardware)
 
@@ -71,7 +71,7 @@ exact v0.1.2 tag with the one-line change `CONFIG_SPIRAM_MODE_OCT` →
 `esp_psram: Found 2MB PSRAM device / Speed 80MHz / SPI SRAM memory test OK`,
 then app_main runs and opens the SoftAP setup portal:
 `SETUP PORTAL UP — join open Wi-Fi "aktualino-7321f8"`, DHCP + captive DNS on
-`192.168.4.1`. STA MAC `3c:0f:02:73:21:f8`, SoftAP MAC `…f9`. This exercises the
+`192.168.4.1`. STA MAC `<mac>`, SoftAP MAC = STA MAC + 1. This exercises the
 full ESP-IDF stack on the board: quad PSRAM heap pool, WiFi STA+AP, and the
 antenna (AP is broadcasting) — a complete application-level bring-up pass.
 

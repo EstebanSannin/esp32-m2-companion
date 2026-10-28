@@ -14,4 +14,4 @@ CFG3_G           FAILED (1 terminal(s) left)
 EXP_2            FAILED (1 terminal(s) left)
 EXP_0            FAILED (1 terminal(s) left)
 CFG2_G           FAILED (1 terminal(s) left)
-ROUTED 31/47 nets; 1555 items written -> /Users/stefano.viola/code/esp32-m2-companion/v2/probe/probe_6L_grid.kicad_pcb
+ROUTED 31/47 nets; 1555 items written -> <workspace>/esp32-m2-companion/v2/probe/probe_6L_grid.kicad_pcb

@@ -3,7 +3,7 @@
 **The contract between the companion card and any carrier or accessory board.**
 Single source of truth for carrier design sessions: import it from a carrier
 repo's `CLAUDE.md` with
-`@/Users/stefano.viola/code/esp32-m2-companion-v2/docs/carrier-interface.md`
+`@<workspace>/esp32-m2-companion-v2/docs/carrier-interface.md`
 (after v2 merges: `…/esp32-m2-companion/docs/carrier-interface.md`).
 
 Version: **v2.0 Rev A, GATE V3 (layout) approved 2026-10-10** (GATE V1 pinmap 2026-10-07;
