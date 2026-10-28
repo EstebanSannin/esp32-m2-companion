@@ -527,3 +527,24 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   final-DFM-verified offsets for unchanged footprints (dated 2026-10-13); the
   order procedure is now production-file check + engineers' final DFM (the
   pre-order preview is reference only).
+
+## v2.0 Rev A — release-candidate design review (2026-10-28)
+
+- 2026-10-28 · RC review · — · **PROCESS** (owner-requested, multi-agent:
+  6 reviewers + 6 skeptics) · 59 verified findings: 1 blocker, 2 major, 32
+  minor, 23 info → full record `docs/review/v2_rc1_design_review.md`
+  (evidence, skeptic reasoning, what was checked OK). Headlines:
+  - **blocker dfm-1** — bottom-side CPL rotations: the "+90" library offsets
+    are very likely 180° wrong for U4/U5/Q1–Q3 (probably U3/U6 too); the
+    land patterns are 180°-symmetric, so a wrong part seats silently and
+    swaps VDD/GND (TMUX1511) or IN/OUT (eFuse). Model calibrated on v1/Rev B
+    JLC history: bottom offset = library rotation + 180°.
+  - **major contract_test-1** — the EXP bus turns on ~9 ms before the ESP32
+    leaves reset (EXP_OE RC faster than EN RC): ESP32 power-up glitches reach
+    the carrier; the "high-Z until EEPROM" contract promise is false.
+  - **major power-1** — OVLO hysteresis: after any trip, a nominal 3.3 V host
+    keeps the card off until the slot is power-cycled; OVLO node unfiltered.
+  - Known K1 (inrush) confirmed and sized; plus minors on eFuse OUT cap,
+    W_DISABLE2# pull-up (1 MΩ vs spec 100–200 kΩ), gold-finger pour between
+    fingers, GND stitching, second sources (TPS259474L not drop-in), contract
+    §5 vs EXP bus, no v2 firmware / test procedure yet.
