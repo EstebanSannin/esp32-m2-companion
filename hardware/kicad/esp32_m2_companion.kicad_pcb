@@ -20019,6 +20019,17 @@
 		(layer "B.SilkS")
 		(uuid "47da9061-bd02-4508-8695-10b950378b60")
 	)
+	(gr_rect
+		(start 89.5 115.4)
+		(end 99.5 117.4)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "B.SilkS")
+		(uuid "36749107-7471-4fa2-a4eb-b04f64c4d4c3")
+	)
 	(gr_text "J4 UART/SPI"
 		(at 95.8 145.31 0)
 		(layer "F.SilkS")

@@ -38,6 +38,15 @@ show for every polarized part (step 3 below).
 - **Castellated holes: No.** The mounting notch is routed in the outline (no plated edge feature). If
   JLC's DFM flags castellation, something is wrong: stop and check.
 - Confirm Production File: **Yes**. Deburring/Edge rounding: Yes. Mark: Remove.
+- **Mark on PCB → 2D Barcode (Serial Number): Number only, Specify Position: Yes.** The board
+  carries the required solid 2 × 10 mm silkscreen rectangle on the back, under "samnium.tech"
+  (`tools/v2_brand.py`). JLC prints prefix + incrementing number inside it, one row; fewer
+  characters = larger font. Recommended: **prefix `V2A`, Unique Number: Remove, starting value
+  `0001`** (prints `V2A0001`, `V2A0002`, ...). JLC does not guarantee a continuous sequence
+  (extra or scrapped panels), and on a reorder **set the starting value by hand** (it does not
+  reliably continue). JLC shows the number on a separate `qrb` layer in the production files.
+  The board serial is for people; the unit identity stays the module MAC (Data Matrix): record
+  serial ↔ MAC at bring-up.
 - **Assembly: both sides** (top: U2, J3, J4, R33; bottom: everything else).
 - **13 Extended BOM lines** (feeder fee each): U2, U1, D1/D2, D3, D4, J3, J4, Q1–Q3, R31, R32,
   RN1–RN3, U3–U5, U6. No DNP parts in v2.

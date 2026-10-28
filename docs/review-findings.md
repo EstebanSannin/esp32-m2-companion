@@ -790,3 +790,9 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   `docs/img/ref_map_top.png` / `ref_map_bottom.png` (`make render`,
   `tools/gen_ref_map.py`). U6 and D4 have no legal spot and stay
   unlabelled. Footprint outlines / pin-1 marks unchanged (library parity).
+- 2026-10-28 · GATE V4 owner review · info · **SILK** · Board serial
+  readable without a scanner: solid 2 × 10 mm B.Silkscreen field under
+  `samnium.tech` for JLC "Mark on PCB → Serial Number, Number only, Specify
+  Position" (prefix + incrementing number; recommended `V2A` + `0001`, unique
+  number removed; fab/README.md). Unit identity stays the module MAC
+  (decision L8); serial ↔ MAC recorded at bring-up.

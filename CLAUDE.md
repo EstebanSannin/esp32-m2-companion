@@ -12,6 +12,9 @@ Knowledge management per SPEC §12 (findings log, block LESSONS.md, this file).
 - Every net is named — no SKiDL auto nets (`N$x`) in review artifacts
   (LED anodes: `LED_PWR_A`, `LED_STATUS_A`; BOOT strap: `IO0`).
 - Unit serial = ESP32-S3 base MAC, printed as the module's Data Matrix.
+  v2 also has a human-readable board serial: JLC "Number only" serial in
+  the 2 x 10 mm silk field on the back (fab/README.md); record serial <-> MAC
+  at bring-up.
 
 - Net names follow the source datasheets **verbatim**:
   - M.2 edge nets: Mallow X17 names where they exist (`USBH3_D_P`,

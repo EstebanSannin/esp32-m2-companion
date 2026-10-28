@@ -9,7 +9,14 @@ Silk in the antenna keep-out is fine (the Espressif rule is about copper).
 
 Back (B.Silkscreen): logo (owner-placed), then a column version / "Designed
 in Italy" / samnium.tech at 0.8 mm (DRC min_text_height); the board name
-moves to the top. Idempotent.
+moves to the top.
+
+Back, below the website (owner request 2026-10-28): the JLC serial-number
+field - a SOLID 2 x 10 mm B.Silkscreen rectangle, JLC "Mark on PCB ->
+2D Barcode (Serial Number) -> Number only -> Specify Position" (jlcpcb.com
+help "How to mark on PCB": the number is printed inside it, one row,
+prefix + incrementing number). Aligned with the text column, clear of
+vias / parts (first via at y 118.6). Idempotent.
   $KPY tools/v2_brand.py
 """
 import sys
@@ -26,6 +33,7 @@ STRIP_Y = (108.3, 112.1)                      # usable band (edge / module silk)
 LEFT_X, RIGHT_X = (89.3, 97.95), (102.05, 110.7)
 BACK = [("v2.0 Rev A 2026-10", 111.0), ("Designed in Italy", 112.5), ("samnium.tech", 114.0)]
 BACK_X, H_BACK, TH = 89.5, 0.8, 0.15
+SERIAL = (89.5, 115.4, 99.5, 117.4)           # x0, y0, x1, y1: 10 x 2 mm
 
 
 def main():
@@ -74,6 +82,18 @@ def main():
             t.SetHorizJustify(ref.GetHorizJustify()); t.SetMirrored(ref.IsMirrored())
         t.SetPosition(V(BACK_X, y))
         log.append(f"back: '{s}' at {H_BACK} mm, y {y}")
+    # ---- back: JLC serial-number field -------------------------------------
+    x0, y0, x1, y1 = SERIAL
+    have = [d for d in b.GetDrawings() if isinstance(d, pcbnew.PCB_SHAPE)
+            and d.GetLayer() == pcbnew.B_SilkS and d.GetShape() == pcbnew.SHAPE_T_RECT
+            and abs(T(d.GetStart().x) - x0) < 0.01 and abs(T(d.GetStart().y) - y0) < 0.01]
+    if not have:
+        r = pcbnew.PCB_SHAPE(b, pcbnew.SHAPE_T_RECT)
+        r.SetLayer(pcbnew.B_SilkS)
+        r.SetStart(V(x0, y0)); r.SetEnd(V(x1, y1))
+        r.SetWidth(0); r.SetFilled(True)
+        b.Add(r)
+        log.append(f"back: JLC serial field {x1 - x0:.0f} x {y1 - y0:.0f} mm at ({x0}, {y0})")
     for t in doomed:
         b.Remove(t)
         log.append(f"back: '{NAME}' removed (now on top)")

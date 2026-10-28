@@ -14,7 +14,8 @@ inch units, whole panel). This checks, against `fab/*_gerbers.zip`:
    Expected, harmless differences: etch compensation (thin outlines
    everywhere), plane pull-back from V-cut edges, gold-finger tips cut back,
    mask expansion / one mask window over the fingers, silk clipped off pads,
-   panel frame on the outline layer. Inspect the diff images; WARN marks
+   panel frame on the outline layer, the 2 x 10 mm serial-number field on
+   `bo` (JLC may clear it and put the number on its own `qrb` layer). Inspect the diff images; WARN marks
    layers whose difference is unusually large.
 
 Usage (from the repo root; needs network once for the pinned libraries and

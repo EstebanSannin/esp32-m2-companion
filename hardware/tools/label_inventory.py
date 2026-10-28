@@ -106,6 +106,7 @@ def main():
         w("| V3 | Test points | TP3–TP6 removed in v2; `EN` / `BOOT` legends beside TP1 / TP2 |")
         w("| V4 | Refdes | all 0.8 mm (DRC min); hidden refs: `Silk refdes` column of section 1 |")
         w("| V5 | Refdes (GATE V4 label review, 2026-10-28) | silk only for ICs, transistors, LEDs (U1, U3-U6, Q1-Q3, D3, D4); passives and D1/D2 on the fab layer; every reference is on `docs/img/ref_map_top.png` / `ref_map_bottom.png` (`make render`). U6 and D4: no legal spot, unlabelled |")
+        w("| V6 | Board serial (2026-10-28) | solid 2 x 10 mm silk field on the back under `samnium.tech`: JLC Number-only serial (prefix + incrementing number, `fab/README.md`); unit identity stays the module MAC |")
         w("")
         w("<details><summary>Rev B decisions (GATE B2, kept for history)</summary>\n")
     w("## GATE B2 decisions (owner, 2026-10-06)\n")
