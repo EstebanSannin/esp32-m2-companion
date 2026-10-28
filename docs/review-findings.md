@@ -796,3 +796,9 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   Position" (prefix + incrementing number; recommended `V2A` + `0001`, unique
   number removed; fab/README.md). Unit identity stays the module MAC
   (decision L8); serial ↔ MAC recorded at bring-up.
+- 2026-10-28 · GATE V4 · info · **APPROVED** · Owner approved GATE V4 on
+  RC2 (DRC 0/0, `make check` PASS; RC2 check 0 blocker / 0 major). Residual
+  R-v2-9 (OVLO ramp overshoot up to ~50 mV over the ESP32 3.6 V abs max on a
+  50-100 us ramp) accepted. Order next per fab/README.md "Order steps";
+  `JLC_ROT` dates are set after JLC's production-file / DFM check, and
+  `v2.0-revA` is tagged on the ordered commit.
