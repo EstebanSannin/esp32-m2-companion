@@ -285,8 +285,10 @@ review. Never proceed past a gate without explicit approval.
       - OVLO node filtered (C16 100 pF C0G, τ ≈ 3.4 µs; RC2 2026-10-28,
         was 1 nF) against hot-plug ringing. Hard step: trip after a few µs
         plus tOVLO 1.2 µs; the worst case is an overvoltage ramp, which the
-        worst-case model keeps at +3V3 ≤ ~3.55 V (RC1 delta review
-        power-rc1-1). Cold-start inrush soft-started by C15 2.2 nF
+        worst-case model puts at +3V3 ~3.56–3.6 V typ, up to ~3.65 V worst
+        case on 50–100 µs ramps, i.e. up to ~50 mV above the ESP32 3.6 V
+        abs max for µs (RC1 delta review power-rc1-1; RC2 check power-1:
+        even unfiltered the max trip is 3.561 V; residual risk R-v2-9). Cold-start inrush soft-started by C15 2.2 nF
         (≤ ~90 mA, 0 → 3.3 V in ~2–16 ms incl. the turn-on delay; M.2 hosts
         may soft-start the slot at 200 mA) (RC1).
       - Normal operation from 3.135 V.

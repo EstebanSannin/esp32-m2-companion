@@ -107,7 +107,8 @@ a carrier **cannot** tell a v2 card from a modem by CONFIG_0/1 (see §5 rule 4).
   - v2 cards: overvoltage trip at **3.44–3.57 V** (filtered, τ ≈ 3.4 µs:
     MHz ringing is attenuated ~20×). A hard step trips after a few µs plus
     the eFuse's 1.2 µs; the worst case is a ramp of tens of µs, which the
-    worst-case model keeps at ≤ ~3.55 V on the card rail (ADR 0007 RC2).
+    worst-case model puts at ~3.56–3.6 V typ, up to ~3.65 V on the card rail
+    for µs (ADR 0007 RC2; the max trip alone is 3.561 V).
     The card switches off without damage up to ~18 V (ADR 0007). Even so,
     the 3.6 V limit applies to every carrier (test-fixture exception: §5
     rule 8).

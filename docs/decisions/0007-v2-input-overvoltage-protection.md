@@ -79,8 +79,10 @@ contract_test-7). Authoritative values: `hardware/blocks/power_3v3/power_3v3.py`
   1.2 µs. **The worst case is a ramp**, not a
   step: until OVLO trips the HFET is fully on, OUT follows IN, and the
   current limit only settles in ~400 µs (tLIM), so the filter lag adds to
-  the trip voltage. With 100 pF the worst-case ramp model keeps +3V3 at
-  **≤ ~3.55 V** (< 3.6 V ESP32 abs max); see RC2 below.
+  the trip voltage. With 100 pF the worst-case ramp model puts +3V3 at
+  **~3.56–3.6 V typ, up to ~3.65 V** for µs on 50–100 µs ramps (the max trip
+  alone is 3.561 V, so no filter value meets "never > 3.6 V" on a ramp);
+  see RC2 below.
 - **OUT capacitor: C17 1 µF 25 V** (CL05A105KA5NQNC, C52923) on +3V3_EFUSE
   **at FB1 pad 1, ~4 mm of track from U6 OUT** (no closer spot on the
   bottom side; review power-4; TI §8.3.1/§8.4.1 "≥ 1 µF close to OUT").
@@ -127,8 +129,12 @@ Owner decision after the RC1 delta review ("accept your recommendations";
   the current limit settles in ~400 µs, so the filter lag (ramp rate × τ)
   adds to the 3.561 V maximum trip. The "~4 µs trip, stays < 3.6 V" claim of
   the RC1 amendment held only for a hard step on a typical part. With
-  100 pF (τ 3.4 µs) the worst-case ramp model peaks at ~3.55 V; a hard step
-  trips after a few µs plus tOVLO 1.2 µs.
+  100 pF (τ 3.4 µs) the worst-case ramp model peaks at ~3.56–3.6 V typ and
+  up to ~3.65 V (RC2 check power-1, including the eFuse RON + FB1 drop; the
+  first RC2 text said ~3.55 V, which is below the 3.561 V max trip and was
+  wrong). A hard step stays < 3.6 V (trip after a few µs plus tOVLO 1.2 µs).
+  Residual: up to ~50 mV above the ESP32 3.6 V abs max for µs on a ramp -
+  risk R-v2-9, owner to accept at GATE V4.
 - The review's X7R remark on C16 (power-rc1-4) is moot: the part is C0G.
 - Bring-up: step 4.5 of `docs/v2-test-procedure.md` now also asks for a
   50–100 µs ramp from 3.3 V to 5 V, scoping +3V3 at the module.

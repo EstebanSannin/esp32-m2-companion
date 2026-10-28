@@ -281,7 +281,14 @@ def main():
         table.append(f'<text x="150" y="{37 + 5*i}">{kind:8} Ø{d:.2f} mm × {n}</text>')
     table.append("</g>")
     rot = jlc_rot()
-    unverified = sorted(k for k, v in rot.items() if v[1] is None)
+    # count only parts actually in the BOM (not approved 2nd sources)
+    bomf = Path(__file__).resolve().parents[2] / "fab" / "esp32_m2_companion_bom_jlc.csv"
+    placed_lcsc = set()
+    if bomf.exists():
+        import csv
+        placed_lcsc = {r["LCSC Part #"] for r in csv.DictReader(bomf.open()) if r.get("LCSC Part #")}
+    unverified = sorted(k for k, v in rot.items()
+                        if v[1] is None and (not placed_lcsc or k in placed_lcsc))
     via_txt = ", ".join(f"{n} x {d:.2f}/{h:.2f}"
                         for (d, h), n in sorted(fx["vias"].items(), reverse=True))
     fab_notes = [STACKUP[1] + f" (board: {fx['layers']} Cu)",

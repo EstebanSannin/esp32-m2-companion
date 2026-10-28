@@ -41,8 +41,11 @@
   on and OUT follows IN (the current limit settles in ~400 µs, tLIM), so the
   filter lag (≈ ramp rate × τ) adds straight to the rail peak. 1 nF (τ 34 µs)
   let a tens-of-µs ramp lift +3V3 to ~3.7–3.9 V; 100 pF (τ 3.4 µs) keeps the
-  worst-case model at ~3.55 V. With 0.1 % resistors the no-filter margin is
-  only ~40 mV (3.561 V max trip vs 3.6 V), so any τ above a few µs eats it.
+  worst-case model at ~3.56–3.6 V typ, up to ~3.65 V (corrected by the RC2
+  check: the first RC2 text said 3.55 V, below the 3.561 V max trip itself).
+  With 0.1 % resistors the no-filter margin is only ~40 mV (3.561 V max trip
+  vs 3.6 V), so on a ramp ANY filter eats it - verify a model's output
+  against the trip threshold before quoting it.
 - 2026-10-28 (v2 RC1 delta review power-rc1-2/-3): quote a soft-start ramp
   over the full IdVdt spread AND the CdVdt tolerance plus the turn-on delay
   (2.2 nF: 0 → 3.3 V in ~2–16 ms), or the bring-up window fails good parts.

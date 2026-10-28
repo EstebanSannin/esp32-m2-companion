@@ -57,7 +57,7 @@ Parts + assembly: see `docs/v2-gate-v4.md`.
    > are 180-degree symmetric; please confirm pin 1 against our silkscreen, do not rely on the CPL
    > rotation alone. Q1, Q2, Q3: pin 1 per the silkscreen triangle (180 degrees is electrically
    > equivalent for these; the pads must land). D3/D4 side-view LEDs: lens facing the nearest long
-   > side edge, away from R3/R4 (not toward the gold fingers); "+" on the pad level with R3/R4.
+   > side edge, away from R3/R4 (not toward the gold fingers); "+" (anode) on the pad toward the gold fingers - the one wired to R3 pad 2 / R4 pad 2; cathode mark toward the screw notch.
 3. **Production files** (email, ~48 h to confirm):
    - Download JLC's zip and run `make jlc-check JLC=<zip>`. It must report **PASS** (stored upload
      identical, every drill hole matched).
@@ -67,7 +67,7 @@ Parts + assembly: see `docs/v2-gate-v4.md`.
    - Check the panel: V-cut on the long sides only, nothing on the finger edge, no castellation.
 4. **Final DFM placement** (engineers, "Confirm" button on the order page): check every row of
    `fab/polarity_checklist.md` (18 parts) using N/S: N = screw-notch edge, S = gold fingers.
-   - **LEDs D3/D4: check BOTH.** The "+" must be on the pad level with the series resistor (R3/R4),
+   - **LEDs D3/D4: check BOTH.** The "+" (anode) must be on the pad toward the gold fingers, the one wired to R3 pad 2 / R4 pad 2,
      **and** the lens must face the nearest long side edge, away from R3/R4 (not the gold fingers;
      "left" in the top view, mirrored in JLC's bottom preview). v1 got the lens right but polarity
      wrong; Rev B got polarity right but the lens inward.

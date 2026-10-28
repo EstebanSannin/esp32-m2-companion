@@ -18,7 +18,8 @@ U6 (docs/datasheets/tps25947.pdf):
   (~12-15 V/ms) = 0.5-1 A inrush into the ~65 uF card rail, at the current
   limit and above a 200 mA M.2 host soft-start (M.2 Table 39). 2.2 nF:
   SR ~0.7 V/ms typ, <= 1.3 V/ms at max IdVdt (3.82 uA) -> inrush <= ~90 mA;
-  slowest ~0.24 V/ms (max IdVdt, C15 -10 % .. min, +10 %): 0 -> 3.3 V in ~2-16 ms incl. the
+  fastest ~1.37 V/ms (max IdVdt, C15 -10 %), slowest ~0.24 V/ms (min
+  IdVdt, C15 +10 %): 0 -> 3.3 V in ~2-16 ms incl. the
   turn-on delay. Rated >= VIN + 5 V (datasheet Rec. Op.). X7R accepted (C0G
   would only narrow the slew spread). C15 sits 0.32 mm from the V-scored long
   edge (no room inboard of U6): parallel to the edge; a crack fails safe
@@ -30,7 +31,9 @@ U6 (docs/datasheets/tps25947.pdf):
   NOT larger: RC1 delta review power-rc1-1 - with 1 nF (tau 34 us) an
   overvoltage RAMP of tens of us lifts +3V3 to ~3.7-3.9 V before the trip
   (the HFET stays on and the current limit settles in ~400 us); with 100 pF
-  the worst-case ramp model peaks ~3.55 V (< 3.6 V ESP32 abs max).
+  the worst-case ramp model peaks ~3.56-3.6 V typ, up to ~3.65 V for us
+  (the max trip alone is 3.561 V; up to ~50 mV over the ESP32 3.6 V abs max
+  on a 50-100 us ramp - residual risk R-v2-9). A hard step stays < 3.6 V.
   OVLO RELEASE is 3.13-3.25 V at IN (VOV(F) x 2.912): on a nominal 3.3 V host
   a trip keeps the card OFF until the slot is power-cycled (documented, not
   auto-recovering).
@@ -98,7 +101,7 @@ def power_3v3(v3v3_m2, v3v3_efuse, v3v3, gnd, ovlo, en_uvlo, ilm, dvdt):
     c_dvdt = C_0402("2.2nF 50V", lcsc="C1531", mpn="0402B222K500NT", ref="C15")
     c_dvdt[1] += dvdt
     c_dvdt[2] += gnd
-    c_ovlo = C_0402("100pF 50V C0G", lcsc="C1546", mpn="0402CG101J500NT", ref="C16")
+    c_ovlo = C_0402("100pF C0G", lcsc="C1546", mpn="0402CG101J500NT", ref="C16")
     c_ovlo[1] += ovlo
     c_ovlo[2] += gnd
     c_out = C_0402("1uF 25V", lcsc="C52923", mpn="CL05A105KA5NQNC", ref="C17")

@@ -133,7 +133,8 @@ Toradex Verdin family (Mallow carrier).
 - **Carrier expansion bus**: 12 EXP lines on the M.2 edge (6 ADC-capable,
   2 = I2C for the carrier ID EEPROM) through bus switches. **On only when a
   carrier grounds CONFIG_2 + CONFIG_3 *and* firmware releases it**; high-Z on
-  every standard host, during reset and when unpowered
+  every standard host, from power-up through ROM boot, and when unpowered
+  (after a software/watchdog reset: firmware rule, see the contract)
   ([`docs/carrier-interface.md`](docs/carrier-interface.md))
 - **Standard host sidebands**: LED_1# and WAKE_ON_WWAN# (open-drain),
   W_DISABLE2# radio-kill input — voltage-agnostic NMOS cells; µA-level

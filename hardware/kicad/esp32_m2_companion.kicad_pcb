@@ -8222,7 +8222,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "100pF 50V C0G"
+		(property "Value" "100pF C0G"
 			(at 0 -1.16 180)
 			(layer "B.Fab")
 			(uuid "2c4b311f-275f-41d1-a306-7f38b358bb48")

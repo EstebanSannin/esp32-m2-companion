@@ -738,3 +738,33 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
 - 2026-10-28 · RC2 · info · **PROCESS** (docs-15) · Out of this repo:
   m2-dev-carrier CLAUDE.md carries an absolute home path, and its bring-up §7
   is pre-RC1 — fix in that repo.
+
+## v2.0 Rev A — RC2 check (2026-10-28)
+
+- 2026-10-28 · RC2 check · — · **PROCESS** · Focused re-review of the RC2
+  fixes (`cda1064..c1625ca`, 3 areas + skeptics): 0 blocker, 0 major, 4
+  minor, 10 info; 33 delta-review findings confirmed closed or accepted.
+- 2026-10-28 · RC2 check · minor (was major) · **BLOCK power_3v3**
+  (power-1) · The RC2 text "worst-case ramp model ≤ ~3.55 V" was wrong: it is
+  below the 3.561 V maximum OVLO trip itself. Corrected everywhere to
+  ~3.56–3.6 V typ, up to ~3.65 V for µs on a 50–100 µs ramp (including the
+  eFuse RON + FB1 drop). No filter value can meet "never > 3.6 V" on a ramp;
+  100 pF stays. Residual (≤ ~50 mV over the ESP32 3.6 V abs max for µs)
+  recorded as risk R-v2-9, **owner to accept at GATE V4**. Procedure 4.5b
+  now records the peak (FAIL only above 3.7 V).
+- 2026-10-28 · RC2 check · minor · **PROCESS** (power-2) · C16 value text
+  "100pF 50V C0G" collided with C17's reference in the generated schematic
+  → value shortened to "100pF C0G".
+- 2026-10-28 · RC2 check · minor · **PROCESS** (fab-1) · LED order remark
+  "'+' on the pad level with R3/R4" was ambiguous (both pads are level with
+  a resistor pad) → "'+' (anode) on the pad toward the gold fingers, wired
+  to R3/R4 pad 2; cathode mark toward the screw notch".
+- 2026-10-28 · RC2 check · minor · **PROCESS** (bus-1) · No step measured
+  the bus-off time after the signature is removed → procedure step 8.1e;
+  8.1d now names the IO38 reference channel.
+- 2026-10-28 · RC2 check · info · Corrections to the RC2 record above:
+  the block docstrings' "no back-feed" WAS fixed (commit c1625ca, not left
+  as stated); power-rc1-5 (C16 at the U6 pin-2 end) accepted as is, no
+  layout change (OVLO trace over solid planes, DC neighbours only);
+  DATASHEET "high-Z during reset" qualified (software/WDT reset = firmware
+  rule); drawing note counts only placed parts' unverified offsets.

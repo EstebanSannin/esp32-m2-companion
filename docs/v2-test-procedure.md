@@ -155,7 +155,7 @@ Setup as at the end of §3 (JP1 = BENCH, card running).
 | 4.3 | Keep lowering in 10 mV steps | rail returns at **V_release = 3.13–3.25 V** (record; SPEC S-v2-3). Restart is current-limited: a brief bench current up to ~1.15 A is normal | [ ] | S-v2-3 |
 | 4.4 | Back to 3.30 V | card runs, enumerates again (§5) | [ ] | S-v2-3 |
 | 4.5 | **5 V survival.** Card running at 3.30 V. Scope CH1 on J3 pin 2, single trigger. Step the supply to **5.00 V** (preset + output switch, or the fastest knob turn), hold 10 s | card rail peak **≤ 3.6 V** (record; design: trip a few µs plus tOVLO 1.2 µs after the input crosses 3.44–3.57 V, then off). Rail then < 0.3 V. Nothing warm | [ ] | S-v2-3, G11 |
-| 4.5b | **Ramp (worst case, optional equipment).** Card running at 3.30 V. Programmable-slew source: ramp 3.3 → 5 V in **50 µs**, then **100 µs**; scope CH1 at the module (J3 pin 2) and CH2 on the input. Power-cycle between runs (4.6) | card rail peak **≤ 3.6 V** each run (record; worst-case model ~3.55 V with C16 100 pF, ADR 0007 RC2) | [ ] | S-v2-3, G11 |
+| 4.5b | **Ramp (worst case, optional equipment).** Card running at 3.30 V. Programmable-slew source: ramp 3.3 → 5 V in **50 µs**, then **100 µs**; scope CH1 at the module (J3 pin 2) and CH2 on the input. Power-cycle between runs (4.6) | **record** the card rail peak each run; expect ~3.56–3.6 V, ≤ ~3.65 V worst case (ADR 0007 RC2). Above 3.7 V = FAIL (filter or divider wrong) | [ ] | S-v2-3, G11 |
 | 4.6 | Output off (0 V), then 3.30 V on | card boots, enumerates; §7 self-test still PASS | [ ] | S-v2-3 |
 
 Set the limit back to 0.5 A. Output off, **JP1 = REG** for the rest unless a step says BENCH.
@@ -248,7 +248,8 @@ Setup: JP1 = REG, **JP2/JP3 = GND**, bus indicator on J3 hdr 1.
 | 8.1a | Power up, MicroPython idle (`boot.py` holds IO38 high; 6.2 proved the R35 path) | J3 hdr 1 **< 0.05 V**; EXP_OE at C13 **< 0.1 V** (optional probe) | [ ] | RC1 |
 | 8.1b | REPL: `import v2_selftest; v2_selftest.bus_on()` | J3 hdr 1 **3.0–3.3 V**; EXP_OE ≈ 3.3 V. `bus_on()` deliberately leaves the bus released until `bus_off()`, a reset or a Ctrl-C during its wait | [ ] | S-v2-2 |
 | 8.1c | `v2_selftest.bus_off()` | J3 hdr 1 **< 0.05 V** | [ ] | S-v2-2 |
-| 8.1d | Scope on J3 hdr 1: `bus_on()`, then `bus_off()` | turns on **~1–6.5 ms** after release (R26/C13 RC incl. tolerances; carrier-interface §4.3.1); turns off in **< 0.1 ms** (contract: ~20 µs, to be confirmed here). Record both times | [ ] | RC1, S-v2-2 |
+| 8.1d | Scope CH1 on J3 hdr 1, CH2 on IO38 (R35 pad 2, trigger on its edge): `bus_on()`, then `bus_off()` | turns on **~1–6.5 ms** after release (R26/C13 RC incl. tolerances; carrier-interface §4.3.1); turns off in **< 0.1 ms** (contract: ~20 µs, to be confirmed here). Record both times | [ ] | RC1, S-v2-2 |
+| 8.1e | Bus released with `bus_on()`; scope CH1 on J3 hdr 1, CH2 on JP2's card-side pin (CONFIG_2), trigger on CH2 rising; move JP2 from GND to open, then repeat with JP3 | bus off **< ~1 ms** after the signature pin leaves 0 V (contract §4.3.1: ~0.3 ms, to be confirmed here). Record both | [ ] | RC2, S-v2-2 |
 
 ### 8.2 Loopback, every EXP line both ways
 
