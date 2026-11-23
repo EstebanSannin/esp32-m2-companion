@@ -7,7 +7,7 @@ JLCPCB's [instant quote](https://cart.jlcpcb.com/quote):
 |---|---|
 | `esp32_m2_companion_gerbers.zip` | **Gerber file** (PCB tab): 6 copper layers + masks, silk, paste, outline; drill as separate PTH / NPTH files. No `.gbrjob`: its stackup / finish fields are KiCad defaults that contradict the order form (RC1 delta review dfm-r4); JLC orders from the web form |
 | `esp32_m2_companion_bom_jlc.csv` | **BOM** (SMT Assembly tab): Comment / Designator / Footprint / LCSC# |
-| `esp32_m2_companion_cpl_jlc.csv` | **CPL / centroid** (SMT Assembly tab): 54 placed parts |
+| `esp32_m2_companion_cpl_jlc.csv` | **CPL / centroid** (SMT Assembly tab): 53 placed parts (J3 DNP) |
 
 Also generated, **not uploaded**: `polarity_checklist.md`. It says what JLC's placement preview must
 show for every polarized part (step 3 below).
