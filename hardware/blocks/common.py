@@ -101,10 +101,10 @@ def R_0402(value, lcsc, mpn, jlc="Basic", ref=None, dnp=False):
     return _bom(p, lcsc, jlc, mpn, dnp)
 
 
-def C_0402(value, lcsc, mpn, ref=None):
+def C_0402(value, lcsc, mpn, jlc="Basic", ref=None):
     p = Part("Device", "C", value=value, ref=ref, tag=_next_tag("C"),
              footprint="Capacitor_SMD:C_0402_1005Metric")
-    return _bom(p, lcsc, "Basic", mpn)
+    return _bom(p, lcsc, jlc, mpn)
 
 
 def _template(name, prefix, footprint, description, pins):

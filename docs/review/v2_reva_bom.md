@@ -5,7 +5,7 @@
 | C1,C2 | 2 | 22uF 25V / CL21A226MAQNNNE | C45783 | Basic |  |  |
 | C10,C11,C12,C14,C4,C6 | 6 | 100nF 50V / CC0603KRX7R9BB104 | C14663 | Basic |  |  |
 | C13,C5 | 2 | 1uF 50V / CL10A105KB8NNNC | C15849 | Basic |  |  |
-| C15 | 1 | 2.2nF 50V / 0402B222K500NT | C1531 | Basic |  |  |
+| C15 | 1 | 2.2nF 50V / 0402B222K500NT | C1531 | Extended |  |  |
 | C16 | 1 | 100pF C0G / 0402CG101J500NT | C1546 | Basic |  |  |
 | C17 | 1 | 1uF 25V / CL05A105KA5NQNC | C52923 | Basic |  |  |
 | C3,C7 | 2 | 10uF 10V / CL10A106KP8NNNC | C19702 | Basic |  |  |

@@ -98,7 +98,9 @@ def power_3v3(v3v3_m2, v3v3_efuse, v3v3, gnd, ovlo, en_uvlo, ilm, dvdt):
     c_in[1] += v3v3_m2
     c_in[2] += gnd
     # RC1 review: inrush slew, OVLO filter, OUT decoupling (see docstring)
-    c_dvdt = C_0402("2.2nF 50V", lcsc="C1531", mpn="0402B222K500NT", ref="C15")
+    c_dvdt = C_0402("2.2nF 50V", lcsc="C1531", mpn="0402B222K500NT",
+                    jlc="Extended", ref="C15")
+    c_dvdt.fields["JLC_note"] = "JLC reclassified it Extended (2026-11-23); kept, no design change"
     c_dvdt[1] += dvdt
     c_dvdt[2] += gnd
     c_ovlo = C_0402("100pF C0G", lcsc="C1546", mpn="0402CG101J500NT", ref="C16")

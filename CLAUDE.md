@@ -1,5 +1,11 @@
 # Project conventions — esp32-m2-companion
 
+Personal project (samnium.tech), **not Toradex work**. This overrides the global
+Toradex identity rule: author commits as `Stefano Viola <samnium.tech@gmail.com>`
+(repo-local git config) and end every commit with only
+`Signed-off-by: Stefano Viola <samnium.tech@gmail.com>`. No Toradex email, branding
+or brand kit here. Older commits used the work address by mistake (`.mailmap`).
+
 SPEC.md is the contract; STOP at every GATE (SPEC §9) for owner review.
 Knowledge management per SPEC §12 (findings log, block LESSONS.md, this file).
 

@@ -48,8 +48,11 @@ show for every polarized part (step 3 below).
   The board serial is for people; the unit identity stays the module MAC (Data Matrix): record
   serial ↔ MAC at bring-up.
 - **Assembly: both sides** (top: U2, J3, J4, R33; bottom: everything else).
-- **13 Extended BOM lines** (feeder fee each): U2, U1, D1/D2, D3, D4, J3, J4, Q1–Q3, R31, R32,
-  RN1–RN3, U3–U5, U6. No DNP parts in v2.
+- **14 Extended BOM lines** (feeder fee each): U2, U1, C15, D1/D2, D3, D4, J3, J4, Q1–Q3, R31,
+  R32, RN1–RN3, U3–U5, U6. No DNP parts in v2. (C15 became Extended at JLC by 2026-11-23.)
+- **Stock (JLC, 2026-11-23):** J3 (BM04B-SRSS-TB, C160390) is out of stock - pre-order it into
+  "My Parts Lib" (min 27) before ordering. TMUX1511 (C2673275): only 78 orderable - reserve 15+
+  for 5 boards (300 for 100). Everything else has ample stock.
 
 Cost reference (PCB only, quote 2026-10-10, settings above): 5 pcs $85.39 · 100 pcs $207.49.
 Parts + assembly: see `docs/v2-gate-v4.md`.
