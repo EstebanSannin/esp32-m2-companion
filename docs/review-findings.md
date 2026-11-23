@@ -802,3 +802,8 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   50-100 us ramp) accepted. Order next per fab/README.md "Order steps";
   `JLC_ROT` dates are set after JLC's production-file / DFM check, and
   `v2.0-revA` is tagged on the ordered commit.
+- 2026-11-23 · Order stock check · info · **DNP** · J3 (Qwiic, C160390)
+  out of stock at JLC (1 piece, pre-order min 27). Owner decision: J3 DNP
+  for v2.0 Rev A, hand-soldered after delivery (no added cost or lead
+  time). Copper and gerbers unchanged; BOM/CPL/polarity checklist drop J3.
+  C15 (C1531) became Extended at JLC (13 Extended lines with J3 out).

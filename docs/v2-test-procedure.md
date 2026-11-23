@@ -98,7 +98,7 @@ preview next to it. N = screw-notch edge, S = finger edge.
 | 1.5 | D1, D2 (BAT54A), U1 (USBLC6) | pin 1 at the **SW** corner. U1's land is 180°-symmetric: turned 180° it puts GND (pin 2) on +3V3 and VBUS (pin 5) on GND — **stop** before power-up if U1 pin 1 is not SW | [ ] | S-v2-4 |
 | 1.6 | 0.4 mm-pitch parts U3–U6, RN1–RN3 | no bridges along the package edges (0.1 mm mask dams, review dfm-3); no tombstoned 0402s | [ ] | — |
 | 1.7 | Gold fingers | no solder or flux on them; leading edge **hand-chamfered** before first insertion (SPEC A1) | [ ] | — |
-| 1.8 | U2 module, J3/J4 JST connectors, R33 (top side since RC1, between the module and J4) | module flat, castellations wetted; JST shell legs soldered; R33 present | [ ] | S-v2-4 |
+| 1.8 | U2 module, J4 JST connector (J3 is DNP: hand-solder it first, see fab/README.md), R33 (top side since RC1, between the module and J4) | module flat, castellations wetted; JST shell legs soldered; R33 present | [ ] | S-v2-4 |
 | 1.9 | C15 (DVDT 2.2 nF, bottom, 0.32 mm from the V-scored long edge — accepted deviation) | no crack or chipped end after depanelling (loupe); 3.2 confirms it electrically | [ ] | K1 |
 
 ## 2. Unpowered resistance checks (card out of any slot)

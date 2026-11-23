@@ -13,7 +13,7 @@
 | D3 | 1 | green / TJ-S1706SW6TGLC2G-A5 | C273616 | Extended |  |  |
 | D4 | 1 | red / TJ-S1706SW6TGLC2R-A5 | C273612 | Extended |  |  |
 | FB1 | 1 | 120R@100MHz 2A / BLM18PG121SN1D | C14709 | Basic |  |  |
-| J3 | 1 | Conn_01x04 / JST BM04B-SRSS-TB | C160390 | Extended |  |  |
+| J3 | 1 | Conn_01x04 / JST BM04B-SRSS-TB | C160390 | Extended | DNP |  |
 | J4 | 1 | Conn_01x08 / JST BM08B-SRSS-TB | C160394 | Extended |  | C265120 (JST BM08B-SRSS-TBT) |
 | Q1,Q2,Q3 | 3 | SSM6N56FE / SSM6N56FE,LM | C146449 | Extended |  | C86784 (Vishay SI1024X-T1-GE3) |
 | R1,R2,R26,R30 | 4 | 10k / 0603WAF1002T5E | C25804 | Basic |  |  |

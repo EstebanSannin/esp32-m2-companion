@@ -79,8 +79,14 @@ def main(out):
     b = pcbnew.LoadBoard(str(PCB))
     fps = {f.GetReference(): f for f in b.GetFootprints()}
     rows, errors = [], []
+    # placed parts only: DNP parts are absent from the generated BOM
+    import csv
+    placed = {ref for r in csv.DictReader(open(HERE / "build" / "bom.csv"))
+              for ref in r["Designator"].split(",")}
 
     for ref, fp in sorted(fps.items()):
+        if ref not in placed:
+            continue
         c = fp.GetPosition()
         side = "bottom" if fp.IsFlipped() else "top"
         pads = {p.GetNumber(): p for p in fp.Pads() if p.GetNumber()}

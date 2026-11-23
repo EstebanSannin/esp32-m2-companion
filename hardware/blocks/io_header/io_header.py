@@ -30,6 +30,9 @@ def io_header(v3v3, gnd, ios, txd0, rxd0):
     j3.fields.update(LCSC="C160390", JLC="Extended",
                      MPN="JST BM04B-SRSS-TB")
     j3.fields["JLC_note"] = "Qwiic I2C port; no Basic 1mm connector exists"
+    # v2.0 Rev A: DNP at JLC (out of stock 2026-11-23); owner hand-solders it
+    j3.fields["DNP"] = "DNP"
+    j3.do_not_populate = True
     j3[1] += gnd          # Qwiic order
     j3[2] += v3v3
     j3[3] += ios["IO8"]   # SDA
