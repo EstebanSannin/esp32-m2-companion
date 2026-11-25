@@ -807,3 +807,19 @@ topology & margins (≥145 mV worst-case), power budget (3.06 V worst case vs
   for v2.0 Rev A, hand-soldered after delivery (no added cost or lead
   time). Copper and gerbers unchanged; BOM/CPL/polarity checklist drop J3.
   C15 (C1531) became Extended at JLC (13 Extended lines with J3 out).
+- 2026-11-25 · Order: final DFM · info · **ROTATION** · JLC engineering's
+  final DFM for v2.0 Rev A matches the CPL as uploaded: pin 1 of U1, U3-U6,
+  Q1-Q3, D1/D2 at the silk mark; D3/D4 lens toward the card edge AND anode
+  on the R3/R4 pad (2D and 3D). The pre-order auto preview had shown U1,
+  U4, U5, Q1-Q3 180 off: the preview was wrong, the bottom-side rule
+  (library rotation + 180) was right. Owner confirmed; `JLC_ROT` dated,
+  `make fab` exit 0.
+- 2026-11-25 · Order: production files · info · **DRILL** · `make jlc-check`
+  FAIL, accepted by the owner: stored upload identical, all 267 holes
+  present, but JLC drills the 125 x 0.3 mm holes (113 vias + 12 module
+  thermal vias) at 0.25 mm. All are epoxy filled and capped, nothing is
+  inserted; the smaller hole only widens the annular ring. Other diffs are
+  expected (etch compensation, non-functional pads removed on In4,
+  plane pull-back at the V-cut, mask dams on U3-U6 kept). Serial field:
+  solid block removed, `V2A0001` on `qrb` - slightly large, accepted
+  (aesthetic; a 1.5 mm field next revision).

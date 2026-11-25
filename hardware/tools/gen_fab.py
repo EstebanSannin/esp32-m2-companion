@@ -55,7 +55,7 @@ JLC_ROT = {
     # U1 USBLC6 (bottom): Rev B went out at 0 and JLC engineering RE-ROTATED
     # it (at 0 the library rows cannot land on our columns) - the Rev B date
     # recorded JLC's correction, not a calibration (RC1 review dfm-4).
-    "C7519": (270, None, "USBLC6-2SC6 (bottom): library = ours +90 -> bottom "
+    "C7519": (270, "2026-11-25", "USBLC6-2SC6 (bottom): library = ours +90 -> bottom "
               "rule 90+180 = 270; Rev B was corrected by JLC at 0"),
     "C160390": (0, "2026-10-13", "JST SH-4 (J3): pin 1 correct in final DFM (Rev B)"),
     "C160394": (180, "2026-10-13", "JST SH-8 (J4): at +0 JLC's auto preview put "
@@ -69,9 +69,14 @@ JLC_ROT = {
     # old footprint) = correct polarity, lens inward; v1 (+0, old footprint)
     # = lens toward the edge, polarity reversed. With the renumbered footprint
     # +0 gives both - derived, NOT yet confirmed by JLC on this footprint.
-    "C273616": (0, None, "TJ-S1706 green: renumbered footprint, +0 = lens to "
+    "C273616": (0, "2026-11-25", "TJ-S1706 green: renumbered footprint, +0 = lens to "
                 "the card edge AND anode on the R3 pad; confirm BOTH in the final DFM"),
-    "C273612": (0, None, "TJ-S1706 red: same as C273616 (R4 pad)"),
+    "C273612": (0, "2026-11-25", "TJ-S1706 red: same as C273616 (R4 pad)"),
+    # 2026-11-25: every None above/below for a placed part was confirmed in
+    # JLC engineering's FINAL DFM for v2.0 Rev A (order SMT026112362553):
+    # pin 1 of U1, U3-U6, Q1-Q3, D1/D2 at the silk mark; D3/D4 lens to the
+    # card edge AND anode on the R3/R4 pad. The pre-order auto preview had
+    # shown U1/U4/U5/Q1-Q3 180 off - it was wrong, the CPL was right.
     # v2.0 Rev A, BOTTOM side. Rule (RC1 review dfm-1, the only model that
     # reproduces D1 at 0, v1 LEDs at +0 = polarity reversed and Rev B LEDs at
     # +180 = lens inward): JLC mirrors a bottom library part about the
@@ -84,18 +89,18 @@ JLC_ROT = {
     # against polarity_checklist.md; the order remark says so. Q1-Q3 are
     # checked too, but 180 is electrically equivalent for them (RC1 delta
     # review dfm-r3 / mcu_io-4).
-    "C3662799": (180, None, "TPS259470A RPW (bottom): library = ours (0) -> "
+    "C3662799": (180, "2026-11-25", "TPS259470A RPW (bottom): library = ours (0) -> "
                  "0+180 = 180; was 0 (GATE V4) = IN/OUT swapped under the model"),
-    "C2673275": (270, None, "TMUX1511 RSV (bottom): library = ours +90 -> "
+    "C2673275": (270, "2026-11-25", "TMUX1511 RSV (bottom): library = ours +90 -> "
                  "270; was 90 (GATE V4) = pin 1 in the opposite corner"),
-    "C146449": (270, None, "SSM6N56FE SOT-563 (bottom): library = ours +90 -> "
+    "C146449": (270, "2026-11-25", "SSM6N56FE SOT-563 (bottom): library = ours +90 -> "
                 "270; was 90 (GATE V4) = 180 off under the model, which is "
                 "electrically equivalent (cross-drained pinout 1 S1/2 G1/3 D2/"
                 "4 S2/5 G2/6 D1: each gate keeps its own drain); only a 90 "
                 "error fails (pads would not land)"),
     "C86784": (270, None, "SI1024X SOT-563, approved 2nd source of C146449: "
                "same library orientation -> 270"),
-    "C25498": (90, None, "4D02 array: JLC lib long axis horizontal, KiCad "
+    "C25498": (90, "2026-11-25", "4D02 array: JLC lib long axis horizontal, KiCad "
                "vertical; 180-symmetric (4 equal resistors), so only the 90 "
                "matters - pads must land"),
 }
